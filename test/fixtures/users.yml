@@ -8,8 +8,14 @@ homer:
   email: "homer@gmail.com"
   first_name: "Homer"
   last_name: "Simpson"
+  created_at: "2012-03-11 19:40:58"
+  confirmed_at: "2012-03-11 19:51:56"
+  confirmation_sent_at: "2012-03-11 19:40:58"
 
 fry:
   email: "fry@gmail.com"
   first_name: "J. Fry"
   last_name: "Philip"
+  created_at: "2012-03-11 19:40:58"
+  confirmed_at: "2012-03-11 19:51:56"
+  confirmation_sent_at: "2012-03-11 19:40:58"
