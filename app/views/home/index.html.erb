@@ -1,4 +1,8 @@
 <h1>Home <%= @user.first_name %> </h1>
 <p>Find me in app/views/home/index.html.erb</p>
 
+<IFRAME SRC=<%= @shell_url %> id="gadget0" name="gadget0" frameborder="1" width="720" height="500">
+If you can see this, your browser doesn't understand IFRAME.
+</IFRAME>
+
 <%= button_to 'Logout', '/users/sign_out', method: :delete %>
