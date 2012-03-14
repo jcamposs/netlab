@@ -19,7 +19,11 @@ test:
   timeout: 5000
 
 production:
-  adapter: sqlite3
-  database: db/production.sqlite3
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: netlab_production
   pool: 5
+  username: netlab
+  password: n3tl4b
   timeout: 5000
