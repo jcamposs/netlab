@@ -1,0 +1,105 @@
+=============
+VMC protocol.
+=============
+
+Virtual Machine Controller protocol is based on JSON format wich enable us
+to extend or modify it easily with minimal changes in both client and server
+side. This protocol is based in commands sent from web application to
+NetProxies, wich are the logical entities in charge of manage virtual machines
+with independence of the technology deployed such as NETKIT or anything else.
+Each command should be replied with a proper response with the status code.  
+
+Commands have the next format, the order is not mandatory.
+
+{
+  "command" : {action},
+  "user" : String,
+  "group" : String,
+  "parameters" : {}
+}
+
+* "command" specifies one of the available actions which can be done on the
+  proxy. Valid values are: start, stop.
+* "user" specifies the user who requires the action is done.
+* "group" specifies the group from which this virtual machine can be operated.
+* "parameters": This is a list of optional parameters wich are defined in each
+   command.
+
+Response format:
+
+{
+  "status" : String,
+  "cause" : String
+}
+
+Status parameter should be either "success" or "error". The optional cause
+field will be only present if a error happened and it contains the error cause.
+
+In order to keep backward compatibility, proxies should ignore options and
+parameters that don't known how to manage.
+
+
+Start Command
+=============
+
+Start command starts a virtual machine. It has next format:
+
+{
+  "command" : "start",
+  "user" : String,
+  "group" : String,
+  "parameters" : {
+    "name" : String,
+    "network" : [
+      {"interface" : String, "collision-domain" : String},
+    ]    
+  }
+}
+
+The attribute parameter is composed of the name of the virtual machine and the
+interfaces used to connect to collision domains. Next example starts a virtual
+machine called "pc1" with two interfaces: "eth0" and "eth1", the former
+connected to collision domain "A" and the other to "B".
+
+{
+  "command" : "start",
+  "user" : "userA",
+  "group" : "groupA",
+  "parameters" : {
+    "name" : "pc1",
+    "network" : [
+      {"interface" : "eth0", "collision-domain" : "A"},
+      {"interface" : "eth1", "collision-domain" : "B"},
+    ]    
+  }
+}
+
+
+Stop Command
+============
+
+Stop command shuts down the virtual machine specified within the parameter name.
+
+{
+  "command" : "stop",
+  "user" : String,
+  "group" : String,
+  "parameters" : {
+    "name" : String    
+  }
+}
+
+Next example shuts down the virtual machine "pc1"
+
+{
+  "command" : "stop",
+  "user" : "userA",
+  "group" : "groupA",
+  "parameters" : {
+    "name" : "pc1"    
+  }
+}
+
+Every user who belongs to the same group as the virtual machine does, can shut
+down it.
+
