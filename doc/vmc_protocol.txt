@@ -12,14 +12,11 @@ Each command should be replied with a proper response with the status code.
 Commands have the next format, the order is not mandatory.
 
 {
-  "command" : {action},
   "user" : String,
   "group" : String,
   "parameters" : {}
 }
 
-* "command" specifies one of the available actions which can be done on the
-  proxy. Valid values are: start, stop.
 * "user" specifies the user who requires the action is done.
 * "group" specifies the group from which this virtual machine can be operated.
 * "parameters": This is a list of optional parameters wich are defined in each
@@ -45,7 +42,6 @@ Start Command
 Start command starts a virtual machine. It has next format:
 
 {
-  "command" : "start",
   "user" : String,
   "group" : String,
   "parameters" : {
@@ -62,7 +58,6 @@ machine called "pc1" with two interfaces: "eth0" and "eth1", the former
 connected to collision domain "A" and the other to "B".
 
 {
-  "command" : "start",
   "user" : "userA",
   "group" : "groupA",
   "parameters" : {
@@ -74,6 +69,13 @@ connected to collision domain "A" and the other to "B".
   }
 }
 
+The response contains the port where the proxy will be waiting for telnet
+connections if everything was successful
+
+{
+  "status" : "success"
+  "port" : xxxx
+}
 
 Stop Command
 ============
@@ -81,7 +83,6 @@ Stop Command
 Stop command shuts down the virtual machine specified within the parameter name.
 
 {
-  "command" : "stop",
   "user" : String,
   "group" : String,
   "parameters" : {
@@ -92,7 +93,6 @@ Stop command shuts down the virtual machine specified within the parameter name.
 Next example shuts down the virtual machine "pc1"
 
 {
-  "command" : "stop",
   "user" : "userA",
   "group" : "groupA",
   "parameters" : {
