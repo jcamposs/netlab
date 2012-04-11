@@ -5,9 +5,9 @@ VMC protocol.
 Virtual Machine Controller protocol is based on JSON format wich enable us
 to extend or modify it easily with minimal changes in both client and server
 side. This protocol is based in commands sent from web application to
-NetProxies, wich are the logical entities in charge of manage virtual machines
-with independence of the technology deployed such as NETKIT or anything else.
-Each command should be replied with a proper response with the status code.  
+NetProxies using RESTful API. NetProxies are logical entities in charge of
+manage virtual machines with independence of the technology deployed such as
+NETKIT or anything else.
 
 Commands have the next format, the order is not mandatory.
 
