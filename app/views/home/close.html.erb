@@ -1,0 +1,9 @@
+<h1>Home <%= @user.first_name %>, machine halted, code: <%= response.code %> </h1>
+<p>Find me in app/views/home/close.html.erb</p>
+
+<p>
+  <%= link_to "Index", home_index_path %>
+</p>
+
+
+<%= button_to 'Logout', '/users/sign_out', method: :delete %>

@@ -1,5 +1,6 @@
 Netlab::Application.routes.draw do
   get "home/index"
+  get "home/close"
 
   devise_for :users
 
