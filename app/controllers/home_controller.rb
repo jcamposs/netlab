@@ -19,7 +19,7 @@ class HomeController < ApplicationController
     }'
 
     host = 'localhost'
-    port = '3000'
+    port = '10502'
     post_ws = "/virtual_machine/start"
     json = '{"test" : "tester"}'
     req = Net::HTTP::Post.new(post_ws, initheader = {'Content-Type' =>'application/json'})
@@ -33,7 +33,7 @@ class HomeController < ApplicationController
       @shell_url = "http://localhost:4200"
       @pid = pid = fork do
         #TODO: Configure the next comand
-        exec "shellinaboxd -t -s '/:rroman:rroman:HOME:ssh rroman@localhost \"telnet localhost #{vm_port}\"'"
+        exec "shellinaboxd -t -s '/:netlab:netlab:HOME:ssh netlab@localhost \"telnet localhost #{vm_port}\"'"
       end
     end
   end
@@ -51,7 +51,7 @@ class HomeController < ApplicationController
 
 
     host = 'localhost'
-    port = '3000'
+    port = '10502'
     post_ws = "/virtual_machine/halt"
     json = '{"test" : "tester"}'
     req = Net::HTTP::Post.new(post_ws, initheader = {'Content-Type' =>'application/json'})
