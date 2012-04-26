@@ -18,8 +18,8 @@ class HomeController < ApplicationController
       }
     }'
 
-    host = 'localhost'
-    port = '10502'
+    host = 'netlab.libresoft.es'
+    port = '10500'
     post_ws = "/virtual_machine/start"
     json = '{"test" : "tester"}'
     req = Net::HTTP::Post.new(post_ws, initheader = {'Content-Type' =>'application/json'})
@@ -30,7 +30,7 @@ class HomeController < ApplicationController
       resp_object = ActiveSupport::JSON.decode(response.body)
       vm_port = resp_object["port"]
       #TODO: Calculate the url for shell in a box
-      @shell_url = "http://localhost:4200"
+      @shell_url = "http://netlab.libresoft.es:4200"
       @pid = pid = fork do
         #TODO: Configure the next comand
         exec "shellinaboxd -t -s '/:netlab:netlab:HOME:ssh netlab@localhost \"telnet localhost #{vm_port}\"'"
@@ -50,8 +50,8 @@ class HomeController < ApplicationController
     }'
 
 
-    host = 'localhost'
-    port = '10502'
+    host = 'netlab.libresoft.es'
+    port = '10500'
     post_ws = "/virtual_machine/halt"
     json = '{"test" : "tester"}'
     req = Net::HTTP::Post.new(post_ws, initheader = {'Content-Type' =>'application/json'})
