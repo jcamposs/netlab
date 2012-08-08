@@ -11,9 +11,9 @@
 // GO AFTER THE REQUIRES BELOW.
 //
 //= require kinetic
-//= require kwidgets
-//= require netlab
-//= require desktopeditor
+//= require neteditor/netlab
+//= require neteditor/desktop/kwidgets
+//= require neteditor/desktop/editor
 //= require jquery
 //= require jquery_ujs
 //= require_tree .
