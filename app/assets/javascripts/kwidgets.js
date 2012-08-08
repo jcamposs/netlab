@@ -710,13 +710,14 @@ var KWidgets = (function () {
       if (!label)
         return;
 
-      label.setX(item.toolAttrs.maxx + that.attrs.max_size / 2
-                                                    - label.getBoxWidth() / 2);
-      label.setY(item.toolAttrs.maxy - label.getBoxHeight()
-                                                    + item.toolAttrs.maxy / 2);
       label.setFontSize(that.attrs.fontSize);
       label.setFontFamily(that.attrs.fontFamily);
       label.setTextFill(that.attrs.textFill);
+
+      label.setX(item.toolAttrs.maxx - label.getBoxWidth() / 2
+                                                    + that.attrs.max_size / 2);
+      label.setY(item.toolAttrs.maxy - label.getBoxHeight()
+                                                    + item.toolAttrs.maxy / 2);
       label.hide();
     };
 
