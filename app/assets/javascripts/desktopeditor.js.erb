@@ -1,0 +1,1783 @@
+/**
+ *
+ *  Copyright (C) 2012 GSyC/LibreSoft, Universidad Rey Juan Carlos.
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+/**
+ * Desktop editor Module
+ */
+var DesktopEditor = (function () {
+
+  var module = {};
+  var sources = {
+      pc: "<%= asset_path('editor/image.png') %>",
+      router: "<%= asset_path('editor/router.png') %>",
+      switch: "<%= asset_path('editor/switch.png') %>",
+      hub: "<%= asset_path('editor/hub.png') %>",
+      connect: "<%= asset_path('editor/connect.png') %>",
+      scissor: "<%= asset_path('editor/scissors.png') %>"
+    };
+  var images = {};
+
+  var MAX_ICON_SIZE = 68;
+  var MIN_ICON_SIZE = 32;
+
+  var desktopEditor;
+
+  var layers = {
+    panning: new Kinetic.Layer({floating: true}),
+    wires: new Kinetic.Layer(),
+    nodes: new Kinetic.Layer(),
+    ifaces: new Kinetic.Layer(),
+    options: new Kinetic.Layer({floating: true})
+  }
+
+  var cursors = [];
+
+  function setCursor(cursor) {
+    cursors.push(document.body.style.cursor);
+    document.body.style.cursor = cursor;
+  }
+
+  function restoreCursor() {
+    document.body.style.cursor = cursors.pop();
+  }
+
+  function merge(conf1, conf2) {
+    var attrs = conf1 || {};
+
+    for(var key in conf2) {
+      attrs[key] = conf2[key];
+    }
+
+    return attrs;
+  };
+
+  function implements(obj, iface) {
+    for(var prop in iface) {
+      if (typeof(iface[prop]) != "function")
+        continue;
+
+      obj[prop] = iface[prop];
+    };
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Global Object
+  //////////////////////////////////////////////////////////////////////////////
+  GlobalObj = function(config) {
+    var that = {};
+
+    that.attrs = config;
+    that.superius = {};
+
+    that.overwrite = function (method, func) {
+      that.superius[method] = that[method];
+      that[method] = func;
+    };
+
+    return that;
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Node Object
+  //////////////////////////////////////////////////////////////////////////////
+  Node = function(config) {
+    var that = GlobalObj(merge({
+      x: 0,
+      y: 0
+    }, config));
+
+    var group = new Kinetic.Group();
+
+    that.getNode = function() {
+      return group;
+    };
+
+    return that;
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Network element interface
+  //////////////////////////////////////////////////////////////////////////////
+  NetElementIface = {
+    getType: function getType() {
+      return undefined;
+    },
+    canConnectTo: function(obj) {
+      return false;
+    },
+    checkEvtEdit: function(evt) {
+      return false;
+    },
+    checkEvtConnect: function(evt) {
+      return false;
+    },
+    checkEvtCut: function(evt) {
+      return false;
+    }
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Image node object
+  //////////////////////////////////////////////////////////////////////////////
+  ImageNode = function(config) {
+    var that = Node(merge({
+      scale: 1,
+      links: {}
+    }, config));
+
+    implements(that, NetElementIface);
+
+    var group = that.getNode();
+    group.setDraggable(true);
+
+    var img = new Kinetic.Image({
+      image: that.attrs.image,
+      width: MAX_ICON_SIZE,
+      height: MAX_ICON_SIZE,
+      scale: {
+        x: 0.8,
+        y: 0.8
+      },
+      offset: {
+        x: MAX_ICON_SIZE / 2,
+        y: MAX_ICON_SIZE / 2
+      },
+      shadow: {
+        color: 'grey',
+        blur: 6,
+        offset: [2, 2],
+        alpha: 0.6
+      }
+    });
+
+    function setLinksColor(color) {
+      for (var iface in that.attrs.links) {
+        var link = that.attrs.links[iface];
+        link.setColor(color);
+      }
+    };
+
+    function procMouseOverEvt(state) {
+      switch (state) {
+      case "edit":
+        setCursor("move");
+        break;
+      case "connect":
+        setCursor("crosshair");
+        break;
+      case "cut":
+        setCursor("pointer");
+        setLinksColor("red");
+        layers.wires.draw();
+        break;
+      default:
+        setCursor("default");
+      }
+    };
+
+    function procMouseOutEvt(state) {
+      restoreCursor();
+
+      switch (state) {
+      case "cut":
+        setLinksColor("grey");
+        layers.wires.draw();
+        break;
+      }
+    };
+
+    function removeLinks() {
+      for (var iface in that.attrs.links) {
+        var link = that.attrs.links[iface];
+        desktopEditor.removeConnection(link);
+      }
+    };
+
+    function clickEvent(state) {
+      switch (state) {
+      case "connect":
+        var picked = desktopEditor.getPickedNode();
+
+        if (!picked)
+          desktopEditor.setPickedNode(that);
+        else
+          desktopEditor.addConnection({
+              node: picked,
+              iface: "any"
+            }, {
+              node: that,
+              iface: "any"
+          });
+        break;
+      case "cut":
+        desktopEditor.removeNode(that);
+        break;
+      }
+    };
+
+    function processEvt(type) {
+      var state = desktopEditor.getState();
+
+      switch (type) {
+      case "mouseover":
+        return procMouseOverEvt(state);
+      case "mouseout":
+        return procMouseOutEvt(state);
+      case "click":
+        return clickEvent(state);
+      default:
+        return false;
+      }
+    };
+
+    function evtProcessable(type) {
+      switch (desktopEditor.getState()) {
+      case "edit":
+        return that.checkEvtEdit(type);
+      case "connect":
+        return that.checkEvtConnect(type);
+      case "cut":
+        return that.checkEvtCut(type);
+      default:
+        return false;
+      }
+    };
+
+    function getAvailableIfaceId() {
+      var id = 0;
+
+      while (that.attrs.links["eth" + id])
+        id++;
+
+      return "eth" + id;
+    };
+
+    group.on("mouseover", function(evt) {
+      if (!evtProcessable("mouseover"))
+        return;
+
+      processEvt("mouseover");
+
+      group.moveToTop();
+      img.setShadow({
+        offset: [10, 10]
+      });
+      this.transitionTo({
+        scale: {
+          x: 1.3,
+          y: 1.3
+        },
+        duration: 0.5,
+        easing: "elastic-ease-out"
+      });
+    });
+
+    group.on("mouseout", function(evt) {
+      if (!evtProcessable("mouseout"))
+        return;
+
+      processEvt("mouseout");
+
+      img.setShadow({
+        offset: [2, 2]
+      });
+      this.transitionTo({
+        scale: {
+          x: 1,
+          y: 1
+        },
+        duration: 0.5,
+        easing: "elastic-ease-out"
+      });
+    });
+
+    group.on("click", function(evt) {
+      if (!evtProcessable("click"))
+        return;
+
+      this.setScale({x: 1.8, y: 1.8});
+      this.transitionTo({
+        scale: {
+          x: 1.3,
+          y: 1.3
+        },
+        duration: 0.5,
+        easing: "elastic-ease-out"
+      });
+
+      processEvt("click");
+    });
+
+    group.on("dragstart", function() {
+      desktopEditor.dragNodeStart(that);
+    });
+
+    group.on("dragmove", function() {
+      desktopEditor.draggingNode(that);
+      for (var iface in that.attrs.links) {
+        var link = that.attrs.links[iface];
+        link.updatePosition(that);
+      }
+    });
+
+    group.on("dragend", function() {
+      desktopEditor.dragNodeStop(that);
+    });
+
+    if (!that.attrs.name) {
+      group.add(img);
+      return;
+    }
+
+    var label = new Kinetic.Text({
+      stroke: 'grey',
+      strokeWidth: 1,
+      text: that.attrs.name,
+      fontSize: 12,
+      fontFamily: "Calibri",
+      textFill: "black",
+      align: "center",
+      fontStyle: "bold",
+      fill: "white",
+      padding: 3,
+      alpha: 0.6,
+      shadow: {
+        color: 'grey',
+        blur: 6,
+        offset: [2, 2],
+        alpha: 0.6
+      },
+      cornerRadius: 5
+    });
+
+    label.setY(MAX_ICON_SIZE / 2 - label.getBoxHeight() / 2);
+    label.setX(-label.getBoxWidth() / 2);
+
+    group.add(label);
+    group.add(img);
+
+    that.remove = function() {
+      removeLinks();
+      that.getNode().off("mouseover mouseout click dragstart dragmove dragend");
+      restoreCursor();
+
+      that.getNode().transitionTo({
+        scale: {
+          x: 0.2,
+          y: 0.2
+        },
+        alpha: 0.0,
+        duration: 0.5,
+        easing: "ease-in-out",
+        callback: function () {
+          var knode = that.getNode();
+          layers.nodes.remove(knode);
+          layers.nodes.draw();
+        }
+      });
+    };
+
+    that.getInterface = function(link) {
+      for (var iface in that.attrs.links) {
+        var l = that.attrs.links[iface];
+
+        if (link.equals(l))
+          return iface;
+      }
+
+      return null;
+    };
+
+    that.removeLink = function(link) {
+      var iface = that.getInterface(link);
+
+      if (iface)
+        delete that.attrs.links[iface]
+    };
+
+    that.addLink = function(link, iface) {
+      var ethx;
+
+      if (that.getInterface(link) != null)
+        return false;
+
+      if (iface == "any")
+        ethx = getAvailableIfaceId();
+      else if (!that.attrs.links[iface])
+        ethx = iface;
+      else
+        return false;
+
+      that.attrs.links[ethx] = link;
+      return true;
+    };
+
+    that.getName = function() {
+      return that.attrs.name;
+    };
+
+    that.isConnectedTo = function(node) {
+      if (that == node)
+        return true;
+
+      for (var iface in that.attrs.links) {
+        var link = that.attrs.links[iface];
+        var n = link.getNodeConnectedTo(that);
+
+        if (n == node)
+          return true;
+      }
+
+      return false;
+    };
+
+    that.checkEvtCut = function(type) {
+      switch (type) {
+      case "mouseover":
+      case "mouseout":
+        return true;
+      case "click":
+        return true;
+      default:
+        return false;
+      }
+    };
+
+    return that;
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Objects wich are able to show interfaces
+  //////////////////////////////////////////////////////////////////////////////
+  Interfaceable = function(config) {
+    var that = ImageNode(merge({
+      labels: {}
+    }, config));
+
+    /**
+     * Calculates the intersection between a imaginary circunference set just
+     * in the center of the node and the line representing the connection.
+     */
+    function calculatePoint(link) {
+      var pos = {};
+      var radius = MAX_ICON_SIZE / 2 + MAX_ICON_SIZE / 3;
+      var node = link.getNodeConnectedTo(that);
+      var group = that.getNode();
+
+      if (node.getNode().getX() == group.getX()) {
+        /* line that has got an infinity slop */
+        if (node.getNode().getY() >= group.getY())
+          return {
+            x: node.getNode().getX(),
+            y: group.getY() + radius
+          }
+        else
+          return {
+            x: node.getNode().getX(),
+            y: group.getY() - radius
+          }
+      }
+
+      var m = (node.getNode().getY() - group.getY())
+              / (node.getNode().getX() - group.getX());
+
+      var p = group.getY() - m * group.getX();
+
+      var a = 1 + Math.pow(m, 2);
+      var b = 2 * m * p - 2 * group.getX() - 2 * m * group.getY();
+      var c = Math.pow(group.getX(), 2) + Math.pow(p, 2)
+        + Math.pow(group.getY(), 2) - 2 * p * group.getY()
+        - Math.pow(radius, 2);
+
+      var x1 = (-b + Math.sqrt(Math.pow(b, 2) - 4 * a * c)) / (2 * a);
+      var y1 = m * x1 + p;
+      var dst1 = Math.sqrt(Math.pow(node.getNode().getX() - x1, 2)
+        + Math.pow(node.getNode().getY() - y1, 2));
+
+      var x2 = (-b - Math.sqrt(Math.pow(b, 2) - 4 * a * c)) / (2 * a);
+      var y2 = m * x2 + p;
+      var dst2 = Math.sqrt(Math.pow(node.getNode().getX() - x2, 2)
+        + Math.pow(node.getNode().getY() - y2, 2));
+
+      if (dst1 >= dst2)
+        pos = {x: x2, y: y2};
+      else
+        pos = {x: x1, y: y1};
+
+      return pos;
+    };
+
+    function updateInterface(id, link) {
+      var pos = calculatePoint(link);
+      var node = that.attrs.labels[id].node;
+
+      var x = isNaN(pos.x) ? that.getNode().getX() : pos.x;
+      var y = isNaN(pos.y) ? that.getNode().getY() : pos.y;
+
+      node.setX(x - node.getBoxWidth() / 2);
+      node.setY(y - node.getBoxHeight() / 2);
+
+      layers.ifaces.draw();
+    };
+
+    function _calculateIfaceId() {
+      var id = 0;
+
+      while (that.attrs.labels[id])
+        id++;
+
+      return id;
+    };
+
+    that.overwrite("removeLink", function(link) {
+      var ifaceId = that.getInterface(link);
+
+      if (!ifaceId)
+        return;
+
+      var eth = that.attrs.labels[ifaceId];
+
+      eth.link.unregisterWatcher(eth.watcherId);
+      layers.ifaces.remove(eth.node);
+      that.superius.removeLink(link);
+      delete that.attrs.labels[ifaceId];
+      layers.ifaces.draw();
+    });
+
+    that.overwrite("addLink", function(link, iface) {
+      if (!that.superius.addLink(link, iface))
+        return false;
+
+      var pos = calculatePoint(link);
+      var ifaceId = that.getInterface(link);
+
+      that.attrs.labels[ifaceId] = {
+        link: link,
+        watcherId: link.registerWatcher(null, function() {
+          updateInterface(ifaceId, link);
+        }),
+        node: new Kinetic.Text({
+          x: pos.x,
+          y: pos.y,
+          text: ifaceId,
+          fontSize: 8,
+          fontFamily: "Calibri",
+          textFill: "blue",
+          align: "center",
+          verticalAlign: "middle",
+          fontStyle: "bold",
+          fill: "white",
+          padding: 8,
+          alpha: 0.6,
+        })
+      };
+
+      var node = that.attrs.labels[ifaceId].node;
+      node.setX(pos.x - node.getBoxWidth() / 2);
+      node.setY(pos.y - node.getBoxHeight() / 2);
+
+      layers.ifaces.add(that.attrs.labels[ifaceId].node);
+      layers.ifaces.draw();
+
+      return true;
+    });
+
+    return that;
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
+  // PC Object
+  //////////////////////////////////////////////////////////////////////////////
+  PC = function(config) {
+    var that = Interfaceable(merge(config, {
+      image: images.pc
+    }));
+
+    function numberOfInterfaces() {
+      var n = 0;
+
+      for(var iface in that.attrs.links)
+        n++;
+
+      return n;
+    };
+
+    function isConnectable() {
+      if (numberOfInterfaces() > 0)
+        return false;
+
+      var node = desktopEditor.getPickedNode();
+      if (!node)
+        return true;
+
+      if (that.isConnectedTo(node))
+        return false;
+
+      return that.canConnectTo(node);
+    };
+
+    that.checkEvtConnect = function(type) {
+      switch (type) {
+      case "mouseover":
+        return isConnectable();
+      case "mouseout":
+        return true;
+      case "click":
+        return isConnectable();
+      default:
+        return false;
+      }
+    };
+
+    that.checkEvtEdit = function(type) {
+      switch (type) {
+      case "mouseover":
+      case "mouseout":
+        return true;
+      case "click":
+        return false;
+      default:
+        return false;
+      }
+    };
+
+    that.canConnectTo = function(node) {
+      return (node.getType() == "switch" || node.getType() == "hub" );
+    };
+
+    that.getType = function() {
+      return "pc";
+    };
+
+    return that;
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Router Object
+  //////////////////////////////////////////////////////////////////////////////
+  Router = function(config) {
+    var that = Interfaceable(merge(config, {
+      image: images.router
+    }));
+
+    function isConnectable() {
+      var node = desktopEditor.getPickedNode();
+      if (!node)
+        return true;
+
+      if (that.isConnectedTo(node))
+        return false;
+
+      return that.canConnectTo(node);
+    };
+
+    that.checkEvtConnect = function(type) {
+      switch (type) {
+      case "mouseover":
+        return isConnectable();
+      case "mouseout":
+        return true;
+      case "click":
+        return isConnectable();
+      default:
+        return false;
+      }
+    };
+
+    that.checkEvtEdit = function(type) {
+      switch (type) {
+      case "mouseover":
+      case "mouseout":
+        return true;
+      case "click":
+        return false;
+      default:
+        return false;
+      }
+    };
+
+    that.canConnectTo = function(node) {
+      return node.getType() != "pc";
+    };
+
+    that.getType = function() {
+      return "router";
+    };
+
+    return that;
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Switch Object
+  //////////////////////////////////////////////////////////////////////////////
+  Switch = function(config) {
+    var that = Interfaceable(merge(config, {
+      image: images.switch
+    }));
+
+    function isConnectable() {
+      var node = desktopEditor.getPickedNode();
+      if (!node)
+        return true;
+
+      if (that.isConnectedTo(node))
+        return false;
+
+      return that.canConnectTo(node);
+    };
+
+    that.checkEvtConnect = function(type) {
+      switch (type) {
+      case "mouseover":
+        return isConnectable();
+      case "mouseout":
+        return true;
+      case "click":
+        return isConnectable();
+      default:
+        return false;
+      }
+    };
+
+    that.checkEvtEdit = function(type) {
+      switch (type) {
+      case "mouseover":
+      case "mouseout":
+        return true;
+      case "click":
+        return false;
+      default:
+        return false;
+      }
+    };
+
+    that.canConnectTo = function(node) {
+      return true;
+    };
+
+    that.getType = function() {
+      return "switch";
+    };
+
+    return that;
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Hub Object
+  //////////////////////////////////////////////////////////////////////////////
+  Hub = function(config) {
+    var that = ImageNode(merge(config, {
+      image: images.hub
+    }));
+
+    function isConnectable() {
+      var node = desktopEditor.getPickedNode();
+      if (!node)
+        return true;
+
+      if (that.isConnectedTo(node))
+        return false;
+
+      return that.canConnectTo(node);
+    };
+
+    that.checkEvtConnect = function(type) {
+      switch (type) {
+      case "mouseover":
+        return isConnectable();
+      case "mouseout":
+        return true;
+      case "click":
+        return isConnectable();
+      default:
+        return false;
+      }
+    };
+
+    that.checkEvtEdit = function(type) {
+      switch (type) {
+      case "mouseover":
+      case "mouseout":
+        return true;
+      case "click":
+        return false;
+      default:
+        return false;
+      }
+    };
+
+    that.canConnectTo = function(node) {
+      return node.getType() != "hub";
+    };
+
+    that.getType = function() {
+      return "hub";
+    };
+
+    return that;
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Link Object
+  //////////////////////////////////////////////////////////////////////////////
+  Link = function(config) {
+    var that = Node(merge({
+      points: [{
+        x: 0,
+        y: 0
+      }, {
+        x: 0,
+        y: 0
+      }],
+      watchers: {}
+    }, config));
+
+    var group = that.getNode();
+    var ids = 0;
+
+    function enableHandlers() {
+      that.attrs.line.on('click', function() {
+        desktopEditor.removeConnection(that);
+      });
+
+      that.attrs.line.on("mouseover", function(evt) {
+        setCursor("pointer");
+        that.setColor("red");
+        layers.wires.draw();
+      });
+
+      that.attrs.line.on("mouseout", function(evt) {
+        restoreCursor();
+        that.setColor("grey");
+        layers.wires.draw();
+      });
+    };
+
+    function disableHandlers() {
+      that.attrs.line.off("xChange yChange scaleChange");
+      that.attrs.line.clearData();
+    };
+
+    function notifyWatchers() {
+      for(var id in that.attrs.watchers) {
+        var controller = that.attrs.watchers[id];
+
+        controller.handler(controller.data);
+      }
+    };
+
+    that.attrs.points[0].x = that.attrs.node1.getNode().getX();
+    that.attrs.points[0].y = that.attrs.node1.getNode().getY();
+    that.attrs.points[1].x = that.attrs.node2.getNode().getX();
+    that.attrs.points[1].y = that.attrs.node2.getNode().getY();
+
+    that.attrs.line = new Kinetic.Line({
+      points: that.attrs.points,
+      stroke: "grey",
+      strokeWidth: 1,
+      lineCap: 'round',
+      lineJoin: 'round'
+    });
+
+    group.add(that.attrs.line);
+
+    that.getNodeConnectedTo = function(node) {
+      if (node == that.attrs.node1)
+        return that.attrs.node2;
+      else if (node == that.attrs.node2)
+        return that.attrs.node1;
+      else
+        return null;
+    };
+
+    that.getNodes = function() {
+      return {
+        node1: that.attrs.node1,
+        node2: that.attrs.node2
+      };
+    };
+
+    that.equals = function(link) {
+      if ((that.attrs.node1.getName() == link.attrs.node1.getName() ||
+            that.attrs.node1.getName() == link.attrs.node2.getName()) &&
+           (that.attrs.node2.getName() == link.attrs.node1.getName() ||
+           that.attrs.node2.getName() == link.attrs.node2.getName()))
+        return true;
+      else
+        return false;
+    };
+
+    that.updatePosition = function(node) {
+      if (that.attrs.node1 == node) {
+        that.attrs.points[0].x = node.getNode().getX();
+        that.attrs.points[0].y = node.getNode().getY();
+        that.updateDetection();
+        layers.wires.draw();
+        notifyWatchers();
+      } else if (that.attrs.node2 == node) {
+        that.attrs.points[1].x = node.getNode().getX();
+        that.attrs.points[1].y = node.getNode().getY();
+        that.updateDetection();
+        layers.wires.draw();
+        notifyWatchers();
+      }
+    };
+
+    that.manageable = function(flag) {
+      if (flag)
+        enableHandlers();
+      else
+        disableHandlers();
+    };
+
+    that.updateDetection = function() {
+      if (desktopEditor.getState() != "cut")
+        return;
+
+      that.attrs.line.clearData();
+      that.attrs.line.saveData();
+    };
+
+    that.setColor = function(color) {
+      that.attrs.line.setAttrs({stroke: color});
+    };
+
+    that.unregisterWatcher = function(watchId) {
+      delete that.attrs.watchers[watchId];
+    },
+
+    that.registerWatcher = function(data, handler) {
+      var id = ++ids;
+
+      that.attrs.watchers[id] = {
+        data: data,
+        handler: handler
+      };
+
+      return id;
+    };
+
+    return that;
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Desktop editor Object
+  //////////////////////////////////////////////////////////////////////////////
+  DeskEditor = function(config) {
+    var that = GlobalObj(merge({
+      container: "container",
+      width: 500,
+      height: 250
+    }, config));
+
+    var lock = 0;
+    var state = "edit";
+    var nodes = [];
+    var links = [];
+
+    function loadSources() {
+      var loadedImages = 0;
+      var numImages = 0;
+
+      for(var src in sources) {
+        numImages++;
+      }
+
+      for(var src in sources) {
+        images[src] = new Image();
+        images[src].onload = function() {
+          if(++loadedImages >= numImages)
+            initStage();
+        };
+        images[src].src = sources[src];
+      }
+    };
+
+    function resize(percent, dragging, obj) {
+      var min = 0.4;
+      var scale = (1 - min) * (1 - percent) + min;
+
+      for (var e in layers) {
+        var callback = undefined;
+        var layer = layers[e];
+
+        if (layer.attrs.floating)
+          continue;
+
+        if (dragging) {
+          layer.setScale(scale, scale);
+          layer.draw();
+          continue;
+        }
+
+        if (layer == layers.wires) {
+          lockLinkCalculation();
+          callback = function() {
+            unlockLinkCalculation();
+            updateLinksDetection();
+          }
+        }
+
+        layer.transitionTo({
+          scale: {
+            x: scale,
+            y: scale
+          },
+          duration: 0.2,
+          easing: 'ease-in-out',
+          callback: callback
+        });
+      }
+    };
+
+    function calculateCenter() {
+      var x, y, cx, cy;
+      var maxX, minX, maxY, minY;
+
+      if (nodes.length <= 0)
+        return {
+          x: layers.nodes.getX(),
+          y: layers.nodes.getY()
+        };
+
+      minX = nodes[0].getNode().getX();
+      minY = nodes[0].getNode().getY();
+      maxX = minX;
+      maxY = minY;
+
+      for (var i = 0; i < nodes.length; i++) {
+        var node = nodes[i];
+        if (minX > node.getNode().getX())
+          minX = node.getNode().getX();
+
+        if (minY > node.getNode().getY())
+          minY = node.getNode().getY();
+
+        if (maxX < node.getNode().getX())
+          maxX = node.getNode().getX();
+
+        if (maxY < node.getNode().getY())
+          maxY = node.getNode().getY();
+      }
+
+      x = (minX + maxX) / 2;
+      y = (minY + maxY) / 2;
+
+      /* Center point */
+      cx = ((that.attrs.stage.getWidth() / 2) - layers.nodes.getX()
+           - that.attrs.stage.getX()) / layers.nodes.getScale().x;
+      cy = ((that.attrs.stage.getHeight() / 2) - layers.nodes.getY()
+           - that.attrs.stage.getY()) / layers.nodes.getScale().y;
+
+      var dx = (cx - x) * layers.nodes.getScale().x;
+      var dy = (cy - y) * layers.nodes.getScale().y;
+
+      return {
+          x: layers.nodes.getX() + dx,
+          y: layers.nodes.getY() + dy
+      };
+    };
+
+    function move(direction, obj) {
+      var nx = layers.nodes.getX();
+      var ny = layers.nodes.getY();
+      var factor = 100;
+
+      switch (direction) {
+      case "Up":
+        ny -= factor;
+        break;
+      case "Down":
+        ny += factor;
+        break;
+      case "Left":
+        nx -= factor;
+        break;
+      case "Right":
+        nx += factor;
+        break;
+      case "Center":
+        var pos = calculateCenter();
+        nx = pos.x;
+        ny = pos.y;
+        break;
+      }
+
+      for (var e in layers) {
+        var callback = undefined;
+        var layer = layers[e];
+
+        if (layer.attrs.floating)
+          continue;
+
+        if (layer == layers.wires) {
+          lockLinkCalculation();
+          callback = function() {
+            unlockLinkCalculation();
+            updateLinksDetection();
+          }
+        }
+
+        layer.transitionTo({
+          x: nx,
+          y: ny,
+          duration: 0.2,
+          easing: 'ease-in-out',
+          callback: callback
+        });
+      }
+    };
+
+    function confDragging() {
+      //Trick to simulate panning
+      var panningRect = new Kinetic.Rect({
+        x : that.attrs.stage.getX(),
+        y : that.attrs.stage.getY(),
+        draggable : true,
+        alpha: 0.0,
+        width : that.attrs.stage.getWidth(),
+        height : that.attrs.stage.getHeight()
+      });
+
+      panningRect.on("dragstart",function() {
+        lockLinkCalculation();
+
+        for (var e in layers) {
+          var layer = layers[e];
+
+          if (layer.attrs.floating)
+            continue;
+
+          layer.xSave = layer.attrs.x;
+          layer.ySave = layer.attrs.y;
+        }
+      });
+
+      panningRect.on("dragmove", function() {
+        var nowP = this.getAbsolutePosition();
+
+        for (var e in layers) {
+          var layer = layers[e];
+
+          if (layer.attrs.floating)
+            continue;
+
+          layer.setX(layer.xSave + nowP.x);
+          layer.setY(layer.ySave + nowP.y);
+          layer.draw();
+        }
+      });
+
+      panningRect.on("dragend", function() {
+        unlockLinkCalculation();
+        panningRect.setX(0);
+        panningRect.setY(0);
+        layers.panning.draw();
+
+        for (var e in layers) {
+          var layer = layers[e];
+
+          if (layer.attrs.floating)
+            continue;
+
+          layer.xSave = undefined;
+          layer.ySave = undefined;
+        }
+
+        updateLinksDetection();
+      });
+
+      layers.panning.add(panningRect);
+    };
+
+    function updateLinksDetection() {
+      if (state != "cut" || lock > 0)
+        return;
+
+      for (var index = 0; index < links.length; index++) {
+        var link = links[index];
+        link.updateDetection();
+      }
+    };
+
+    function generateRootName(root) {
+      for (var i = 0; i < nodes.length; i++) {
+        var name = root + i;
+
+        for (var j = 0; j < nodes.length; j++) {
+          var node = nodes[j];
+
+          if (node.getName() == name)
+            break;
+
+          if (j == nodes.length - 1)
+            return  name;
+        }
+      }
+
+      return root + nodes.length;
+    };
+
+    function removeFakeLink() {
+      if (!that.attrs.fake_link)
+            return;
+
+      layers.wires.remove(that.attrs.fake_link.line);
+      that.attrs.fake_link = null;
+      that.attrs._picked = null;
+    };
+
+    function clearConnectState() {
+      var dom = that.attrs.stage.getDOM();
+      dom.removeEventListener('mousemove', that.attrs.mouseMoveHandler, false);
+      document.removeEventListener('keydown', that.attrs.keyDownHandler, false);
+
+      if (!that.attrs.fake_link)
+        return;
+
+      layers.wires.remove(that.attrs.fake_link.line);
+      that.attrs.fake_link = null;
+      that.attrs._picked = null;
+      layers.wires.draw();
+    };
+
+    function confConnectState() {
+      that.attrs._picked = null;
+
+      that.attrs.mouseMoveHandler = function(evt) {
+        if (!that.attrs.fake_link)
+          return;
+
+        var mousePos = getMousePos(layers.nodes.getCanvas(), evt);
+        that.attrs.fake_link.points[1].x = (mousePos.x - layers.nodes.getX()
+                         - that.attrs.stage.getX()) / layers.nodes.getScale().x;
+        that.attrs.fake_link.points[1].y = (mousePos.y - layers.nodes.getY()
+                         - that.attrs.stage.getY()) / layers.nodes.getScale().y;
+        layers.wires.draw();
+      }
+
+      that.attrs.keyDownHandler = function(evt) {
+        var ESC = 27;
+
+        if (evt.which != ESC)
+          return;
+
+        removeFakeLink();
+        layers.wires.draw();
+      }
+
+      var dom = that.attrs.stage.getDOM();
+      dom.addEventListener('mousemove', that.attrs.mouseMoveHandler, false);
+      document.addEventListener('keydown', that.attrs.keyDownHandler, false);
+    };
+
+    function setLinksManageable(flag) {
+      for (var index = 0; index < links.length; index++) {
+        var link = links[index];
+        link.manageable(flag);
+      }
+    };
+
+    function clearCutState() {
+      layers.wires.off("xChange yChange scaleChange");
+      setLinksManageable(false);
+    };
+
+    function confCutState() {
+      layers.wires.on("xChange yChange scaleChange", updateLinksDetection);
+
+      setLinksManageable(true);
+      updateLinksDetection();
+    };
+
+    function clearPreviousState() {
+      switch (state) {
+      case "connect":
+        clearConnectState();
+        break;
+      case "cut":
+        clearCutState();
+        break;
+      }
+    };
+
+    function confNewState(state) {
+      switch (state) {
+      case "connect":
+        confConnectState();
+        break;
+      case "cut":
+        confCutState();
+        break;
+      }
+    };
+
+    function changeState(newState) {
+      if (state == newState)
+        return;
+
+      clearPreviousState();
+      state = newState;
+      confNewState(state);
+    };
+
+    function getMousePos(canvas, evt) {
+      // get canvas position
+      var obj = canvas;
+      var top = 0;
+      var left = 0;
+      while (obj && obj.tagName != 'BODY') {
+          top += obj.offsetTop;
+          left += obj.offsetLeft;
+          obj = obj.offsetParent;
+      }
+
+      // return relative mouse position
+      var mouseX = evt.clientX - left + window.pageXOffset;
+      var mouseY = evt.clientY - top + window.pageYOffset;
+      return {
+          x: mouseX,
+          y: mouseY
+      };
+    };
+
+    function lockLinkCalculation() {
+      lock++;
+    };
+
+    function unlockLinkCalculation() {
+      if (--lock < 0)
+        alert("BAD: lock = " + lock);
+    };
+
+    function initStage() {
+      that.attrs.stage = new Kinetic.Stage({
+        container: that.attrs.container,
+        width: that.attrs.width,
+        height: that.attrs.height
+      });
+
+      confDragging();
+
+      var zoom = KWidgets.Slider({
+        x: 50,
+        y: 90,
+        height: 120,
+        callback: {
+          func: resize,
+          data: that,
+        }
+      });
+
+      var browser = KWidgets.Browser({
+        x: 50,
+        y: 48,
+        radius: 30,
+        callback: {
+          func: move,
+          data: that
+        }
+      });
+
+      // ToolMenu
+      var menu = KWidgets.ToolMenu({
+        x: that.attrs.stage.getWidth() / 2 - ((MIN_ICON_SIZE * 6 + 15 * 6) / 2),
+        y: that.attrs.stage.getHeight() - MAX_ICON_SIZE,
+        min_size: MIN_ICON_SIZE,
+        max_size: MAX_ICON_SIZE,
+        fontSize: 10,
+        separation: 15,
+        padding: {
+          horizontal: 3,
+          vertical: 3,
+          radius: 10
+        }
+      });
+
+      /*
+       * go ahead and add the groups
+       * to the layer and the layer to the
+       * stage so that the groups have knowledge
+       * of its layer and stage
+       */
+      layers.options.add(browser.getNode());
+      layers.options.add(zoom.getNode());
+      layers.options.add(menu.getNode());
+
+      that.attrs.stage.add(layers.panning);
+      that.attrs.stage.add(layers.wires);
+      that.attrs.stage.add(layers.ifaces);
+      that.attrs.stage.add(layers.nodes);
+      that.attrs.stage.add(layers.options);
+
+      var pcItem = KWidgets.ToolMenuItem({
+        image: images.pc,
+        label: "PC",
+        draggable: true
+      });
+      var routerItem = KWidgets.ToolMenuItem({
+        image: images.router,
+        label: "Router",
+        draggable: true
+      });
+      var switchItem = KWidgets.ToolMenuItem({
+        image: images.switch,
+        label: "Switch",
+        draggable: true
+      });
+      var hubItem = KWidgets.ToolMenuItem({
+        image: images.hub,
+        label: "Hub",
+        draggable: true
+      });
+      var connItem = KWidgets.ToolMenuItem({
+        image: images.connect,
+        label: "Connect"
+      });
+      var scissorItem = KWidgets.ToolMenuItem({
+        image: images.scissor,
+        label: "Cut",
+      });
+
+      pcItem.on("dragend", function(pos) {
+        var node = PC({
+          name: generateRootName("pc")
+        });
+        that.addNode(node, pos, true);
+      });
+
+      routerItem.on("dragend", function(pos) {
+        var node = Router({
+          name: generateRootName("r")
+        });
+        that.addNode(node, pos, true);
+      });
+
+      switchItem.on("dragend", function(pos) {
+        var node = Switch({
+          name: generateRootName("s")
+        });
+        that.addNode(node, pos, true);
+      });
+
+      hubItem.on("dragend", function(pos) {
+        var node = Hub({
+          name: generateRootName("h")
+        });
+        that.addNode(node, pos, true);
+      });
+
+      connItem.on("click", function(pos) {
+        changeState("connect");
+      });
+
+      scissorItem.on("click", function(pos) {
+        changeState("cut");
+      });
+
+      menu.addMenuItem(pcItem);
+      menu.addMenuItem(routerItem);
+      menu.addMenuItem(switchItem);
+      menu.addMenuItem(hubItem);
+      menu.addSeparator();
+      menu.addMenuItem(connItem);
+      menu.addMenuItem(scissorItem);
+
+      if (that.attrs.callback)
+        that.attrs.callback(that);
+    };
+
+    that.getNodeByName = function(name) {
+      for(var index = 0; index < nodes.length; index++) {
+        var node = nodes[index];
+
+        if (name == node.getName())
+          return node;
+      }
+
+      return null;
+    };
+
+    that.setPickedNode = function(node) {
+      that.attrs._picked = node;
+
+      that.attrs.fake_link = {};
+      that.attrs.fake_link["points"] = [{
+        x: node.getNode().getX(),
+        y: node.getNode().getY()
+      }, {
+        x: node.getNode().getX(),
+        y: node.getNode().getY()
+      }];
+      that.attrs.fake_link["line"] = new Kinetic.Line({
+        points: that.attrs.fake_link.points,
+        stroke: "grey",
+        strokeWidth: 1,
+        lineCap: 'round',
+        lineJoin: 'round'
+      });
+
+      layers.wires.add(that.attrs.fake_link.line);
+      layers.wires.draw();
+    };
+
+    that.dragNodeStart = function(node) {
+      switch (state) {
+      case "connect":
+        if (!that.attrs.fake_link || that.attrs._picked != node)
+          return;
+
+        that.attrs.fake_link.line.hide();
+        break;
+      }
+    };
+
+    that.draggingNode = function(node) {
+      switch (state) {
+      case "connect":
+        if (!that.attrs.fake_link || that.attrs._picked != node)
+          return;
+
+        that.attrs.fake_link.points[0].x = node.getNode().getX();
+        that.attrs.fake_link.points[0].y = node.getNode().getY();
+        break;
+      }
+    };
+
+    that.dragNodeStop = function(node) {
+      switch (state) {
+      case "connect":
+        if (!that.attrs.fake_link || that.attrs._picked != node)
+          return;
+
+        that.attrs.fake_link.line.show();
+        break;
+      }
+    };
+
+    that.getPickedNode = function() {
+      return that.attrs._picked;
+    };
+
+    that.getState = function() {
+      return state;
+    };
+
+    that.getNodes = function() {
+      return nodes;
+    };
+
+    that.getConnections = function() {
+      return links;
+    };
+
+    that.removeNode = function(node) {
+      var index = nodes.indexOf(node);
+
+      nodes.splice(index, 1);
+
+      node.remove();
+    };
+
+    that.addNode = function(node, pos, absolute) {
+      var knode = node.getNode();
+
+      layers.nodes.add(knode);
+
+      if (absolute) {
+        pos.x = pos.x + ((MAX_ICON_SIZE - MIN_ICON_SIZE) / 2);
+        pos.y = pos.y + ((MAX_ICON_SIZE - MIN_ICON_SIZE) / 2);
+        knode.setAbsolutePosition(pos);
+      } else
+        knode.setPosition(pos);
+
+      layers.nodes.draw();
+      nodes.push(node);
+    };
+
+    that.removeConnection = function(link) {
+      var index = links.indexOf(link);
+      links.splice(index, 1);
+
+      var nodes = link.getNodes();
+
+      nodes.node1.removeLink(link);
+      nodes.node2.removeLink(link);
+
+      layers.wires.remove(link.getNode());
+      layers.wires.draw();
+    };
+
+    that.addConnection = function(node1, node2) {
+      var link = new Link({
+        node1: node1.node,
+        node2: node2.node
+      });
+
+      if (!node1.node.addLink(link, node1.iface))
+        return false;
+
+      if (!node2.node.addLink(link, node2.iface)) {
+        node1.node.removeLink(link);
+        return false;
+      }
+
+      removeFakeLink();
+
+      links.push(link);
+      layers.wires.add(link.getNode());
+      link.updateDetection();
+      layers.wires.draw();
+
+      return true;
+    };
+
+    loadSources();
+
+    return that;
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Object that wraps DeskEditor methods to avoid anybody to use its public
+  // methods out of this module. Editor object only implements EditorInterface
+  //////////////////////////////////////////////////////////////////////////////
+  Editor = function(config) {
+    var that = {};
+
+    /* Create the editor */
+    desktopEditor = DeskEditor(config);
+
+    implements(that, Netlab.EditorInterface);
+
+    that.addNode = function(type, name, position) {
+      var node = desktopEditor.getNodeByName(name);
+
+      if (node)
+        return false;
+
+      switch (type) {
+      case "pc":
+        node = PC({
+          name: name
+        });
+        break;
+      case "router":
+        node = Router({
+          name: name
+        });
+        break;
+      case "switch":
+        node = Switch({
+          name: name
+        });
+        break;
+      case "hub":
+        node = Hub({
+          name: name
+        });
+        break;
+      default:
+        return false;
+      }
+
+      desktopEditor.addNode(node, position, false);
+      return true;
+    };
+
+    that.removeNode = function(name) {
+      var node = desktopEditor.getNodeByName(name);
+
+      if (!node)
+        return;
+
+      desktopEditor.removeNode(node);
+    };
+
+    that.addConnection = function(node1, node2) {
+      if (node1.name == node2.name)
+        return false;
+
+      var n1 = desktopEditor.getNodeByName(node1.name);
+      var n2 = desktopEditor.getNodeByName(node2.name);
+
+      if (n1 == null || n2 ==null)
+        return false;
+
+      if (!n1.canConnectTo(n2))
+        return false;
+
+      return desktopEditor.addConnection({
+          node: n1,
+          iface: node1.iface
+        }, {
+          node: n2,
+          iface: node2.iface
+      });
+    };
+
+    that.getNodes = function() {
+      var nodes = desktopEditor.getNodes();
+      var n = [];
+
+      for(var index = 0; index < nodes.length; index++) {
+        var node = nodes[index];
+
+        n[index] = {
+          name: node.getName(),
+          type: node.getType(),
+          position: node.getNode().getPosition()
+        };
+      }
+
+      return n;
+    };
+
+    that.getConnections = function() {
+      var connections = desktopEditor.getConnections();
+      var links = [];
+
+      for(var index = 0; index < connections.length; index++) {
+        var conn = connections[index];
+        var nodes = conn.getNodes();
+
+        links[index] = {
+          node1: {
+            name: nodes.node1.getName(),
+            iface: nodes.node1.getInterface(conn)
+          },
+          node2: {
+            name: nodes.node2.getName(),
+            iface: nodes.node2.getInterface(conn)
+          }
+        };
+      }
+
+      return links;
+    };
+
+    return that;
+  };
+
+  module.init = function(config) {
+    return Editor(config);
+  }
+
+  return module;
+
+}());
