@@ -46,7 +46,7 @@ var DesktopEditor = (function () {
     options: new Kinetic.Layer({floating: true})
   }
 
-  var cursors = [];
+  var cursors = new Array("default");
 
   function setCursor(cursor) {
     cursors.push(document.body.style.cursor);
@@ -871,7 +871,7 @@ var DesktopEditor = (function () {
 
     function disableHandlers() {
       that.attrs.line.off("xChange yChange scaleChange");
-      that.attrs.line.clearData();
+      that.attrs.line.clearImageData();
     };
 
     function notifyWatchers() {
@@ -950,8 +950,8 @@ var DesktopEditor = (function () {
       if (desktopEditor.getState() != "cut")
         return;
 
-      that.attrs.line.clearData();
-      that.attrs.line.saveData();
+      that.attrs.line.clearImageData();
+      that.attrs.line.saveImageData();
     };
 
     that.setColor = function(color) {
@@ -1264,11 +1264,13 @@ var DesktopEditor = (function () {
         if (!that.attrs.fake_link)
           return;
 
-        var mousePos = getMousePos(layers.nodes.getCanvas(), evt);
+        var mousePos = that.attrs.stage.getMousePosition(evt);
+
         that.attrs.fake_link.points[1].x = (mousePos.x - layers.nodes.getX()
                          - that.attrs.stage.getX()) / layers.nodes.getScale().x;
         that.attrs.fake_link.points[1].y = (mousePos.y - layers.nodes.getY()
                          - that.attrs.stage.getY()) / layers.nodes.getScale().y;
+
         layers.wires.draw();
       }
 
@@ -1335,26 +1337,6 @@ var DesktopEditor = (function () {
       clearPreviousState();
       state = newState;
       confNewState(state);
-    };
-
-    function getMousePos(canvas, evt) {
-      // get canvas position
-      var obj = canvas;
-      var top = 0;
-      var left = 0;
-      while (obj && obj.tagName != 'BODY') {
-          top += obj.offsetTop;
-          left += obj.offsetLeft;
-          obj = obj.offsetParent;
-      }
-
-      // return relative mouse position
-      var mouseX = evt.clientX - left + window.pageXOffset;
-      var mouseY = evt.clientY - top + window.pageYOffset;
-      return {
-          x: mouseX,
-          y: mouseY
-      };
     };
 
     function lockLinkCalculation() {

@@ -10,7 +10,7 @@
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
 //
-//= require kinetic-v3.10.3
+//= require kinetic-v3.10.5
 //= require kwidgets
 //= require netlab
 //= require desktopeditor
