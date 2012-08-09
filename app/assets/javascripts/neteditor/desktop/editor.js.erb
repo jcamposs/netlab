@@ -555,6 +555,7 @@ var DesktopEditor = (function () {
           return;
 
         color = that.attrs.labels[ifaceId].link.getColor();
+        setCursor("pointer");
         that.attrs.labels[ifaceId].link.setColor("red");
         layers.wires.draw();
       });
@@ -563,6 +564,7 @@ var DesktopEditor = (function () {
         if (desktopEditor.getState() != "cut")
           return;
 
+        restoreCursor();
         that.attrs.labels[ifaceId].link.setColor(color);
         layers.wires.draw();
       });
@@ -573,6 +575,7 @@ var DesktopEditor = (function () {
 
         that.attrs.labels[ifaceId].node.off("mouseout");
         desktopEditor.removeConnection(that.attrs.labels[ifaceId].link);
+        restoreCursor();
       });
     };
 
