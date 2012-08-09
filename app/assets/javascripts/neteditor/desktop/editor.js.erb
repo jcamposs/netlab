@@ -547,6 +547,35 @@ var DesktopEditor = (function () {
       return id;
     };
 
+    function setLabelCutEvents(ifaceId) {
+      var color;
+
+      that.attrs.labels[ifaceId].node.on("mouseover", function(evt) {
+        if (desktopEditor.getState() != "cut")
+          return;
+
+        color = that.attrs.labels[ifaceId].link.getColor();
+        that.attrs.labels[ifaceId].link.setColor("red");
+        layers.wires.draw();
+      });
+
+      that.attrs.labels[ifaceId].node.on("mouseout", function(evt) {
+        if (desktopEditor.getState() != "cut")
+          return;
+
+        that.attrs.labels[ifaceId].link.setColor(color);
+        layers.wires.draw();
+      });
+
+      that.attrs.labels[ifaceId].node.on("click", function(evt) {
+        if (desktopEditor.getState() != "cut")
+          return;
+
+        that.attrs.labels[ifaceId].node.off("mouseout");
+        desktopEditor.removeConnection(that.attrs.labels[ifaceId].link);
+      });
+    };
+
     that.overwrite("removeLink", function(link) {
       var ifaceId = that.getInterface(link);
 
@@ -591,8 +620,10 @@ var DesktopEditor = (function () {
       };
 
       var node = that.attrs.labels[ifaceId].node;
+
       node.setX(pos.x - node.getBoxWidth() / 2);
       node.setY(pos.y - node.getBoxHeight() / 2);
+      setLabelCutEvents(ifaceId);
 
       layers.ifaces.add(that.attrs.labels[ifaceId].node);
       layers.ifaces.draw();
@@ -958,6 +989,11 @@ var DesktopEditor = (function () {
 
     that.setColor = function(color) {
       that.attrs.line.setAttrs({stroke: color});
+    };
+
+    that.getColor = function() {
+      var attrs = that.attrs.line.getAttrs();
+      return attrs.stroke;
     };
 
     that.unregisterWatcher = function(watchId) {
