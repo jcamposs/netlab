@@ -23,14 +23,16 @@
 var DesktopEditor = (function () {
 
   var module = {};
+
   var sources = {
-      pc: "<%= asset_path('editor/image.png') %>",
-      router: "<%= asset_path('editor/router.png') %>",
-      switch: "<%= asset_path('editor/switch.png') %>",
-      hub: "<%= asset_path('editor/hub.png') %>",
-      connect: "<%= asset_path('editor/connect.png') %>",
-      scissor: "<%= asset_path('editor/scissors.png') %>"
-    };
+    pc: "<%= asset_path('editor/image.png') %>",
+    router: "<%= asset_path('editor/router.png') %>",
+    switch: "<%= asset_path('editor/switch.png') %>",
+    hub: "<%= asset_path('editor/hub.png') %>",
+    connect: "<%= asset_path('editor/connect.png') %>",
+    scissor: "<%= asset_path('editor/scissors.png') %>"
+  };
+
   var images = {};
 
   var MAX_ICON_SIZE = 68;
