@@ -1,0 +1,25 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Owner:</b>
+  <%= @scene.owner_id %>
+</p>
+
+<p>
+  <b>Name:</b>
+  <%= @scene.name %>
+</p>
+
+<p>
+  <b>Definition:</b>
+  <%= @scene.definition %>
+</p>
+
+<p>
+  <b>Schema:</b>
+  <%= @scene.schema %>
+</p>
+
+
+<%= link_to 'Edit', edit_scene_path(@scene) %> |
+<%= link_to 'Back', scenes_path %>

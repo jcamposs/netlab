@@ -1,0 +1,29 @@
+<h1>Listing scenes</h1>
+
+<table>
+  <tr>
+    <th>Owner</th>
+    <th>Name</th>
+    <th>Definition</th>
+    <th>Schema</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @scenes.each do |scene| %>
+  <tr>
+    <td><%= scene.owner_id %></td>
+    <td><%= scene.name %></td>
+    <td><%= scene.definition %></td>
+    <td><%= scene.schema %></td>
+    <td><%= link_to 'Show', scene %></td>
+    <td><%= link_to 'Edit', edit_scene_path(scene) %></td>
+    <td><%= link_to 'Destroy', scene, confirm: 'Are you sure?', method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Scene', new_scene_path %>

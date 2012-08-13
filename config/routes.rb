@@ -1,4 +1,6 @@
 Netlab::Application.routes.draw do
+  resources :scenes
+
   get "home/index"
   get "home/close"
 
