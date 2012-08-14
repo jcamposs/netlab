@@ -1,4 +1,6 @@
 class ScenesController < ApplicationController
+  before_filter :authenticate_user!
+
   # GET /scenes
   # GET /scenes.json
   def index
