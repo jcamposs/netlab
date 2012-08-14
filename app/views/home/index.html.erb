@@ -1,50 +1,5 @@
-<script>
-  var editor;
-
-  function onready() {
-    var json = Netlab.saveJSON(editor);
-    document.getElementById("json").firstChild.nodeValue = json;
-  
-    // add button event bindings
-    document.getElementById("load").addEventListener("click", function() {
-      var nodes = editor.getNodes();
-  
-      for(var i = 0; i < nodes.length; i++)
-        editor.removeNode(nodes[i].name);
-
-      Netlab.loadJSON(editor, json);
-    }, false);
-
-    document.getElementById("save").addEventListener("click", function() {
-      json = Netlab.saveJSON(editor);
-      document.getElementById("json").firstChild.nodeValue = json;
-    }, false);
-  };
-
-  window.onload = function() {
-    editor = Desktop.initEditor({
-      container: "container",
-      width: 700,
-      height: 600,
-      callback: onready
-    });
-  }
-</script>
-
 <h1>Home <%= @user.first_name %> </h1>
 
-<div id="container"></div>
-<div id="buttons">
-  <button id="load">
-    Load
-  </button>
-  <button id="save">
-    Save
-  </button>
-</div>
-<div id="json">
-</div>
-<br/>
 <!--
 <IFRAME SRC=<%= @shell_url %> id="gadget0" name="gadget0" frameborder="1" width="720" height="500">
 If you can see this, your browser doesn't understand IFRAME.
@@ -57,4 +12,8 @@ If you can see this, your browser doesn't understand IFRAME.
 </p>
 -->
 
-<%= button_to 'Logout', '/users/sign_out', method: :delete %>
+<div id="menu">
+  <%= link_to 'Scenes', scenes_path %>
+  |
+  <%= link_to 'Logout', destroy_user_session_path, method: :delete %>
+</div>
