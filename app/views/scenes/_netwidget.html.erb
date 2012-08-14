@@ -1,12 +1,3 @@
-<%= javascript_tag do %>
-  $(window).load( function() {
-    DesktopEditor.initEditor({
-      container: "container",
-      width: 700,
-      height: 600,
-      callback: null
-    });
-  });
-<% end %>
+<%= render partial: 'initwidget', formats: :js %>
 
 <div id="container"></div>

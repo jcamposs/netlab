@@ -1,0 +1,13 @@
+<%= javascript_tag do %>
+
+  function fillForm() {
+    var editor = DesktopEditor.getEditor();
+
+    $("#scene_definition").val(Netlab.saveJSON(editor));
+
+    alert("object: " + $("#scene_definition").val());
+
+    return false;
+  };
+
+<% end %>

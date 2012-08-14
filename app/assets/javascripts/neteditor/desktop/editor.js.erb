@@ -23,6 +23,7 @@
 var DesktopEditor = (function () {
 
   var module = {};
+  var editor;
 
   var sources = {
     pc: "<%= asset_path('editor/image.png') %>",
@@ -1798,7 +1799,15 @@ var DesktopEditor = (function () {
   };
 
   module.initEditor = function(config) {
-    return Editor(config);
+    editor = Editor(config);
+    return editor;
+  }
+
+  module.getEditor = function() {
+    if (!editor)
+      throw ("Editor is not initialized");
+
+    return editor;
   }
 
   return module;

@@ -1,4 +1,4 @@
-<%= form_for @scene, :html => { :onsubmit => 'alert("Lets go"); return false' } do |f| %>
+<%= form_for @scene, :html => { :onSubmit => 'return fillForm();' } do |f| %>
   <% if @scene.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@scene.errors.count, "error") %> prohibited this scene from being saved:</h2>
