@@ -45,22 +45,20 @@ class ScenesController < ApplicationController
   # POST /scenes
   # POST /scenes.json
   def create
-puts "TODO: Create a new scene"
-     @scene = Scene.new
-#    @scene = Scene.new(params[:scene])
+    @scene = Scene.new(params[:scene])
+    @user = current_user
 
-     respond_to do |format|
-       format.html { redirect_to home_index_path}
-     end
-#    respond_to do |format|
-#      if @scene.save
-#        format.html { redirect_to @scene, notice: 'Scene was successfully created.' }
-#        format.json { render json: @scene, status: :created, location: @scene }
-#      else
-#        format.html { render action: "new" }
-#        format.json { render json: @scene.errors, status: :unprocessable_entity }
-#      end
-#    end
+    @scene.owner_id = @user.id
+
+    respond_to do |format|
+      if @scene.save
+        format.html { redirect_to @scene, notice: 'Scene was successfully created.' }
+        format.json { render json: @scene, status: :created, location: @scene }
+      else
+        format.html { render action: "new" }
+        format.json { render json: @scene.errors, status: :unprocessable_entity }
+      end
+    end
   end
 
   # PUT /scenes/1
