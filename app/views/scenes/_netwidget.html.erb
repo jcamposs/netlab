@@ -1,12 +1,12 @@
-<script>
-  window.onload = function() {
+<%= javascript_tag do %>
+  $(window).load( function() {
     DesktopEditor.init({
       container: "container",
       width: 700,
       height: 600,
       callback: null
     });
-  }
-</script>
+  });
+<% end %>
 
 <div id="container"></div>
