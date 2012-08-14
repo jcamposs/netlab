@@ -38,7 +38,7 @@ var DesktopEditor = (function () {
   var MAX_ICON_SIZE = 68;
   var MIN_ICON_SIZE = 32;
 
-  var desktopEditor;
+  var scene;
 
   var layers = {
     panning: new Kinetic.Layer({floating: true}),
@@ -207,19 +207,19 @@ var DesktopEditor = (function () {
     function removeLinks() {
       for (var iface in that.attrs.links) {
         var link = that.attrs.links[iface];
-        desktopEditor.removeConnection(link);
+        scene.removeConnection(link);
       }
     };
 
     function clickEvent(state) {
       switch (state) {
       case "connect":
-        var picked = desktopEditor.getPickedNode();
+        var picked = scene.getPickedNode();
 
         if (!picked)
-          desktopEditor.setPickedNode(that);
+          scene.setPickedNode(that);
         else
-          desktopEditor.addConnection({
+          scene.addConnection({
               node: picked,
               iface: "any"
             }, {
@@ -228,13 +228,13 @@ var DesktopEditor = (function () {
           });
         break;
       case "cut":
-        desktopEditor.removeNode(that);
+        scene.removeNode(that);
         break;
       }
     };
 
     function processEvt(type) {
-      var state = desktopEditor.getState();
+      var state = scene.getState();
 
       switch (type) {
       case "mouseover":
@@ -249,7 +249,7 @@ var DesktopEditor = (function () {
     };
 
     function evtProcessable(type) {
-      switch (desktopEditor.getState()) {
+      switch (scene.getState()) {
       case "edit":
         return that.checkEvtEdit(type);
       case "connect":
@@ -327,11 +327,11 @@ var DesktopEditor = (function () {
     });
 
     group.on("dragstart", function() {
-      desktopEditor.dragNodeStart(that);
+      scene.dragNodeStart(that);
     });
 
     group.on("dragmove", function() {
-      desktopEditor.draggingNode(that);
+      scene.draggingNode(that);
       for (var iface in that.attrs.links) {
         var link = that.attrs.links[iface];
         link.updatePosition(that);
@@ -339,7 +339,7 @@ var DesktopEditor = (function () {
     });
 
     group.on("dragend", function() {
-      desktopEditor.dragNodeStop(that);
+      scene.dragNodeStop(that);
     });
 
     if (!that.attrs.name) {
@@ -551,7 +551,7 @@ var DesktopEditor = (function () {
       var color;
 
       that.attrs.labels[ifaceId].node.on("mouseover", function(evt) {
-        if (desktopEditor.getState() != "cut")
+        if (scene.getState() != "cut")
           return;
 
         color = that.attrs.labels[ifaceId].link.getColor();
@@ -561,7 +561,7 @@ var DesktopEditor = (function () {
       });
 
       that.attrs.labels[ifaceId].node.on("mouseout", function(evt) {
-        if (desktopEditor.getState() != "cut")
+        if (scene.getState() != "cut")
           return;
 
         restoreCursor();
@@ -570,11 +570,11 @@ var DesktopEditor = (function () {
       });
 
       that.attrs.labels[ifaceId].node.on("click", function(evt) {
-        if (desktopEditor.getState() != "cut")
+        if (scene.getState() != "cut")
           return;
 
         that.attrs.labels[ifaceId].node.off("mouseout");
-        desktopEditor.removeConnection(that.attrs.labels[ifaceId].link);
+        scene.removeConnection(that.attrs.labels[ifaceId].link);
         restoreCursor();
       });
     };
@@ -658,7 +658,7 @@ var DesktopEditor = (function () {
       if (numberOfInterfaces() > 0)
         return false;
 
-      var node = desktopEditor.getPickedNode();
+      var node = scene.getPickedNode();
       if (!node)
         return true;
 
@@ -713,7 +713,7 @@ var DesktopEditor = (function () {
     }));
 
     function isConnectable() {
-      var node = desktopEditor.getPickedNode();
+      var node = scene.getPickedNode();
       if (!node)
         return true;
 
@@ -768,7 +768,7 @@ var DesktopEditor = (function () {
     }));
 
     function isConnectable() {
-      var node = desktopEditor.getPickedNode();
+      var node = scene.getPickedNode();
       if (!node)
         return true;
 
@@ -823,7 +823,7 @@ var DesktopEditor = (function () {
     }));
 
     function isConnectable() {
-      var node = desktopEditor.getPickedNode();
+      var node = scene.getPickedNode();
       if (!node)
         return true;
 
@@ -889,7 +889,7 @@ var DesktopEditor = (function () {
 
     function enableHandlers() {
       that.attrs.line.on('click', function() {
-        desktopEditor.removeConnection(that);
+        scene.removeConnection(that);
       });
 
       that.attrs.line.on("mouseover", function(evt) {
@@ -983,7 +983,7 @@ var DesktopEditor = (function () {
     };
 
     that.updateDetection = function() {
-      if (desktopEditor.getState() != "cut")
+      if (scene.getState() != "cut")
         return;
 
       that.attrs.line.clearImageData();
@@ -1684,12 +1684,12 @@ var DesktopEditor = (function () {
     var that = {};
 
     /* Create the editor */
-    desktopEditor = DeskEditor(config);
+    scene = DeskEditor(config);
 
     implements(that, Netlab.EditorInterface);
 
     that.addNode = function(type, name, position) {
-      var node = desktopEditor.getNodeByName(name);
+      var node = scene.getNodeByName(name);
 
       if (node)
         return false;
@@ -1719,25 +1719,25 @@ var DesktopEditor = (function () {
         return false;
       }
 
-      desktopEditor.addNode(node, position, false);
+      scene.addNode(node, position, false);
       return true;
     };
 
     that.removeNode = function(name) {
-      var node = desktopEditor.getNodeByName(name);
+      var node = scene.getNodeByName(name);
 
       if (!node)
         return;
 
-      desktopEditor.removeNode(node);
+      scene.removeNode(node);
     };
 
     that.addConnection = function(node1, node2) {
       if (node1.name == node2.name)
         return false;
 
-      var n1 = desktopEditor.getNodeByName(node1.name);
-      var n2 = desktopEditor.getNodeByName(node2.name);
+      var n1 = scene.getNodeByName(node1.name);
+      var n2 = scene.getNodeByName(node2.name);
 
       if (n1 == null || n2 ==null)
         return false;
@@ -1745,7 +1745,7 @@ var DesktopEditor = (function () {
       if (!n1.canConnectTo(n2))
         return false;
 
-      return desktopEditor.addConnection({
+      return scene.addConnection({
           node: n1,
           iface: node1.iface
         }, {
@@ -1755,7 +1755,7 @@ var DesktopEditor = (function () {
     };
 
     that.getNodes = function() {
-      var nodes = desktopEditor.getNodes();
+      var nodes = scene.getNodes();
       var n = [];
 
       for(var index = 0; index < nodes.length; index++) {
@@ -1772,7 +1772,7 @@ var DesktopEditor = (function () {
     };
 
     that.getConnections = function() {
-      var connections = desktopEditor.getConnections();
+      var connections = scene.getConnections();
       var links = [];
 
       for(var index = 0; index < connections.length; index++) {
@@ -1797,7 +1797,7 @@ var DesktopEditor = (function () {
     return that;
   };
 
-  module.init = function(config) {
+  module.initEditor = function(config) {
     return Editor(config);
   }
 
