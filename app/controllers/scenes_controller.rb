@@ -26,6 +26,9 @@ class ScenesController < ApplicationController
   # GET /scenes/new
   # GET /scenes/new.json
   def new
+    #TODO: Choose the widget that fits better in user's device screen
+    @widget = 'Desktop'
+
     @scene = Scene.new
 
     respond_to do |format|
