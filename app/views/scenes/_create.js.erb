@@ -1,7 +1,7 @@
 <%= javascript_tag do %>
 
   function fillForm() {
-    var editor = DesktopEditor.getEditor();
+    var editor = Desktop.getEditor();
 
     $("#scene_definition").val(Netlab.saveJSON(editor));
 
