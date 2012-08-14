@@ -1,5 +1,13 @@
 <%= javascript_tag do %>
 
+  function clearScene() {
+    var editor = <%= @widget %>.getEditor();
+    var nodes = editor.getNodes();
+
+    for(var i = 0; i < nodes.length; i++)
+      editor.removeNode(nodes[i].name);
+  };
+
   function fillForm() {
     var editor = <%= @widget %>.getEditor();
 
