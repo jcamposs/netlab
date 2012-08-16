@@ -1,3 +1,5 @@
+<%= render partial: 'create', formats: :js %>
+
 <%= form_for @scene, :html => { :onSubmit => 'return fillForm();' } do |f| %>
   <% if @scene.errors.any? %>
     <div id="error_explanation">
