@@ -1,5 +1,10 @@
 class ScenesController < ApplicationController
-  before_filter :authenticate_user!
+  before_filter :authenticate_user!, :setWidget
+
+  def setWidget
+    #TODO: Choose the widget that fits better in user's device screen
+    @widget = 'Desktop'
+  end
 
   # GET /scenes
   # GET /scenes.json
@@ -26,9 +31,6 @@ class ScenesController < ApplicationController
   # GET /scenes/new
   # GET /scenes/new.json
   def new
-    #TODO: Choose the widget that fits better in user's device screen
-    @widget = 'Desktop'
-
     @scene = Scene.new
 
     respond_to do |format|
