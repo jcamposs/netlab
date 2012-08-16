@@ -1,4 +1,4 @@
-<%= render partial: 'create', formats: :js %>
+<%= render partial: 'widget_handler', formats: :js %>
 
 <%= form_for @scene, :html => { :onSubmit => 'return fillForm();' } do |f| %>
   <% if @scene.errors.any? %>
