@@ -9,11 +9,16 @@
   };
 
   function fillForm() {
+    var name = prompt('Scene name', '');
+
+    if (name == null)
+      return false;
+
+    $("#scene_name").val(name);
+
     var editor = <%= @widget %>.getEditor();
 
     $("#scene_definition").val(Netlab.saveJSON(editor));
-
-    alert("object: " + $("#scene_definition").val());
 
     return true;
   };
