@@ -2374,6 +2374,13 @@ var Desktop = (function () {
     return viewer;
   }
 
+  module.getViewer = function() {
+    if (!viewer)
+      throw ("Viewer is not initialized");
+
+    return viewer;
+  }
+
   module.initEditor = function(config) {
     editor = Editor(config);
     return editor;

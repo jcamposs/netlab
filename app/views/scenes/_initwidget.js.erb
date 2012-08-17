@@ -6,12 +6,12 @@
     if (!json)
       return;
 
-    var widget = <%= @widget %>.getEditor();
+    var widget = <%= @module %>.get<%= @widget %>();
     Netlab.loadJSON(widget, json);
   };
 
   $(window).load( function() {
-    <%= @widget %>.<%= @init_func %>({
+    <%= @module %>.init<%= @widget %>({
       container: "container",
       width: 700,
       height: 600,

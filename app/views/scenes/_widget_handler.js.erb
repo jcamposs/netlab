@@ -1,7 +1,7 @@
 <%= javascript_tag do %>
 
   function clearScene() {
-    var widget = <%= @widget %>.getEditor();
+    var widget = <%= @module %>.get<%= @widget %>();
     var nodes = widget.getNodes();
 
     for(var i = 0; i < nodes.length; i++)
@@ -17,7 +17,7 @@
 
     $("#scene_name").val(name);
 
-    var widget = <%= @widget %>.getEditor();
+    var widget = <%= @module %>.get<%= @widget %>();
 
     $("#scene_definition").val(Netlab.saveJSON(widget));
 
