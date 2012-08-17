@@ -21,6 +21,7 @@ class ScenesController < ApplicationController
   # GET /scenes/1.json
   def show
     @scene = Scene.find(params[:id])
+    @init_func = 'initViewer'
 
     respond_to do |format|
       format.html # show.html.erb
@@ -32,6 +33,7 @@ class ScenesController < ApplicationController
   # GET /scenes/new.json
   def new
     @scene = Scene.new
+    @init_func = 'initEditor'
 
     respond_to do |format|
       format.html # new.html.erb
@@ -42,12 +44,14 @@ class ScenesController < ApplicationController
   # GET /scenes/1/edit
   def edit
     @scene = Scene.find(params[:id])
+    @init_func = 'initEditor'
   end
 
   # POST /scenes
   # POST /scenes.json
   def create
     @scene = Scene.new(params[:scene])
+    @init_func = 'initEditor'
     @user = current_user
 
     @scene.owner_id = @user.id
@@ -67,6 +71,7 @@ class ScenesController < ApplicationController
   # PUT /scenes/1.json
   def update
     @scene = Scene.find(params[:id])
+    @init_func = 'initEditor'
 
     respond_to do |format|
       if @scene.update_attributes(params[:scene])

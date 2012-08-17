@@ -1,7 +1,7 @@
 <%= javascript_tag do %>
 
   $(window).load( function() {
-    <%= @widget %>.initEditor({
+    <%= @widget %>.<%= @init_func %>({
       container: "container",
       width: 700,
       height: 600,

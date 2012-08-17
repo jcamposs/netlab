@@ -1,24 +1,6 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <b>Owner:</b>
-  <%= @scene.owner_id %>
-</p>
-
-<p>
-  <b>Name:</b>
-  <%= @scene.name %>
-</p>
-
-<p>
-  <b>Definition:</b>
-  <%= @scene.definition %>
-</p>
-
-<p>
-  <b>Schema:</b>
-  <%= @scene.schema %>
-</p>
+<%= render 'form' %>
 
 
 <%= link_to 'Edit', edit_scene_path(@scene) %> |

@@ -23,6 +23,7 @@
 var Desktop = (function () {
 
   var module = {};
+  var viewer;
   var editor;
 
   var sources = {
@@ -1019,6 +1020,665 @@ var Desktop = (function () {
   };
 
   //////////////////////////////////////////////////////////////////////////////
+  // Desktop viewer Object
+  //////////////////////////////////////////////////////////////////////////////
+  DeskViewer = function(config) {
+    var that = GlobalObj(merge({
+      container: "container",
+      width: 500,
+      height: 250
+    }, config));
+
+    var lock = 0;
+    var state = "edit";
+    var nodes = [];
+    var links = [];
+
+    function loadSources() {
+      var loadedImages = 0;
+      var numImages = 0;
+
+      for(var src in sources) {
+        numImages++;
+      }
+
+      for(var src in sources) {
+        images[src] = new Image();
+        images[src].onload = function() {
+          if(++loadedImages >= numImages)
+            initStage();
+        };
+        images[src].src = sources[src];
+      }
+    };
+
+    function resize(percent, dragging, obj) {
+      var min = 0.4;
+      var scale = (1 - min) * (1 - percent) + min;
+
+      for (var e in layers) {
+        var callback = undefined;
+        var layer = layers[e];
+
+        if (layer.attrs.floating)
+          continue;
+
+        if (dragging) {
+          layer.setScale(scale, scale);
+          layer.draw();
+          continue;
+        }
+
+        if (layer == layers.wires) {
+          lockLinkCalculation();
+          callback = function() {
+            unlockLinkCalculation();
+            updateLinksDetection();
+          }
+        }
+
+        layer.transitionTo({
+          scale: {
+            x: scale,
+            y: scale
+          },
+          duration: 0.2,
+          easing: 'ease-in-out',
+          callback: callback
+        });
+      }
+    };
+
+    function calculateCenter() {
+      var x, y, cx, cy;
+      var maxX, minX, maxY, minY;
+
+      if (nodes.length <= 0)
+        return {
+          x: layers.nodes.getX(),
+          y: layers.nodes.getY()
+        };
+
+      minX = nodes[0].getNode().getX();
+      minY = nodes[0].getNode().getY();
+      maxX = minX;
+      maxY = minY;
+
+      for (var i = 0; i < nodes.length; i++) {
+        var node = nodes[i];
+        if (minX > node.getNode().getX())
+          minX = node.getNode().getX();
+
+        if (minY > node.getNode().getY())
+          minY = node.getNode().getY();
+
+        if (maxX < node.getNode().getX())
+          maxX = node.getNode().getX();
+
+        if (maxY < node.getNode().getY())
+          maxY = node.getNode().getY();
+      }
+
+      x = (minX + maxX) / 2;
+      y = (minY + maxY) / 2;
+
+      /* Center point */
+      cx = ((that.attrs.stage.getWidth() / 2) - layers.nodes.getX()
+           - that.attrs.stage.getX()) / layers.nodes.getScale().x;
+      cy = ((that.attrs.stage.getHeight() / 2) - layers.nodes.getY()
+           - that.attrs.stage.getY()) / layers.nodes.getScale().y;
+
+      var dx = (cx - x) * layers.nodes.getScale().x;
+      var dy = (cy - y) * layers.nodes.getScale().y;
+
+      return {
+          x: layers.nodes.getX() + dx,
+          y: layers.nodes.getY() + dy
+      };
+    };
+
+    function move(direction, obj) {
+      var nx = layers.nodes.getX();
+      var ny = layers.nodes.getY();
+      var factor = 100;
+
+      switch (direction) {
+      case "Up":
+        ny -= factor;
+        break;
+      case "Down":
+        ny += factor;
+        break;
+      case "Left":
+        nx -= factor;
+        break;
+      case "Right":
+        nx += factor;
+        break;
+      case "Center":
+        var pos = calculateCenter();
+        nx = pos.x;
+        ny = pos.y;
+        break;
+      }
+
+      for (var e in layers) {
+        var callback = undefined;
+        var layer = layers[e];
+
+        if (layer.attrs.floating)
+          continue;
+
+        if (layer == layers.wires) {
+          lockLinkCalculation();
+          callback = function() {
+            unlockLinkCalculation();
+            updateLinksDetection();
+          }
+        }
+
+        layer.transitionTo({
+          x: nx,
+          y: ny,
+          duration: 0.2,
+          easing: 'ease-in-out',
+          callback: callback
+        });
+      }
+    };
+
+    function confDragging() {
+      //Trick to simulate panning
+      var panningRect = new Kinetic.Rect({
+        x : that.attrs.stage.getX(),
+        y : that.attrs.stage.getY(),
+        draggable : true,
+        alpha: 0.0,
+        width : that.attrs.stage.getWidth(),
+        height : that.attrs.stage.getHeight()
+      });
+
+      panningRect.on("dragstart",function() {
+        lockLinkCalculation();
+
+        for (var e in layers) {
+          var layer = layers[e];
+
+          if (layer.attrs.floating)
+            continue;
+
+          layer.xSave = layer.attrs.x;
+          layer.ySave = layer.attrs.y;
+        }
+      });
+
+      panningRect.on("dragmove", function() {
+        var nowP = this.getAbsolutePosition();
+
+        for (var e in layers) {
+          var layer = layers[e];
+
+          if (layer.attrs.floating)
+            continue;
+
+          layer.setX(layer.xSave + nowP.x);
+          layer.setY(layer.ySave + nowP.y);
+          layer.draw();
+        }
+      });
+
+      panningRect.on("dragend", function() {
+        unlockLinkCalculation();
+        panningRect.setX(0);
+        panningRect.setY(0);
+        layers.panning.draw();
+
+        for (var e in layers) {
+          var layer = layers[e];
+
+          if (layer.attrs.floating)
+            continue;
+
+          layer.xSave = undefined;
+          layer.ySave = undefined;
+        }
+
+        updateLinksDetection();
+      });
+
+      layers.panning.add(panningRect);
+    };
+
+    function updateLinksDetection() {
+      if (state != "cut" || lock > 0)
+        return;
+
+      for (var index = 0; index < links.length; index++) {
+        var link = links[index];
+        link.updateDetection();
+      }
+    };
+
+    function generateRootName(root) {
+      for (var i = 0; i < nodes.length; i++) {
+        var name = root + i;
+
+        for (var j = 0; j < nodes.length; j++) {
+          var node = nodes[j];
+
+          if (node.getName() == name)
+            break;
+
+          if (j == nodes.length - 1)
+            return  name;
+        }
+      }
+
+      return root + nodes.length;
+    };
+
+    function removeFakeLink() {
+      if (!that.attrs.fake_link)
+            return;
+
+      layers.wires.remove(that.attrs.fake_link.line);
+      that.attrs.fake_link = null;
+      that.attrs._picked = null;
+    };
+
+    function clearConnectState() {
+      var dom = that.attrs.stage.getDOM();
+      dom.removeEventListener('mousemove', that.attrs.mouseMoveHandler, false);
+      document.removeEventListener('keydown', that.attrs.keyDownHandler, false);
+
+      if (!that.attrs.fake_link)
+        return;
+
+      layers.wires.remove(that.attrs.fake_link.line);
+      that.attrs.fake_link = null;
+      that.attrs._picked = null;
+      layers.wires.draw();
+    };
+
+    function confConnectState() {
+      that.attrs._picked = null;
+
+      that.attrs.mouseMoveHandler = function(evt) {
+        if (!that.attrs.fake_link)
+          return;
+
+        var mousePos = that.attrs.stage.getMousePosition(evt);
+
+        that.attrs.fake_link.points[1].x = (mousePos.x - layers.nodes.getX()
+                         - that.attrs.stage.getX()) / layers.nodes.getScale().x;
+        that.attrs.fake_link.points[1].y = (mousePos.y - layers.nodes.getY()
+                         - that.attrs.stage.getY()) / layers.nodes.getScale().y;
+
+        layers.wires.draw();
+      }
+
+      that.attrs.keyDownHandler = function(evt) {
+        var ESC = 27;
+
+        if (evt.which != ESC)
+          return;
+
+        removeFakeLink();
+        layers.wires.draw();
+      }
+
+      var dom = that.attrs.stage.getDOM();
+      dom.addEventListener('mousemove', that.attrs.mouseMoveHandler, false);
+      document.addEventListener('keydown', that.attrs.keyDownHandler, false);
+    };
+
+    function setLinksManageable(flag) {
+      for (var index = 0; index < links.length; index++) {
+        var link = links[index];
+        link.manageable(flag);
+      }
+    };
+
+    function clearCutState() {
+      layers.wires.off("xChange yChange scaleChange");
+      setLinksManageable(false);
+    };
+
+    function confCutState() {
+      layers.wires.on("xChange yChange scaleChange", updateLinksDetection);
+
+      setLinksManageable(true);
+      updateLinksDetection();
+    };
+
+    function clearPreviousState() {
+      switch (state) {
+      case "connect":
+        clearConnectState();
+        break;
+      case "cut":
+        clearCutState();
+        break;
+      }
+    };
+
+    function confNewState(state) {
+      switch (state) {
+      case "connect":
+        confConnectState();
+        break;
+      case "cut":
+        confCutState();
+        break;
+      }
+    };
+
+    function changeState(newState) {
+      if (state == newState)
+        return;
+
+      clearPreviousState();
+      state = newState;
+      confNewState(state);
+    };
+
+    function lockLinkCalculation() {
+      lock++;
+    };
+
+    function unlockLinkCalculation() {
+      if (--lock < 0)
+        alert("BAD: lock = " + lock);
+    };
+
+    function initStage() {
+      that.attrs.stage = new Kinetic.Stage({
+        container: that.attrs.container,
+        width: that.attrs.width,
+        height: that.attrs.height
+      });
+
+      confDragging();
+
+      var zoom = KWidgets.Slider({
+        x: 50,
+        y: 90,
+        height: 120,
+        callback: {
+          func: resize,
+          data: that,
+        }
+      });
+
+      var browser = KWidgets.Browser({
+        x: 50,
+        y: 48,
+        radius: 30,
+        callback: {
+          func: move,
+          data: that
+        }
+      });
+
+      // ToolMenu
+      var menu = KWidgets.ToolMenu({
+        x: that.attrs.stage.getWidth() / 2 - ((MIN_ICON_SIZE * 6 + 15 * 6) / 2),
+        y: that.attrs.stage.getHeight() - MAX_ICON_SIZE,
+        min_size: MIN_ICON_SIZE,
+        max_size: MAX_ICON_SIZE,
+        fontSize: 10,
+        separation: 15,
+        padding: {
+          horizontal: 3,
+          vertical: 3,
+          radius: 10
+        }
+      });
+
+      /*
+       * go ahead and add the groups
+       * to the layer and the layer to the
+       * stage so that the groups have knowledge
+       * of its layer and stage
+       */
+      layers.options.add(browser.getNode());
+      layers.options.add(zoom.getNode());
+      layers.options.add(menu.getNode());
+
+      that.attrs.stage.add(layers.panning);
+      that.attrs.stage.add(layers.wires);
+      that.attrs.stage.add(layers.ifaces);
+      that.attrs.stage.add(layers.nodes);
+      that.attrs.stage.add(layers.options);
+
+      var pcItem = KWidgets.ToolMenuItem({
+        image: images.pc,
+        label: "PC",
+        draggable: true
+      });
+      var routerItem = KWidgets.ToolMenuItem({
+        image: images.router,
+        label: "Router",
+        draggable: true
+      });
+      var switchItem = KWidgets.ToolMenuItem({
+        image: images.switch,
+        label: "Switch",
+        draggable: true
+      });
+      var hubItem = KWidgets.ToolMenuItem({
+        image: images.hub,
+        label: "Hub",
+        draggable: true
+      });
+      var connItem = KWidgets.ToolMenuItem({
+        image: images.connect,
+        label: "Connect"
+      });
+      var scissorItem = KWidgets.ToolMenuItem({
+        image: images.scissor,
+        label: "Cut",
+      });
+
+      pcItem.on("dragend", function(pos) {
+        var node = PC({
+          name: generateRootName("pc")
+        });
+        that.addNode(node, pos, true);
+      });
+
+      routerItem.on("dragend", function(pos) {
+        var node = Router({
+          name: generateRootName("r")
+        });
+        that.addNode(node, pos, true);
+      });
+
+      switchItem.on("dragend", function(pos) {
+        var node = Switch({
+          name: generateRootName("s")
+        });
+        that.addNode(node, pos, true);
+      });
+
+      hubItem.on("dragend", function(pos) {
+        var node = Hub({
+          name: generateRootName("h")
+        });
+        that.addNode(node, pos, true);
+      });
+
+      connItem.on("click", function(pos) {
+        changeState("connect");
+      });
+
+      scissorItem.on("click", function(pos) {
+        changeState("cut");
+      });
+
+      menu.addMenuItem(pcItem);
+      menu.addMenuItem(routerItem);
+      menu.addMenuItem(switchItem);
+      menu.addMenuItem(hubItem);
+      menu.addSeparator();
+      menu.addMenuItem(connItem);
+      menu.addMenuItem(scissorItem);
+
+      if (that.attrs.callback)
+        that.attrs.callback(that);
+    };
+
+    that.getNodeByName = function(name) {
+      for(var index = 0; index < nodes.length; index++) {
+        var node = nodes[index];
+
+        if (name == node.getName())
+          return node;
+      }
+
+      return null;
+    };
+
+    that.setPickedNode = function(node) {
+      that.attrs._picked = node;
+
+      that.attrs.fake_link = {};
+      that.attrs.fake_link["points"] = [{
+        x: node.getNode().getX(),
+        y: node.getNode().getY()
+      }, {
+        x: node.getNode().getX(),
+        y: node.getNode().getY()
+      }];
+      that.attrs.fake_link["line"] = new Kinetic.Line({
+        points: that.attrs.fake_link.points,
+        stroke: "grey",
+        strokeWidth: 1,
+        lineCap: 'round',
+        lineJoin: 'round'
+      });
+
+      layers.wires.add(that.attrs.fake_link.line);
+      layers.wires.draw();
+    };
+
+    that.dragNodeStart = function(node) {
+      switch (state) {
+      case "connect":
+        if (!that.attrs.fake_link || that.attrs._picked != node)
+          return;
+
+        that.attrs.fake_link.line.hide();
+        break;
+      }
+    };
+
+    that.draggingNode = function(node) {
+      switch (state) {
+      case "connect":
+        if (!that.attrs.fake_link || that.attrs._picked != node)
+          return;
+
+        that.attrs.fake_link.points[0].x = node.getNode().getX();
+        that.attrs.fake_link.points[0].y = node.getNode().getY();
+        break;
+      }
+    };
+
+    that.dragNodeStop = function(node) {
+      switch (state) {
+      case "connect":
+        if (!that.attrs.fake_link || that.attrs._picked != node)
+          return;
+
+        that.attrs.fake_link.line.show();
+        break;
+      }
+    };
+
+    that.getPickedNode = function() {
+      return that.attrs._picked;
+    };
+
+    that.getState = function() {
+      return state;
+    };
+
+    that.getNodes = function() {
+      return nodes;
+    };
+
+    that.getConnections = function() {
+      return links;
+    };
+
+    that.removeNode = function(node) {
+      var index = nodes.indexOf(node);
+
+      nodes.splice(index, 1);
+
+      node.remove();
+    };
+
+    that.addNode = function(node, pos, absolute) {
+      var knode = node.getNode();
+
+      layers.nodes.add(knode);
+
+      if (absolute) {
+        pos.x = pos.x + ((MAX_ICON_SIZE - MIN_ICON_SIZE) / 2);
+        pos.y = pos.y + ((MAX_ICON_SIZE - MIN_ICON_SIZE) / 2);
+        knode.setAbsolutePosition(pos);
+      } else
+        knode.setPosition(pos);
+
+      layers.nodes.draw();
+      nodes.push(node);
+    };
+
+    that.removeConnection = function(link) {
+      var index = links.indexOf(link);
+      links.splice(index, 1);
+
+      var nodes = link.getNodes();
+
+      nodes.node1.removeLink(link);
+      nodes.node2.removeLink(link);
+
+      layers.wires.remove(link.getNode());
+      layers.wires.draw();
+    };
+
+    that.addConnection = function(node1, node2) {
+      var link = new Link({
+        node1: node1.node,
+        node2: node2.node
+      });
+
+      if (!node1.node.addLink(link, node1.iface))
+        return false;
+
+      if (!node2.node.addLink(link, node2.iface)) {
+        node1.node.removeLink(link);
+        return false;
+      }
+
+      removeFakeLink();
+
+      links.push(link);
+      layers.wires.add(link.getNode());
+      link.updateDetection();
+      layers.wires.draw();
+
+      return true;
+    };
+
+    loadSources();
+
+    return that;
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
   // Desktop editor Object
   //////////////////////////////////////////////////////////////////////////////
   DeskEditor = function(config) {
@@ -1797,6 +2457,11 @@ var Desktop = (function () {
 
     return that;
   };
+
+  module.initViewer = function(config) {
+    viewer = DeskViewer(config);
+    return viewer;
+  }
 
   module.initEditor = function(config) {
     editor = Editor(config);
