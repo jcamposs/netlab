@@ -1,5 +1,15 @@
 <%= javascript_tag do %>
 
+  function initStage() {
+    var json = $("#scene_definition").val();
+
+    if (!json)
+      return;
+
+    var widget = <%= @widget %>.getEditor();
+    Netlab.loadJSON(widget, json);
+  };
+
   $(window).load( function() {
     <%= @widget %>.<%= @init_func %>({
       container: "container",

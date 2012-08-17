@@ -1,15 +1,5 @@
 <%= javascript_tag do %>
 
-  function initStage() {
-    var json = $("#scene_definition").val();
-
-    if (!json)
-      return;
-
-    var widget = <%= @widget %>.getEditor();
-    Netlab.loadJSON(widget, json);
-  };
-
   function clearScene() {
     var widget = <%= @widget %>.getEditor();
     var nodes = widget.getNodes();
