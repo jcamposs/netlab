@@ -2249,6 +2249,127 @@ var Desktop = (function () {
   };
 
   //////////////////////////////////////////////////////////////////////////////
+  // Object that wraps DeskViewer methods to avoid anybody to use its public
+  // methods out of this module. Viewer object only implements EditorInterface
+  //////////////////////////////////////////////////////////////////////////////
+  Viewer = function(config) {
+    var that = {};
+
+    /* Create the Viewer */
+    scene = DeskViewer(config);
+
+    implements(that, Netlab.EditorInterface);
+
+    that.addNode = function(type, name, position) {
+      var node = scene.getNodeByName(name);
+
+      if (node)
+        return false;
+
+      switch (type) {
+      case "pc":
+        node = PC({
+          name: name
+        });
+        break;
+      case "router":
+        node = Router({
+          name: name
+        });
+        break;
+      case "switch":
+        node = Switch({
+          name: name
+        });
+        break;
+      case "hub":
+        node = Hub({
+          name: name
+        });
+        break;
+      default:
+        return false;
+      }
+
+      scene.addNode(node, position, false);
+      return true;
+    };
+
+    that.removeNode = function(name) {
+      var node = scene.getNodeByName(name);
+
+      if (!node)
+        return;
+
+      that.attrs.scene.removeNode(node);
+    };
+
+    that.addConnection = function(node1, node2) {
+      if (node1.name == node2.name)
+        return false;
+
+      var n1 = scene.getNodeByName(node1.name);
+      var n2 = scene.getNodeByName(node2.name);
+
+      if (n1 == null || n2 ==null)
+        return false;
+
+      if (!n1.canConnectTo(n2))
+        return false;
+
+      return scene.addConnection({
+          node: n1,
+          iface: node1.iface
+        }, {
+          node: n2,
+          iface: node2.iface
+      });
+    };
+
+    that.getNodes = function() {
+      var nodes = scene.getNodes();
+      var n = [];
+
+      for(var index = 0; index < nodes.length; index++) {
+        var node = nodes[index];
+
+        n[index] = {
+          name: node.getName(),
+          type: node.getType(),
+          position: node.getNode().getPosition()
+        };
+      }
+
+      return n;
+    };
+
+    that.getConnections = function() {
+      var connections = scene.getConnections();
+      var links = [];
+
+      for(var index = 0; index < connections.length; index++) {
+        var conn = connections[index];
+        var nodes = conn.getNodes();
+
+        links[index] = {
+          node1: {
+            name: nodes.node1.getName(),
+            iface: nodes.node1.getInterface(conn)
+          },
+          node2: {
+            name: nodes.node2.getName(),
+            iface: nodes.node2.getInterface(conn)
+          }
+        };
+      }
+
+      return links;
+    };
+
+    return that;
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
   // Object that wraps DeskEditor methods to avoid anybody to use its public
   // methods out of this module. Editor object only implements EditorInterface
   //////////////////////////////////////////////////////////////////////////////
@@ -2370,7 +2491,7 @@ var Desktop = (function () {
   };
 
   module.initViewer = function(config) {
-    viewer = DeskViewer(config);
+    viewer = Viewer(config);
     return viewer;
   }
 
