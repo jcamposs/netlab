@@ -6,16 +6,16 @@
     if (!json)
       return;
 
-    var editor = <%= @widget %>.getEditor();
-    Netlab.loadJSON(editor, json);
+    var widget = <%= @widget %>.getEditor();
+    Netlab.loadJSON(widget, json);
   };
 
   function clearScene() {
-    var editor = <%= @widget %>.getEditor();
-    var nodes = editor.getNodes();
+    var widget = <%= @widget %>.getEditor();
+    var nodes = widget.getNodes();
 
     for(var i = 0; i < nodes.length; i++)
-      editor.removeNode(nodes[i].name);
+      widget.removeNode(nodes[i].name);
   };
 
   function fillForm() {
@@ -27,9 +27,9 @@
 
     $("#scene_name").val(name);
 
-    var editor = <%= @widget %>.getEditor();
+    var widget = <%= @widget %>.getEditor();
 
-    $("#scene_definition").val(Netlab.saveJSON(editor));
+    $("#scene_definition").val(Netlab.saveJSON(widget));
 
     return true;
   };
