@@ -1420,21 +1420,6 @@ var Desktop = (function () {
         }
       });
 
-      // ToolMenu
-      var menu = KWidgets.ToolMenu({
-        x: that.attrs.stage.getWidth() / 2 - ((MIN_ICON_SIZE * 6 + 15 * 6) / 2),
-        y: that.attrs.stage.getHeight() - MAX_ICON_SIZE,
-        min_size: MIN_ICON_SIZE,
-        max_size: MAX_ICON_SIZE,
-        fontSize: 10,
-        separation: 15,
-        padding: {
-          horizontal: 3,
-          vertical: 3,
-          radius: 10
-        }
-      });
-
       /*
        * go ahead and add the groups
        * to the layer and the layer to the
@@ -1443,86 +1428,12 @@ var Desktop = (function () {
        */
       layers.options.add(browser.getNode());
       layers.options.add(zoom.getNode());
-      layers.options.add(menu.getNode());
 
       that.attrs.stage.add(layers.panning);
       that.attrs.stage.add(layers.wires);
       that.attrs.stage.add(layers.ifaces);
       that.attrs.stage.add(layers.nodes);
       that.attrs.stage.add(layers.options);
-
-      var pcItem = KWidgets.ToolMenuItem({
-        image: images.pc,
-        label: "PC",
-        draggable: true
-      });
-      var routerItem = KWidgets.ToolMenuItem({
-        image: images.router,
-        label: "Router",
-        draggable: true
-      });
-      var switchItem = KWidgets.ToolMenuItem({
-        image: images.switch,
-        label: "Switch",
-        draggable: true
-      });
-      var hubItem = KWidgets.ToolMenuItem({
-        image: images.hub,
-        label: "Hub",
-        draggable: true
-      });
-      var connItem = KWidgets.ToolMenuItem({
-        image: images.connect,
-        label: "Connect"
-      });
-      var scissorItem = KWidgets.ToolMenuItem({
-        image: images.scissor,
-        label: "Cut",
-      });
-
-      pcItem.on("dragend", function(pos) {
-        var node = PC({
-          name: generateRootName("pc")
-        });
-        that.addNode(node, pos, true);
-      });
-
-      routerItem.on("dragend", function(pos) {
-        var node = Router({
-          name: generateRootName("r")
-        });
-        that.addNode(node, pos, true);
-      });
-
-      switchItem.on("dragend", function(pos) {
-        var node = Switch({
-          name: generateRootName("s")
-        });
-        that.addNode(node, pos, true);
-      });
-
-      hubItem.on("dragend", function(pos) {
-        var node = Hub({
-          name: generateRootName("h")
-        });
-        that.addNode(node, pos, true);
-      });
-
-      connItem.on("click", function(pos) {
-        changeState("connect");
-      });
-
-      scissorItem.on("click", function(pos) {
-        changeState("cut");
-      });
-
-      menu.addMenuItem(pcItem);
-      menu.addMenuItem(routerItem);
-      menu.addMenuItem(switchItem);
-      menu.addMenuItem(hubItem);
-      menu.addSeparator();
-      menu.addMenuItem(connItem);
-      menu.addMenuItem(scissorItem);
 
       if (that.attrs.callback)
         that.attrs.callback(that);
