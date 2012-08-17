@@ -19,7 +19,8 @@
   };
 
   function fillForm() {
-    var name = prompt('Scene name', '');
+    var name = $("#scene_name").val();
+    name = prompt('Scene name:', name);
 
     if (name == null)
       return false;
