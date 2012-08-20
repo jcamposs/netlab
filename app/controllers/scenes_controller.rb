@@ -4,6 +4,8 @@ class ScenesController < ApplicationController
   def setWidgetModule
     #TODO: Choose the widget that fits better in user's device screen
     @module = 'Desktop'
+    @edit = false
+    @run = false
   end
 
   # GET /scenes
@@ -32,6 +34,7 @@ class ScenesController < ApplicationController
   # GET /scenes/new.json
   def new
     @scene = Scene.new
+    @edit = true
 
     respond_to do |format|
       format.html # new.html.erb
@@ -42,12 +45,14 @@ class ScenesController < ApplicationController
   # GET /scenes/1/edit
   def edit
     @scene = Scene.find(params[:id])
+    @edit = true
   end
 
   # POST /scenes
   # POST /scenes.json
   def create
     @scene = Scene.new(params[:scene])
+    @edit = true
     @user = current_user
 
     @scene.owner_id = @user.id
@@ -67,6 +72,7 @@ class ScenesController < ApplicationController
   # PUT /scenes/1.json
   def update
     @scene = Scene.find(params[:id])
+    @edit = true
 
     respond_to do |format|
       if @scene.update_attributes(params[:scene])
