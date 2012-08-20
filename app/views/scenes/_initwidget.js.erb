@@ -1,7 +1,12 @@
 <%= javascript_tag do %>
 
   function initStage() {
-    var json = "<%=j @scene.definition.html_safe %>";
+    var json =
+      <% if @scene.definition %>
+        "<%=j @scene.definition.html_safe %>";
+      <% else %>
+        "";
+      <% end %>
 
     if (!json)
       return;
