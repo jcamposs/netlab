@@ -1523,8 +1523,14 @@ var Desktop = (function () {
       confDragging();
       addBrowserWidgets();
 
-      if (that.attrs.editable)
+      switch (that.attrs.mode) {
+      case "edit":
         addToolMenu();
+        break;
+      case "view":
+        //TODO
+        break;
+      };
 
       if (that.attrs.callback)
         that.attrs.callback(that);
