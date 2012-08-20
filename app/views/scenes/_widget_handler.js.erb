@@ -9,7 +9,7 @@
   };
 
   function fillForm() {
-    var name = $("#scene_name").val();
+    var name = "<%=@scene.name %>";
     name = prompt('Scene name:', name);
 
     if (name == null)
