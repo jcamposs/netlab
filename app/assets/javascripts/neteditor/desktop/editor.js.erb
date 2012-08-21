@@ -145,9 +145,7 @@ var Desktop = (function () {
     }, config));
 
     implements(that, NetElementIface);
-
     var group = that.getNode();
-    group.setDraggable(true);
 
     var img = new Kinetic.Image({
       image: that.attrs.image,
@@ -1350,6 +1348,20 @@ var Desktop = (function () {
       updateLinksDetection();
     };
 
+    function clearViewState() {
+      for (var i = 0; i < nodes.length; i++) {
+       var knode = nodes[i].getNode();
+       knode.setDraggable(true);
+      }
+    };
+
+    function confViewState() {
+      for (var i = 0; i < nodes.length; i++) {
+       var knode = nodes[i].getNode();
+       knode.setDraggable(false);
+      }
+    };
+
     function clearPreviousState() {
       switch (state) {
       case "connect":
@@ -1357,6 +1369,12 @@ var Desktop = (function () {
         break;
       case "cut":
         clearCutState();
+        break;
+      case "view":
+        clearViewState();
+        break;
+      case "edit":
+        // Nothing to do
         break;
       }
     };
@@ -1368,6 +1386,12 @@ var Desktop = (function () {
         break;
       case "cut":
         confCutState();
+        break;
+      case "view":
+        confViewState();
+        break;
+      case "edit":
+        // Nothing to do
         break;
       }
     };
@@ -1528,7 +1552,7 @@ var Desktop = (function () {
         addToolMenu();
         break;
       case "view":
-        //TODO
+        changeState("view");
         break;
       };
 
@@ -1630,6 +1654,9 @@ var Desktop = (function () {
 
     that.addNode = function(node, pos, absolute) {
       var knode = node.getNode();
+
+      if (state != "view")
+        knode.setDraggable(true);
 
       layers.nodes.add(knode);
 
