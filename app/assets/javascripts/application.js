@@ -15,5 +15,6 @@
 //= require neteditor/desktop/kwidgets
 //= require neteditor/desktop/editor
 //= require jquery
+//= require jquery-ui
 //= require jquery_ujs
 //= require_tree .
