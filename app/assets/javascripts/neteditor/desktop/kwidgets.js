@@ -71,7 +71,7 @@ var KWidgets = (function () {
 
     var background = new Kinetic.Ellipse({
       radius: that.attrs.radius + 5,
-      alpha: 0.6,
+      opacity: 0.6,
       fill: "white",
       shadow: {
         color: 'grey',
@@ -81,7 +81,7 @@ var KWidgets = (function () {
 
     var circle = new Kinetic.Ellipse({
       radius: that.attrs.radius,
-      alpha: 0.8,
+      opacity: 0.8,
       fill: "white",
       stroke: "black",
       strokeWidth: 1
@@ -285,7 +285,7 @@ var KWidgets = (function () {
       width: that.attrs.width,
       height: that.attrs.width + that.attrs.height + 2 * that.attrs.width / 4
               + that.attrs.slide_hight - that.attrs.width,
-      alpha: 0.6,
+      opacity: 0.6,
       fill: "white",
       shadow: {
         color: 'grey',
@@ -575,7 +575,7 @@ var KWidgets = (function () {
         fontSize: 20,
         fill: "white",
         padding: 8,
-        alpha: 0.6,
+        opacity: 0.6,
         stroke: 'grey',
         strokeWidth: 1,
         shadow: {
@@ -699,7 +699,7 @@ var KWidgets = (function () {
           color: 'grey',
           blur: 6,
           offset: [2, 2],
-          alpha: 0.6
+          opacity: 0.6
         }
       });
     };
@@ -874,7 +874,7 @@ var KWidgets = (function () {
             color: 'grey',
             blur: 6,
             offset: [2, 2],
-            alpha: 0.6
+            opacity: 0.6
           }
         });
 
@@ -913,7 +913,7 @@ var KWidgets = (function () {
       var padding = new Kinetic.Rect({
         name: "padding",
         fill: "white",
-        alpha: 0.6,
+        opacity: 0.6,
         shadow: {
           color: 'grey',
           blur: 15

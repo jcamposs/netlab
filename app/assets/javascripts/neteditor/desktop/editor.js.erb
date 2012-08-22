@@ -163,7 +163,7 @@ var Desktop = (function () {
         color: 'grey',
         blur: 6,
         offset: [2, 2],
-        alpha: 0.6
+        opacity: 0.6
       }
     });
 
@@ -357,12 +357,12 @@ var Desktop = (function () {
       fontStyle: "bold",
       fill: "white",
       padding: 3,
-      alpha: 0.6,
+      opacity: 0.6,
       shadow: {
         color: 'grey',
         blur: 6,
         offset: [2, 2],
-        alpha: 0.6
+        opacity: 0.6
       },
       cornerRadius: 5
     });
@@ -383,7 +383,7 @@ var Desktop = (function () {
           x: 0.2,
           y: 0.2
         },
-        alpha: 0.0,
+        opacity: 0.0,
         duration: 0.5,
         easing: "ease-in-out",
         callback: function () {
@@ -617,7 +617,7 @@ var Desktop = (function () {
           fontStyle: "bold",
           fill: "white",
           padding: 8,
-          alpha: 0.6,
+          opacity: 0.6,
         })
       };
 
@@ -905,8 +905,7 @@ var Desktop = (function () {
     };
 
     function disableHandlers() {
-      that.attrs.line.off("xChange yChange scaleChange");
-      that.attrs.line.clearImageData();
+      that.attrs.line.off("click mouseover mouseout");
     };
 
     function notifyWatchers() {
@@ -925,7 +924,7 @@ var Desktop = (function () {
     that.attrs.line = new Kinetic.Line({
       points: that.attrs.points,
       stroke: "grey",
-      strokeWidth: 1,
+      strokeWidth: 2,
       lineCap: 'round',
       lineJoin: 'round'
     });
@@ -962,13 +961,11 @@ var Desktop = (function () {
       if (that.attrs.node1 == node) {
         that.attrs.points[0].x = node.getNode().getX();
         that.attrs.points[0].y = node.getNode().getY();
-        that.updateDetection();
         layers.wires.draw();
         notifyWatchers();
       } else if (that.attrs.node2 == node) {
         that.attrs.points[1].x = node.getNode().getX();
         that.attrs.points[1].y = node.getNode().getY();
-        that.updateDetection();
         layers.wires.draw();
         notifyWatchers();
       }
@@ -979,14 +976,6 @@ var Desktop = (function () {
         enableHandlers();
       else
         disableHandlers();
-    };
-
-    that.updateDetection = function() {
-      if (scene.getState() != "cut")
-        return;
-
-      that.attrs.line.clearImageData();
-      that.attrs.line.saveImageData();
     };
 
     that.setColor = function(color) {
@@ -1026,7 +1015,6 @@ var Desktop = (function () {
       height: 250
     }, config));
 
-    var lock = 0;
     var state = "edit";
     var nodes = [];
     var links = [];
@@ -1054,7 +1042,6 @@ var Desktop = (function () {
       var scale = (1 - min) * (1 - percent) + min;
 
       for (var e in layers) {
-        var callback = undefined;
         var layer = layers[e];
 
         if (layer.attrs.floating)
@@ -1066,22 +1053,13 @@ var Desktop = (function () {
           continue;
         }
 
-        if (layer == layers.wires) {
-          lockLinkCalculation();
-          callback = function() {
-            unlockLinkCalculation();
-            updateLinksDetection();
-          }
-        }
-
         layer.transitionTo({
           scale: {
             x: scale,
             y: scale
           },
           duration: 0.2,
-          easing: 'ease-in-out',
-          callback: callback
+          easing: 'ease-in-out'
         });
       }
     };
@@ -1160,26 +1138,16 @@ var Desktop = (function () {
       }
 
       for (var e in layers) {
-        var callback = undefined;
         var layer = layers[e];
 
         if (layer.attrs.floating)
           continue;
 
-        if (layer == layers.wires) {
-          lockLinkCalculation();
-          callback = function() {
-            unlockLinkCalculation();
-            updateLinksDetection();
-          }
-        }
-
         layer.transitionTo({
           x: nx,
           y: ny,
           duration: 0.2,
-          easing: 'ease-in-out',
-          callback: callback
+          easing: 'ease-in-out'
         });
       }
     };
@@ -1190,14 +1158,12 @@ var Desktop = (function () {
         x : that.attrs.stage.getX(),
         y : that.attrs.stage.getY(),
         draggable : true,
-        alpha: 0.0,
+        opacity: 0.0,
         width : that.attrs.stage.getWidth(),
         height : that.attrs.stage.getHeight()
       });
 
       panningRect.on("dragstart",function() {
-        lockLinkCalculation();
-
         for (var e in layers) {
           var layer = layers[e];
 
@@ -1225,7 +1191,6 @@ var Desktop = (function () {
       });
 
       panningRect.on("dragend", function() {
-        unlockLinkCalculation();
         panningRect.setX(0);
         panningRect.setY(0);
         layers.panning.draw();
@@ -1239,21 +1204,10 @@ var Desktop = (function () {
           layer.xSave = undefined;
           layer.ySave = undefined;
         }
-
-        updateLinksDetection();
       });
 
       layers.panning.add(panningRect);
-    };
-
-    function updateLinksDetection() {
-      if (state != "cut" || lock > 0)
-        return;
-
-      for (var index = 0; index < links.length; index++) {
-        var link = links[index];
-        link.updateDetection();
-      }
+      layers.panning.draw();
     };
 
     function generateRootName(root) {
@@ -1337,15 +1291,11 @@ var Desktop = (function () {
     };
 
     function clearCutState() {
-      layers.wires.off("xChange yChange scaleChange");
       setLinksManageable(false);
     };
 
     function confCutState() {
-      layers.wires.on("xChange yChange scaleChange", updateLinksDetection);
-
       setLinksManageable(true);
-      updateLinksDetection();
     };
 
     function clearViewState() {
@@ -1403,15 +1353,6 @@ var Desktop = (function () {
       clearPreviousState();
       state = newState;
       confNewState(state);
-    };
-
-    function lockLinkCalculation() {
-      lock++;
-    };
-
-    function unlockLinkCalculation() {
-      if (--lock < 0)
-        alert("BAD: lock = " + lock);
     };
 
     function addBrowserWidgets() {
@@ -1585,7 +1526,7 @@ var Desktop = (function () {
       that.attrs.fake_link["line"] = new Kinetic.Line({
         points: that.attrs.fake_link.points,
         stroke: "grey",
-        strokeWidth: 1,
+        strokeWidth: 2,
         lineCap: 'round',
         lineJoin: 'round'
       });
@@ -1702,7 +1643,6 @@ var Desktop = (function () {
 
       links.push(link);
       layers.wires.add(link.getNode());
-      link.updateDetection();
       layers.wires.draw();
 
       return true;
