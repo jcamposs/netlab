@@ -1,9 +1,11 @@
 class ScenesController < ApplicationController
-  before_filter :authenticate_user!, :setWidgetModule
+  before_filter :authenticate_user!, :confWidget
 
-  def setWidgetModule
+  def confWidget
     #TODO: Choose the widget that fits better in user's device screen
     @module = 'Desktop'
+    @width = 700
+    @height = 600
   end
 
   # GET /scenes

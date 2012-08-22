@@ -18,8 +18,8 @@
   function initWidget() {
     <%= @module %>.initWidget({
       container: "container",
-      width: 700,
-      height: 600,
+      width: <%= @width %>,
+      height: <%= @height %>,
       mode: "<%= @mode %>",
       callback: initStage
     });

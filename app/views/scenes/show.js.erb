@@ -1,7 +1,8 @@
 $('#dialog')
   .html("<%=j render 'netwidget' %>")
   .dialog({
-    autoOpen: false,
+    width: <%= @width %> + 30,
+    height: <%= @height %> + 60,
     title: '<%= @scene.name %>',
     modal: true,
     open: function(event, ui) {
