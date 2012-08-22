@@ -1837,14 +1837,14 @@ var Desktop = (function () {
   module.initWidget = function(config) {
     editor = Editor(config);
     return editor;
-  }
+  };
 
   module.getWidget = function() {
     if (!editor)
       throw ("Editor is not initialized");
 
     return editor;
-  }
+  };
 
   return module;
 
