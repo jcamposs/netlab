@@ -1,8 +1,11 @@
 $('#dialog')
-  .html('This dialog will show every time!')
+  .html("<%=j render 'netwidget' %>")
   .dialog({
     autoOpen: false,
-    title: 'Basic Dialog',
-    modal: true
+    title: '<%= @scene.name %>',
+    modal: true,
+    open: function(event, ui) {
+      initWidget();
+    }
   });
 $('#dialog').dialog('open');

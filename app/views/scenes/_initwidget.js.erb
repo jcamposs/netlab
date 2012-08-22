@@ -15,7 +15,7 @@
     Netlab.loadJSON(widget, json);
   };
 
-  $(window).load( function() {
+  function initWidget() {
     <%= @module %>.initWidget({
       container: "container",
       width: 700,
@@ -23,6 +23,10 @@
       mode: "<%= @mode %>",
       callback: initStage
     });
+  };
+
+  $(window).load( function() {
+    initWidget();
   });
 
 <% end %>
