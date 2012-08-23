@@ -1,5 +1,12 @@
-if (!($('#container').length > 0))
-  $('#dialog').html("<%=j render 'netwidget' %>")
+var init = false;
+
+try {
+  <%= @module %>.getWidget();
+} catch(err) {
+  init = true;
+  $('#dialog').html("<%=j render 'netwidget' %>");
+  initWidget();
+}
 
 $('#dialog')
   .dialog({
@@ -9,12 +16,6 @@ $('#dialog')
     title: '<%= @scene.name %>',
     modal: true,
     open: function(event, ui) {
-      try {
-        <%= @module %>.getWidget();
-      } catch(err) {
-        initWidget();
-      }
-
       var json =
       <% if @scene.definition %>
         "<%=j @scene.definition.html_safe %>";
@@ -22,7 +23,8 @@ $('#dialog')
         "";
       <% end %>
 
-      loadStage(json);
+      if (!init)
+        loadStage(json);
     },
     close: function(event, ui) {
       clearScene();
