@@ -1,5 +1,13 @@
 <%= javascript_tag do %>
 
+  function clearScene() {
+    var widget = <%= @module %>.getWidget();
+    var nodes = widget.getNodes();
+
+    for(var i = 0; i < nodes.length; i++)
+      widget.removeNode(nodes[i].name);
+  };
+
   function initStage() {
     var json =
       <% if @scene.definition %>

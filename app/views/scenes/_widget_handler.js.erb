@@ -1,13 +1,5 @@
 <%= javascript_tag do %>
 
-  function clearScene() {
-    var widget = <%= @module %>.getWidget();
-    var nodes = widget.getNodes();
-
-    for(var i = 0; i < nodes.length; i++)
-      widget.removeNode(nodes[i].name);
-  };
-
   function fillForm() {
     var name = "<%=@scene.name %>";
     name = prompt('Scene name:', name);

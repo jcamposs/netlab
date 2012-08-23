@@ -1,12 +1,25 @@
+if (!($('#container').length > 0))
+  $('#dialog').html("<%=j render 'netwidget' %>")
+
 $('#dialog')
-  .html("<%=j render 'netwidget' %>")
   .dialog({
+    autoOpen: false,
     width: <%= @width %> + 30,
     height: <%= @height %> + 60,
     title: '<%= @scene.name %>',
     modal: true,
     open: function(event, ui) {
-      initWidget();
+      try {
+        <%= @module %>.getWidget();
+      } catch(err) {
+        initWidget();
+      }
+
+      initStage();
+    },
+    close: function(event, ui) {
+      clearScene();
     }
   });
+
 $('#dialog').dialog('open');
