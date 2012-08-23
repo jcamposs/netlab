@@ -15,8 +15,6 @@
   <tr>
     <td><%= scene.owner_id %></td>
     <td><%= scene.name %></td>
-    <td><%= scene.definition %></td>
-    <td><%= scene.schema %></td>
     <td><%= link_to 'Show', scene, :remote => true %></td>
     <td><%= link_to 'Edit', edit_scene_path(scene) %></td>
     <td><%= link_to 'Destroy', scene, confirm: 'Are you sure?', method: :delete %></td>
