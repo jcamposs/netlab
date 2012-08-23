@@ -15,7 +15,7 @@ $('#dialog')
     show: { effect: 'drop', direction: "up" },
     hide: { effect: 'drop', direction: "up" },
     width: <%= @width %> + 30,
-    height: <%= @height %> + 60,
+    height: <%= @height %> + 120,
     title: '<%= @scene.name %>',
     modal: true,
     open: function(event, ui) {
@@ -31,6 +31,14 @@ $('#dialog')
     },
     close: function(event, ui) {
       clearScene();
+    },
+    buttons: {
+      "Edit": function() {
+        window.location.href = "<%= edit_scene_path(@scene) %>";
+      },
+      "Destroy": function() {
+        alert('TODO:');
+      }
     }
   });
 

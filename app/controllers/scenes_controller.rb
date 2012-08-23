@@ -4,8 +4,8 @@ class ScenesController < ApplicationController
   def confWidget
     #TODO: Choose the widget that fits better in user's device screen
     @module = 'Desktop'
-    @width = 700
-    @height = 600
+    @width = 600
+    @height = 500
   end
 
   # GET /scenes
