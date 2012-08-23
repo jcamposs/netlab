@@ -11,6 +11,9 @@ try {
 $('#dialog')
   .dialog({
     autoOpen: false,
+    resizable: false,
+    show: { effect: 'drop', direction: "up" },
+    hide: { effect: 'drop', direction: "up" },
     width: <%= @width %> + 30,
     height: <%= @height %> + 60,
     title: '<%= @scene.name %>',
