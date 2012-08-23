@@ -15,7 +15,14 @@ $('#dialog')
         initWidget();
       }
 
-      initStage();
+      var json =
+      <% if @scene.definition %>
+        "<%=j @scene.definition.html_safe %>";
+      <% else %>
+        "";
+      <% end %>
+
+      loadStage(json);
     },
     close: function(event, ui) {
       clearScene();

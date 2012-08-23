@@ -8,19 +8,22 @@
       widget.removeNode(nodes[i].name);
   };
 
-  function initStage() {
+  function loadStage(json) {
+    if (!json)
+      return;
+
+    var widget = <%= @module %>.getWidget();
+    Netlab.loadJSON(widget, json);
+  };
+
+  function initJSON() {
     var json =
       <% if @scene.definition %>
         "<%=j @scene.definition.html_safe %>";
       <% else %>
         "";
       <% end %>
-
-    if (!json)
-      return;
-
-    var widget = <%= @module %>.getWidget();
-    Netlab.loadJSON(widget, json);
+    loadStage(json);
   };
 
   function initWidget() {
@@ -29,7 +32,7 @@
       width: <%= @width %>,
       height: <%= @height %>,
       mode: "<%= @mode %>",
-      callback: initStage
+      callback: initJSON
     });
   };
 
