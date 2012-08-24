@@ -57,7 +57,7 @@ class ScenesController < ApplicationController
     @mode = "edit"
     @user = current_user
 
-    @scene.owner_id = @user.id
+    @scene.user_id = @user.id
 
     respond_to do |format|
       if @scene.save

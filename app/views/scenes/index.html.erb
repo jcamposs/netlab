@@ -13,7 +13,7 @@
 
 <% @scenes.each do |scene| %>
   <tr>
-    <td><%= scene.owner_id %></td>
+    <td><%= scene.user_id %></td>
     <td><%= scene.name %></td>
     <td><%= link_to 'Show', scene, :remote => true %></td>
     <td><%= link_to 'Edit', edit_scene_path(scene) %></td>
