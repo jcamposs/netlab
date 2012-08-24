@@ -98,17 +98,18 @@ class ScenesController < ApplicationController
   def destroy
     @scene = Scene.find(params[:id])
     @user = current_user
-    if @scene.user != @user
-      respond_to do |format|
-        format.html { redirect_to scenes_url, alert: 'Not allowed.' }
-        format.js { render :nothing => true }
-        format.json { head :no_content }
-      end
-    else
+    if @scene.user == @user
       @scene.destroy
       respond_to do |format|
         format.html { redirect_to scenes_url }
         format.js { render :nothing => true }
+        format.json { head :no_content }
+      end
+    else
+      respond_to do |format|
+        format.html { redirect_to scenes_url, notice: 'Not allowed.' }
+        format.js { render :text => "You can not destroy scene #{@scene.name}",
+                                                 status: :unprocessable_entity }
         format.json { head :no_content }
       end
     end
