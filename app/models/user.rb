@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+  has_many :scenes, dependent: :destroy
+
   validates :first_name, :last_name, presence: true
 
   # Include default devise modules. Others available are:

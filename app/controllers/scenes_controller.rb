@@ -53,11 +53,9 @@ class ScenesController < ApplicationController
   # POST /scenes
   # POST /scenes.json
   def create
-    @scene = Scene.new(params[:scene])
-    @mode = "edit"
     @user = current_user
-
-    @scene.user_id = @user.id
+    @scene = @user.scenes.build(params[:scene])
+    @mode = "edit"
 
     respond_to do |format|
       if @scene.save
