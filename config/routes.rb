@@ -1,5 +1,10 @@
 Netlab::Application.routes.draw do
   resources :scenes
+  resources :scenes do
+    member do
+      get 'delete'
+    end
+  end
 
   get "home/index"
   get "home/close"

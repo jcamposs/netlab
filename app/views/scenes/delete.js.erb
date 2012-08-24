@@ -1,0 +1,30 @@
+var $dialog = $('<div></div>')
+  .html('<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span> This stage will be permanently deleted and cannot be recovered. Are you sure?</p>')
+  .dialog({
+    autoOpen: false,
+    resizable: false,
+    modal: true,
+    title: 'Delete <%= @scene.name %>?',
+    buttons: {
+      "Delete": function() {
+        $.ajax({
+          url: '<%= scene_path(@scene) %>',
+          type: 'post',
+          dataType: 'script',
+          data: { '_method': 'delete' },
+          success: function() {
+            window.location.href = "<%= scenes_path %>";
+          },
+          error: function(msg) {
+            alert("TODO: error: " + msg.responseText );
+          }
+        });
+        $( this ).dialog( "close" );
+      },
+      Cancel: function() {
+        $( this ).dialog( "close" );
+      }
+    }
+  });
+
+$dialog.dialog('open');

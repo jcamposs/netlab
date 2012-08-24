@@ -85,21 +85,30 @@ class ScenesController < ApplicationController
     end
   end
 
+  # Used to manage AJAX delete requests with JQuery dialog
+  def delete
+    @scene = Scene.find(params[:id])
+    respond_to do |format|
+      format.js # delete.js.erb
+    end
+  end
+
   # DELETE /scenes/1
   # DELETE /scenes/1.json
   def destroy
     @scene = Scene.find(params[:id])
     @user = current_user
-    if @scene.user == @user
+    if @scene.user != @user
       respond_to do |format|
         format.html { redirect_to scenes_url, alert: 'Not allowed.' }
-        format.js
+        format.js { render :nothing => true }
         format.json { head :no_content }
       end
     else
       @scene.destroy
       respond_to do |format|
         format.html { redirect_to scenes_url }
+        format.js { render :nothing => true }
         format.json { head :no_content }
       end
     end
