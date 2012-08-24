@@ -11,10 +11,10 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120813082631) do
+ActiveRecord::Schema.define(:version => 20120824082519) do
 
   create_table "scenes", :force => true do |t|
-    t.integer  "owner_id"
+    t.integer  "user_id"
     t.string   "name"
     t.string   "definition"
     t.string   "schema"
