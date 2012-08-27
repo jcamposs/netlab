@@ -11,12 +11,12 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120824082519) do
+ActiveRecord::Schema.define(:version => 20120827132549) do
 
   create_table "scenes", :force => true do |t|
     t.integer  "user_id"
     t.string   "name"
-    t.string   "definition"
+    t.text     "definition"
     t.string   "schema"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
