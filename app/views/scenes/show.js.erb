@@ -37,7 +37,7 @@ $('#dialog')
         window.location.href = "<%= edit_scene_path(@scene) %>";
       },
       "Destroy": function() {
-        alert('TODO:');
+        <%= render "delete_dialog", formats: :js %>
       }
     }
   });
