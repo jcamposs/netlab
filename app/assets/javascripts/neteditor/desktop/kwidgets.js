@@ -69,7 +69,7 @@ var KWidgets = (function () {
     group.setX(that.attrs.x);
     group.setY(that.attrs.y);
 
-    var background = new Kinetic.Ellipse({
+    var background = new Kinetic.Circle({
       radius: that.attrs.radius + 5,
       opacity: 0.6,
       fill: "white",
@@ -79,7 +79,7 @@ var KWidgets = (function () {
       }
     });
 
-    var circle = new Kinetic.Ellipse({
+    var circle = new Kinetic.Circle({
       radius: that.attrs.radius,
       opacity: 0.8,
       fill: "white",
