@@ -94,6 +94,7 @@ var KWidgets = (function () {
       y: -len,
       width: 2 * len,
       height: 2 * len,
+      fill: "white",
       cornerRadius: that.attrs.width / 4,
       stroke: "black",
       strokeWidth: that.attrs.arrow_width
