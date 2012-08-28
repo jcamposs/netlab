@@ -88,6 +88,9 @@ class ScenesController < ApplicationController
   # Used to manage AJAX delete requests with JQuery dialog
   def delete
     @scene = Scene.find(params[:id])
+    @err_msg = "You are not allowed to destroy this scene. Only the owner can delete it."
+    @err_type = "Error delete"
+
     respond_to do |format|
       format.js # delete.js.erb
     end
@@ -98,6 +101,7 @@ class ScenesController < ApplicationController
   def destroy
     @scene = Scene.find(params[:id])
     @user = current_user
+
     if @scene.user == @user
       @scene.destroy
       respond_to do |format|
@@ -108,8 +112,7 @@ class ScenesController < ApplicationController
     else
       respond_to do |format|
         format.html { redirect_to scenes_url, notice: 'Not allowed.' }
-        format.js { render :text => "You can not destroy scene #{@scene.name}",
-                                                 status: :unprocessable_entity }
+        format.js { render :nothing => true, status: :unprocessable_entity }
         format.json { head :no_content }
       end
     end

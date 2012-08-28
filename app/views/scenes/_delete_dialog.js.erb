@@ -16,7 +16,7 @@ var $dialog = $('<div></div>')
             window.location.href = "<%= scenes_path %>";
           },
           error: function(msg) {
-            alert("TODO: error: " + msg.responseText );
+            <%= render "error_msg", formats: :js %>
           }
         });
         $( this ).dialog( "close" );

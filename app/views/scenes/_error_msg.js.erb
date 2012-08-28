@@ -1,0 +1,15 @@
+var $dialog = $('<div></div>')
+  .html('<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><%= @err_msg %></p>')
+  .dialog({
+    autoOpen: false,
+    resizable: false,
+    modal: true,
+    title: '<%= @err_type %>',
+    buttons: {
+      Ok: function() {
+        $( this ).dialog( "close" );
+      }
+    }
+  });
+
+$dialog.dialog('open');
