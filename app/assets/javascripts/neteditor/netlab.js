@@ -224,6 +224,80 @@ var Netlab = (function () {
     return JSON.stringify(sceneObj, null, 2);
   };
 
+
+  function getNodeByName (name, nodes) {
+    for(var index = 0; index < nodes.length; index++) {
+      if (name == nodes[index].name)
+        return nodes[index];
+    }
+    return null;
+  };
+
+  function sameNodes (node1, node2) {
+    return ((node1.name == node2.name) &&
+            (node1.type == node2.type) &&
+            (node1.position.x == node2.position.x) &&
+            (node1.position.y == node2.position.y))
+  };
+
+  function sameConnection(conn1, conn2) {
+    if (conn1.node1.name == conn2.node1.name)
+      return ((conn1.node1.iface == conn2.node1.iface) &&
+              (conn1.node2.name == conn2.node2.name) &&
+              (conn1.node2.iface == conn2.node2.iface))
+    else
+      return ((conn1.node1.name == conn2.node2.name) &&
+              (conn1.node1.iface == conn2.node2.iface) &&
+              (conn1.node2.name == conn2.node1.name) &&
+              (conn1.node2.iface == conn2.node1.iface))
+  };
+
+  function getConnectionByLink (connection, connections) {
+    for(var index = 0; index < connections.length; index++) {
+      var conn = connections[index];
+
+      if (sameConnection(connection, conn))
+        return conn;
+    }
+
+    return null;
+  };
+
+  /**
+   * Next function compares two scenes represented by a JSON
+   * @return true if both scenes are equal
+   */
+  module.sameScenes = function(scene1, scene2) {
+    var sceneObj1 = JSON.parse(scene1);
+    var sceneObj2 = JSON.parse(scene2);
+
+    if ((sceneObj1.nodes.length != sceneObj2.nodes.length) ||
+        (sceneObj1.connections.length != sceneObj2.connections.length))
+      return false;
+
+    /* Compare nodes */
+    for(var index = 0; index < sceneObj1.nodes.length; index++) {
+      var node1 = sceneObj1.nodes[index];
+      var node2 = getNodeByName(node1.name, sceneObj2.nodes);
+
+      if (!node2)
+        return false;
+
+      if (!sameNodes(node1, node2))
+        return false;
+    }
+
+    /* Compare connections */
+    for(var index = 0; index < sceneObj1.connections.length; index++) {
+      var conn1 = sceneObj1.connections[index];
+
+      if (!getConnectionByLink(conn1, sceneObj2.connections))
+        return false;
+    }
+
+    return true;
+  };
+
   return module;
 
 }());
