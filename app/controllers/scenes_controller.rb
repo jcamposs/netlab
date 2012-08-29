@@ -99,9 +99,10 @@ class ScenesController < ApplicationController
   def back_edit_ajax
     @scene = Scene.find(params[:id])
     @warn_msg = "This scene has been modified. If you leave without saving the changes done will be lost. Do really want to continue?"
+    @go_path = scenes_path
 
     respond_to do |format|
-      format.js # back_edit_ajax.js.erb
+      format.js { render :partial => "check_scene_changes" }
     end
   end
 
@@ -111,7 +112,7 @@ class ScenesController < ApplicationController
     @go_path = scene_url(@scene)
 
     respond_to do |format|
-      format.js # show_edit_ajax.js.erb
+      format.js { render :partial => "check_scene_changes" }
     end
   end
 
