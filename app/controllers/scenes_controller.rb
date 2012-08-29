@@ -98,7 +98,7 @@ class ScenesController < ApplicationController
 
   def back_edit_ajax
     @scene = Scene.find(params[:id])
-
+    @warn_msg = "Changes are not saved. If you leave they will be lost. Do really want to continue?"
     respond_to do |format|
       format.js # back_edit.js.erb
     end

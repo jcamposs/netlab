@@ -1,0 +1,20 @@
+(function () {
+  var $dialog = $('<div></div>')
+    .html('<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><%= @warn_msg %></p>')
+    .dialog({
+      autoOpen: false,
+      resizable: false,
+      modal: true,
+      title: 'Warning',
+      buttons: {
+        "Continue": function() {
+          <%= continue_func %>();
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+
+  $dialog.dialog('open');
+}());

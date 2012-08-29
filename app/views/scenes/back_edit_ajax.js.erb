@@ -1,1 +1,14 @@
-alert("TODO: Ajax Edit :D");
+(function () {
+  function continue_f() {
+    window.location.href = "<%= scenes_path %>";
+  };
+
+  var widget = <%= @module %>.getWidget();
+  var scene1 = Netlab.saveJSON(widget);
+  var scene2 = $("#scene_definition").val();
+
+  if (Netlab.sameScenes(scene1, scene2))
+    continue_f();
+  else
+    <%= render :partial =>"warn_msg", formats: :js, :locals => { :continue_func => "continue_f" }  %>
+}());
