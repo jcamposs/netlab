@@ -98,7 +98,7 @@ class ScenesController < ApplicationController
 
   def back_edit_ajax
     @scene = Scene.find(params[:id])
-    @warn_msg = "This scene has been modified. If you leave without saving the changes done will be lost. Do really want to continue?"
+    @warn_msg = "This scene has been modified. If you leave without saving the changes done will be lost. Do you really want to continue?"
     @go_path = scenes_path
 
     respond_to do |format|
@@ -108,7 +108,7 @@ class ScenesController < ApplicationController
 
   def show_edit_ajax
     @scene = Scene.find(params[:id])
-    @warn_msg = "This scene has been modified. If you leave without saving the changes done will be lost. Do really want to continue?"
+    @warn_msg = "This scene has been modified. If you leave without saving the changes done will be lost. Do you really want to continue?"
     @go_path = scene_url(@scene)
 
     respond_to do |format|
