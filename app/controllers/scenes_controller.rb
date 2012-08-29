@@ -96,6 +96,15 @@ class ScenesController < ApplicationController
     end
   end
 
+  def back_new_ajax
+    @warn_msg = "This scene has not been saved. Do you really want to leave?"
+    @go_path = scenes_path
+
+    respond_to do |format|
+      format.js
+    end
+  end
+
   def back_edit_ajax
     @scene = Scene.find(params[:id])
     @warn_msg = "This scene has been modified. If you leave without saving the changes done will be lost. Do you really want to continue?"

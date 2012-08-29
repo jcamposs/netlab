@@ -1,12 +1,17 @@
 Netlab::Application.routes.draw do
-  resources :scenes
   resources :scenes do
     member do
       get 'delete'
       get 'back_edit_ajax'
       get 'show_edit_ajax'
     end
+
+    collection do
+      get 'back_new_ajax'
+    end
   end
+
+  resources :scenes
 
   get "home/index"
   get "home/close"

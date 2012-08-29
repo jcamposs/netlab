@@ -1,0 +1,14 @@
+(function () {
+  function continue_f() {
+    window.location.href = "<%= @go_path %>";
+  };
+
+  var widget = <%= @module %>.getWidget();
+  var scene = Netlab.saveJSON(widget);
+  var sceneObj = JSON.parse(scene);
+
+  if (sceneObj.nodes.length > 0)
+    <%= render :partial =>"warn_msg", formats: :js, :locals => { :continue_func => "continue_f" }  %>
+  else
+    continue_f();
+}());
