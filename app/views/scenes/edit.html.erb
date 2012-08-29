@@ -5,4 +5,4 @@
 <%= render 'form' %>
 
 <%= link_to 'Show', @scene %> |
-<%= link_to 'Back', scenes_path %>
+<%= link_to 'Back', back_edit_ajax_scene_path(@scene), :remote => true %>

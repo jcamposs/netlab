@@ -3,6 +3,7 @@ Netlab::Application.routes.draw do
   resources :scenes do
     member do
       get 'delete'
+      get 'back_edit_ajax'
     end
   end
 

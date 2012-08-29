@@ -96,6 +96,14 @@ class ScenesController < ApplicationController
     end
   end
 
+  def back_edit_ajax
+    @scene = Scene.find(params[:id])
+
+    respond_to do |format|
+      format.js # back_edit.js.erb
+    end
+  end
+
   # DELETE /scenes/1
   # DELETE /scenes/1.json
   def destroy
