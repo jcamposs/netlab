@@ -1,45 +1,47 @@
-var init = false;
+(function () {
+  var init = false;
 
-try {
-  <%= @module %>.getWidget();
-} catch(err) {
-  init = true;
-  $('#dialog').html("<%=j render 'netwidget' %>");
-  initWidget();
-}
+  try {
+    <%= @module %>.getWidget();
+  } catch(err) {
+    init = true;
+    $('#dialog').html("<%=j render 'netwidget' %>");
+    initWidget();
+  }
 
-$('#dialog')
-  .dialog({
-    autoOpen: false,
-    resizable: false,
-    show: { effect: 'drop', direction: "up" },
-    hide: { effect: 'drop', direction: "up" },
-    width: <%= @width %> + 30,
-    height: <%= @height %> + 120,
-    title: '<%= @scene.name %>',
-    modal: true,
-    open: function(event, ui) {
-      var json =
-      <% if @scene.definition %>
-        "<%=j @scene.definition.html_safe %>";
-      <% else %>
-        "";
-      <% end %>
+  $('#dialog')
+    .dialog({
+      autoOpen: false,
+      resizable: false,
+      show: { effect: 'drop', direction: "up" },
+      hide: { effect: 'drop', direction: "up" },
+      width: <%= @width %> + 30,
+      height: <%= @height %> + 120,
+      title: '<%= @scene.name %>',
+      modal: true,
+      open: function(event, ui) {
+        var json =
+        <% if @scene.definition %>
+          "<%=j @scene.definition.html_safe %>";
+        <% else %>
+          "";
+        <% end %>
 
-      if (!init)
-        loadStage(json);
-    },
-    close: function(event, ui) {
-      clearScene();
-    },
-    buttons: {
-      "Edit": function() {
-        window.location.href = "<%= edit_scene_path(@scene) %>";
+        if (!init)
+          loadStage(json);
       },
-      "Destroy": function() {
-        <%= render "delete_dialog", formats: :js %>
+      close: function(event, ui) {
+        clearScene();
+      },
+      buttons: {
+        "Edit": function() {
+          window.location.href = "<%= edit_scene_path(@scene) %>";
+        },
+        "Destroy": function() {
+          <%= render "delete_dialog", formats: :js %>
+        }
       }
-    }
-  });
+    });
 
-$('#dialog').dialog('open');
+  $('#dialog').dialog('open');
+}());
