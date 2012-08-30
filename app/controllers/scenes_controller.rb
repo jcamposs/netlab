@@ -25,6 +25,10 @@ class ScenesController < ApplicationController
     @scene = Scene.find(params[:id])
     @mode = "view"
 
+    # Error in case of an AJAX delete error response
+    @err_type = "Error delete"
+    @err_msg = "You are not allowed to destroy this scene. Only the owner can delete it."
+
     respond_to do |format|
       format.html # show.html.erb
       format.js
@@ -115,7 +119,7 @@ class ScenesController < ApplicationController
 
   def back_edit_ajax
     @scene = Scene.find(params[:id])
-    @warn_msg = "This scene has been modified. If you leave without saving the changes done will be lost. Do you really want to continue?"
+    @warn_msg = "This scene has been modified. Changes done will be lost If you leave without saving. Do you really want to continue?"
     @go_path = scenes_path
 
     respond_to do |format|
@@ -125,7 +129,7 @@ class ScenesController < ApplicationController
 
   def show_edit_ajax
     @scene = Scene.find(params[:id])
-    @warn_msg = "This scene has been modified. If you leave without saving the changes done will be lost. Do you really want to continue?"
+    @warn_msg = "This scene has been modified. Changes done will be lost If you leave without saving. Do you really want to continue?"
     @go_path = scene_url(@scene)
 
     respond_to do |format|
