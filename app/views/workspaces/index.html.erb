@@ -1,0 +1,27 @@
+<h1>Listing workspaces</h1>
+
+<table>
+  <tr>
+    <th>User</th>
+    <th>Scene</th>
+    <th>Proxy</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @workspaces.each do |workspace| %>
+  <tr>
+    <td><%= workspace.user_id %></td>
+    <td><%= workspace.scene_id %></td>
+    <td><%= workspace.proxy %></td>
+    <td><%= link_to 'Show', workspace %></td>
+    <td><%= link_to 'Edit', edit_workspace_path(workspace) %></td>
+    <td><%= link_to 'Destroy', workspace, confirm: 'Are you sure?', method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Workspace', new_workspace_path %>

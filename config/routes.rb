@@ -1,4 +1,6 @@
 Netlab::Application.routes.draw do
+  resources :workspaces
+
   resources :scenes do
     member do
       get 'delete'

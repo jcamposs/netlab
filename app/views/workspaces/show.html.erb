@@ -1,0 +1,20 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>User:</b>
+  <%= @workspace.user_id %>
+</p>
+
+<p>
+  <b>Scene:</b>
+  <%= @workspace.scene_id %>
+</p>
+
+<p>
+  <b>Proxy:</b>
+  <%= @workspace.proxy %>
+</p>
+
+
+<%= link_to 'Edit', edit_workspace_path(@workspace) %> |
+<%= link_to 'Back', workspaces_path %>
