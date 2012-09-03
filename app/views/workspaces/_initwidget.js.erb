@@ -1,0 +1,56 @@
+<%= javascript_tag do %>
+
+  function clearScene() {
+    var widget = <%= @module %>.getWidget();
+    var nodes = widget.getNodes();
+
+    for(var i = 0; i < nodes.length; i++)
+      widget.removeNode(nodes[i].name);
+  };
+
+  function loadStage(json) {
+    if (!json)
+      return;
+
+    var widget = <%= @module %>.getWidget();
+    Netlab.loadJSON(widget, json);
+  };
+
+  function loadJSON(sceneId)
+  {
+    $.ajax({
+      url: '/scenes/' + sceneId,
+      dataType: 'json',
+      success: function(data) {
+        loadStage(data.definition);
+      }
+    })
+  };
+
+  function initJSON() {
+    var sceneId = $('#scene_id').val();
+
+    if (sceneId >= 0)
+      loadJSON(sceneId);
+  };
+
+  function initWidget() {
+    $("#scene_id").change(function() {
+        clearScene();
+        loadJSON($('#scene_id').val());
+    });
+
+    <%= @module %>.initWidget({
+      container: "container",
+      width: <%= @width %>,
+      height: <%= @height %>,
+      mode: "<%= @mode %>",
+      callback: initJSON
+    });
+  };
+
+  $(window).load( function() {
+    initWidget();
+  });
+
+<% end %>

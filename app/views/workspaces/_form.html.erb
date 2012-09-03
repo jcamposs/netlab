@@ -11,7 +11,10 @@
     </div>
   <% end %>
 
-  <%= select_tag(:scene_id, options_from_collection_for_select(Scene.all, :id, :name)) %>
+  <div class="field">
+    <%= f.label :scene %><br />
+    <%= select_tag :scene_id, options_from_collection_for_select(Scene.all, :id, :name) %>
+  </div>
 
   <div class="actions">
     <%= f.submit %>
