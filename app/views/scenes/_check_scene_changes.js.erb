@@ -4,7 +4,7 @@
   };
 
   var widget = <%= @module %>.getWidget();
-  var scene1 = Netlab.saveJSON(widget);
+  var scene1 = Netlab.getJSON(widget);
   var scene2 = $("#scene_definition").val();
 
   if (Netlab.sameScenes(scene1, scene2))

@@ -11,7 +11,7 @@
 
     var widget = <%= @module %>.getWidget();
 
-    $("#scene_definition").val(Netlab.saveJSON(widget));
+    $("#scene_definition").val(Netlab.getJSON(widget));
 
     return true;
   };

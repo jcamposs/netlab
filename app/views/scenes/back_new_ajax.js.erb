@@ -4,7 +4,7 @@
   };
 
   var widget = <%= @module %>.getWidget();
-  var scene = Netlab.saveJSON(widget);
+  var scene = Netlab.getJSON(widget);
   var sceneObj = JSON.parse(scene);
 
   if (sceneObj.nodes.length > 0)

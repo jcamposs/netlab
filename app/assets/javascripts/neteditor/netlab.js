@@ -212,7 +212,7 @@ var Netlab = (function () {
    *   Object implementing the EditorInterface
    * @return {String} json
    */
-  module.saveJSON = function(editor) {
+  module.getJSON = function(editor) {
     if (!implements(editor, module.EditorInterface))
       throw ("Not editor object provided");
 
