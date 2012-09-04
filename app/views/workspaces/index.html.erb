@@ -5,7 +5,6 @@
     <th>Name</th>
     <th>User</th>
     <th>Scene</th>
-    <th>Proxy</th>
     <th></th>
     <th></th>
     <th></th>
@@ -16,7 +15,6 @@
     <td><%= workspace.name %></td>
     <td><%= workspace.user.first_name %></td>
     <td><%= workspace.scene.name %></td>
-    <td><%= workspace.proxy %></td>
     <td><%= link_to 'Show', workspace %></td>
     <td><%= link_to 'Edit', edit_workspace_path(workspace) %></td>
     <td><%= link_to 'Destroy', workspace, confirm: 'Are you sure?', method: :delete %></td>
