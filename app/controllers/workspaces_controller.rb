@@ -16,6 +16,10 @@ class WorkspacesController < ApplicationController
   # GET /workspaces/1.json
   def show
     @workspace = Workspace.find(params[:id])
+    @module = 'Desktop'
+    @width = 600
+    @height = 500
+    @mode = "view"
 
     respond_to do |format|
       format.html # show.html.erb

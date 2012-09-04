@@ -1,20 +1,23 @@
 <p id="notice"><%= notice %></p>
 
 <p>
+  <b>Name:</b>
+  <%= @workspace.name %>
+</p>
+
+<p>
   <b>User:</b>
-  <%= @workspace.user_id %>
+  <%= @workspace.user.first_name %>
 </p>
 
 <p>
   <b>Scene:</b>
-  <%= @workspace.scene_id %>
+  <%= @workspace.scene.name %>
 </p>
 
-<p>
-  <b>Proxy:</b>
-  <%= @workspace.proxy %>
-</p>
+<%= hidden_field_tag 'workspace_scene_id', @workspace.scene.id %>
 
+<%= render 'scenes/netwidget' %>
 
 <%= link_to 'Edit', edit_workspace_path(@workspace) %> |
 <%= link_to 'Back', workspaces_path %>
