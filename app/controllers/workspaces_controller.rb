@@ -55,6 +55,11 @@ class WorkspacesController < ApplicationController
     @workspace = @scene.workspaces.build(params[:workspace])
     @workspace.user = @user
 
+    @module = 'Desktop'
+    @width = 600
+    @height = 500
+    @mode = "view"
+
     respond_to do |format|
       if @workspace.save
         format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
