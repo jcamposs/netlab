@@ -13,7 +13,7 @@
 
   <div class="field">
     <%= f.label :scene %><br />
-    <%= select_tag :scene_id, options_from_collection_for_select(Scene.all, :id, :name) %>
+    <%= f.select :scene_id, options_from_collection_for_select(Scene.all, :id, :name), :selected => :scene_id %>
   </div>
 
   <div class="actions">

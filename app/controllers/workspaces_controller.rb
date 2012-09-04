@@ -46,7 +46,10 @@ class WorkspacesController < ApplicationController
   # POST /workspaces
   # POST /workspaces.json
   def create
-    @workspace = Workspace.new(params[:workspace])
+    @user = current_user
+    @scene = Scene.find(params[:workspace][:scene_id])
+    @workspace = @scene.workspaces.build(params[:workspace])
+    @workspace.user_id = @user.id
 
     respond_to do |format|
       if @workspace.save

@@ -28,16 +28,16 @@
   };
 
   function initJSON() {
-    var sceneId = $('#scene_id').val();
+    var sceneId = $('#workspace_scene_id').val();
 
     if (sceneId >= 0)
       loadJSON(sceneId);
   };
 
   function initWidget() {
-    $("#scene_id").change(function() {
+    $("#workspace_scene_id").change(function() {
         clearScene();
-        loadJSON($('#scene_id').val());
+        loadJSON($('#workspace_scene_id').val());
     });
 
     <%= @module %>.initWidget({
