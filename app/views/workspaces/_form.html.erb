@@ -20,7 +20,7 @@
 
   <div class="field">
     <%= f.label :scene %><br />
-    <%= f.select :scene_id, options_from_collection_for_select(Scene.all, :id, :name), :selected => :scene_id %>
+    <%= f.select :scene_id, options_from_collection_for_select(Scene.all, :id, :name, @workspace.scene.id) %>
   </div>
 
   <div class="actions">
