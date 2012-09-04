@@ -12,7 +12,7 @@
 
 <% @workspaces.each do |workspace| %>
   <tr>
-    <td><%= workspace.user_id %></td>
+    <td><%= workspace.user.first_name %></td>
     <td><%= workspace.scene.name %></td>
     <td><%= workspace.proxy %></td>
     <td><%= link_to 'Show', workspace %></td>

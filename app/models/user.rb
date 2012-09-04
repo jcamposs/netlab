@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   has_many :scenes, dependent: :destroy
+  has_many :workspaces
 
   validates :first_name, :last_name, presence: true
 

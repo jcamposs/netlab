@@ -49,7 +49,7 @@ class WorkspacesController < ApplicationController
     @user = current_user
     @scene = Scene.find(params[:workspace][:scene_id])
     @workspace = @scene.workspaces.build(params[:workspace])
-    @workspace.user_id = @user.id
+    @workspace.user = @user
 
     respond_to do |format|
       if @workspace.save
