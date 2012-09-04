@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120903084936) do
+ActiveRecord::Schema.define(:version => 20120904104247) do
 
   create_table "scenes", :force => true do |t|
     t.integer  "user_id"
@@ -53,6 +53,7 @@ ActiveRecord::Schema.define(:version => 20120903084936) do
     t.string   "proxy"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.string   "name"
   end
 
 end
