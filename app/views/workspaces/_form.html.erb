@@ -20,7 +20,13 @@
 
   <div class="field">
     <%= f.label :scene %><br />
-    <%= f.select :scene_id, options_from_collection_for_select(Scene.all, :id, :name, @workspace.scene.id) %>
+
+    <% if @workspace.scene %>
+      <%= f.select :scene_id, options_from_collection_for_select(Scene.all, :id, :name, @workspace.scene.id) %>
+    <% else %>
+      <%= f.select :scene_id, options_from_collection_for_select(Scene.all, :id, :name) %>
+    <% end %>
+
   </div>
 
   <div class="actions">
