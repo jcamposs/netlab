@@ -12,6 +12,13 @@
   <% end %>
 
   <div class="field">
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </div>
+
+  <%= render 'scenes/netwidget' %>
+
+  <div class="field">
     <%= f.label :scene %><br />
     <%= f.select :scene_id, options_from_collection_for_select(Scene.all, :id, :name), :selected => :scene_id %>
   </div>

@@ -2,6 +2,7 @@
 
 <table>
   <tr>
+    <th>Name</th>
     <th>User</th>
     <th>Scene</th>
     <th>Proxy</th>
@@ -12,6 +13,7 @@
 
 <% @workspaces.each do |workspace| %>
   <tr>
+    <td><%= workspace.name %></td>
     <td><%= workspace.user.first_name %></td>
     <td><%= workspace.scene.name %></td>
     <td><%= workspace.proxy %></td>
