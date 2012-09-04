@@ -41,6 +41,10 @@ class WorkspacesController < ApplicationController
   # GET /workspaces/1/edit
   def edit
     @workspace = Workspace.find(params[:id])
+    @module = 'Desktop'
+    @width = 600
+    @height = 500
+    @mode = "view"
   end
 
   # POST /workspaces
