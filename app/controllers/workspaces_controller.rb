@@ -1,4 +1,6 @@
 class WorkspacesController < ApplicationController
+  before_filter :authenticate_user!
+
   # GET /workspaces
   # GET /workspaces.json
   def index
