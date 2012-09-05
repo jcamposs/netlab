@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120904104247) do
+ActiveRecord::Schema.define(:version => 20120905131851) do
 
   create_table "scenes", :force => true do |t|
     t.integer  "user_id"
@@ -46,6 +46,14 @@ ActiveRecord::Schema.define(:version => 20120904104247) do
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+
+  create_table "virtual_machines", :force => true do |t|
+    t.integer  "workspace_id"
+    t.string   "name"
+    t.string   "type"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
 
   create_table "workspaces", :force => true do |t|
     t.integer  "user_id"
