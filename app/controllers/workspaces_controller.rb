@@ -64,15 +64,22 @@ class WorkspacesController < ApplicationController
     @height = 500
     @mode = "view"
 
+    gen_schema
+
     respond_to do |format|
-      if @workspace.save
-        format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
-        format.json { render json: @workspace, status: :created, location: @workspace }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @workspace.errors, status: :unprocessable_entity }
-      end
+      format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
+      format.json { render json: @workspace, status: :created, location: @workspace }
     end
+
+#    respond_to do |format|
+#      if @workspace.save
+#        format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
+#        format.json { render json: @workspace, status: :created, location: @workspace }
+#      else
+#        format.html { render action: "new" }
+#        format.json { render json: @workspace.errors, status: :unprocessable_entity }
+#      end
+#    end
   end
 
   # PUT /workspaces/1
@@ -100,6 +107,23 @@ class WorkspacesController < ApplicationController
     respond_to do |format|
       format.html { redirect_to workspaces_url }
       format.json { head :no_content }
+    end
+  end
+
+  def gen_schema
+    definition = JSON.parse @workspace.scene.definition
+    nodes = definition["nodes"]
+
+    Workspace.transaction do
+      @workspace.save!
+
+      nodes.each do |node|
+        virtual_machine = VirtualMachine.new(
+#          node_type: node["type"]
+          name: node["name"])
+        virtual_machine.workspace = @workspace
+        virtual_machine.save!
+      end
     end
   end
 end
