@@ -128,6 +128,15 @@ class WorkspacesController < ApplicationController
       definition["connections"].each do |conn|
         vm1 = VirtualMachine.find_by_name_and_workspace_id(conn["node1"]["name"], @workspace.id)
         vm2 = VirtualMachine.find_by_name_and_workspace_id(conn["node2"]["name"], @workspace.id)
+        iface1 = Interface.new(
+          name: conn["node1"]["iface"])
+        iface1.virtual_machine = vm1
+        iface1.save!
+
+        iface2 = Interface.new(
+          name: conn["node2"]["iface"])
+        iface2.virtual_machine = vm2
+        iface2.save!
       end
     end
   end
