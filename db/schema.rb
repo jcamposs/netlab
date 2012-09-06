@@ -11,7 +11,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120906084054) do
+ActiveRecord::Schema.define(:version => 20120906095205) do
+
+  create_table "interfaces", :force => true do |t|
+    t.integer  "virtual_machine_id"
+    t.string   "name"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
 
   create_table "scenes", :force => true do |t|
     t.integer  "user_id"
