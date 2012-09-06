@@ -112,17 +112,22 @@ class WorkspacesController < ApplicationController
 
   def gen_schema
     definition = JSON.parse @workspace.scene.definition
-    nodes = definition["nodes"]
 
     Workspace.transaction do
       @workspace.save!
 
-      nodes.each do |node|
+      definition["nodes"].each do |node|
+        #TODO: Check if this node is in the data base already and throw exception
         virtual_machine = VirtualMachine.new(
           node_type: node["type"],
           name: node["name"])
         virtual_machine.workspace = @workspace
         virtual_machine.save!
+      end
+
+      definition["connections"].each do |conn|
+        vm1 = VirtualMachine.find_by_name_and_workspace_id(conn["node1"]["name"], @workspace.id)
+        vm2 = VirtualMachine.find_by_name_and_workspace_id(conn["node2"]["name"], @workspace.id)
       end
     end
   end
