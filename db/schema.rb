@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120906131953) do
+ActiveRecord::Schema.define(:version => 20120906133436) do
 
   create_table "collision_domains", :force => true do |t|
     t.string   "name"
@@ -22,8 +22,9 @@ ActiveRecord::Schema.define(:version => 20120906131953) do
   create_table "interfaces", :force => true do |t|
     t.integer  "virtual_machine_id"
     t.string   "name"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
+    t.integer  "collision_domain_id"
   end
 
   create_table "scenes", :force => true do |t|
