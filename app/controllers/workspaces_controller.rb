@@ -119,7 +119,7 @@ class WorkspacesController < ApplicationController
 
       nodes.each do |node|
         virtual_machine = VirtualMachine.new(
-#          node_type: node["type"]
+          node_type: node["type"],
           name: node["name"])
         virtual_machine.workspace = @workspace
         virtual_machine.save!
