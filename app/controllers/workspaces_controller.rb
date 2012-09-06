@@ -110,33 +110,57 @@ class WorkspacesController < ApplicationController
     end
   end
 
+  def create_iface(node, collision_domain)
+    vm = VirtualMachine.find_by_name_and_workspace_id(node["name"], @workspace.id)
+    iface = Interface.new(
+      name: node["iface"])
+    iface.virtual_machine = vm
+    iface.collision_domain = collision_domain
+    iface
+  end
+
   def gen_schema
     definition = JSON.parse @workspace.scene.definition
+    collision_domains = {}
 
     Workspace.transaction do
       @workspace.save!
 
       definition["nodes"].each do |node|
-        #TODO: Check if this node is in the data base already and throw exception
-        virtual_machine = VirtualMachine.new(
-          node_type: node["type"],
-          name: node["name"])
-        virtual_machine.workspace = @workspace
-        virtual_machine.save!
+
+        case node["type"]
+        when "hub"
+          if collision_domains[node["name"]] == nil
+            domain = CollisionDomain.new
+            domain.save!
+            collision_domains[node["name"]] = domain
+          end
+        when "pc", "router", "switch"
+          #TODO: Check if this node is in the data base already and throw exception
+          virtual_machine = VirtualMachine.new(
+            node_type: node["type"],
+            name: node["name"])
+          virtual_machine.workspace = @workspace
+          virtual_machine.save!
+        end
       end
 
       definition["connections"].each do |conn|
-        vm1 = VirtualMachine.find_by_name_and_workspace_id(conn["node1"]["name"], @workspace.id)
-        vm2 = VirtualMachine.find_by_name_and_workspace_id(conn["node2"]["name"], @workspace.id)
-        iface1 = Interface.new(
-          name: conn["node1"]["iface"])
-        iface1.virtual_machine = vm1
-        iface1.save!
+        if collision_domains[conn["node1"]["name"]] != nil
+          iface = create_iface(conn["node2"], collision_domains[conn["node1"]["name"]])
+          iface.save!
+        elsif collision_domains[conn["node2"]["name"]] != nil
+          iface = create_iface(conn["node1"], collision_domains[conn["node2"]["name"]])
+          iface.save!
+        else
+          collision_domain = CollisionDomain.new
+          collision_domain.save!
 
-        iface2 = Interface.new(
-          name: conn["node2"]["iface"])
-        iface2.virtual_machine = vm2
-        iface2.save!
+          iface1 = create_iface(conn["node1"], collision_domain)
+          iface1.save!
+          iface2 = create_iface(conn["node2"], collision_domain)
+          iface2.save!
+        end
       end
     end
   end
