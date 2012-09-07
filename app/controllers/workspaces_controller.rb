@@ -119,9 +119,18 @@ class WorkspacesController < ApplicationController
     iface
   end
 
+  def create_collision_domain lan_id
+    collision_domain = CollisionDomain.new
+    collision_domain.workspace = @workspace
+    collision_domain.name = "wk#{@workspace.id}cd#{lan_id[:id]}"
+    lan_id[:id] = lan_id[:id] + 1
+    collision_domain
+  end
+
   def gen_schema
     definition = JSON.parse @workspace.scene.definition
     collision_domains = {}
+    lan_id = { id: 0}
 
     Workspace.transaction do
       @workspace.save!
@@ -131,9 +140,8 @@ class WorkspacesController < ApplicationController
         case node["type"]
         when "hub"
           if collision_domains[node["name"]] == nil
-            domain = CollisionDomain.new
-            domain.save!
-            collision_domains[node["name"]] = domain
+            collision_domains[node["name"]] = create_collision_domain lan_id
+            collision_domains[node["name"]].save!
           end
         when "pc", "router", "switch"
           #TODO: Check if this node is in the data base already and throw exception
@@ -153,7 +161,7 @@ class WorkspacesController < ApplicationController
           iface = create_iface(conn["node1"], collision_domains[conn["node2"]["name"]])
           iface.save!
         else
-          collision_domain = CollisionDomain.new
+          collision_domain = create_collision_domain lan_id
           collision_domain.save!
 
           iface1 = create_iface(conn["node1"], collision_domain)
