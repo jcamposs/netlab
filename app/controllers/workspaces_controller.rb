@@ -64,22 +64,16 @@ class WorkspacesController < ApplicationController
     @height = 500
     @mode = "view"
 
-    gen_schema
-
     respond_to do |format|
-      format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
-      format.json { render json: @workspace, status: :created, location: @workspace }
+      begin
+        gen_schema
+        format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
+        format.json { render json: @workspace, status: :created, location: @workspace }
+      rescue
+        format.html { render action: "new" }
+        format.json { render json: @workspace.errors, status: :unprocessable_entity }
+      end
     end
-
-#    respond_to do |format|
-#      if @workspace.save
-#        format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
-#        format.json { render json: @workspace, status: :created, location: @workspace }
-#      else
-#        format.html { render action: "new" }
-#        format.json { render json: @workspace.errors, status: :unprocessable_entity }
-#      end
-#    end
   end
 
   # PUT /workspaces/1
