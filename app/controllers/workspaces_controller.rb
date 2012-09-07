@@ -106,6 +106,11 @@ class WorkspacesController < ApplicationController
 
   def create_iface(node, collision_domain)
     vm = VirtualMachine.find_by_name_and_workspace_id(node["name"], @workspace.id)
+    if vm == nil
+      @workspace.errors.add(:base, "Corrupted stage: Connection with an undefined node \"#{node["name"]}\"")
+      raise
+    end
+
     iface = Interface.new(
       name: node["iface"])
     iface.virtual_machine = vm
@@ -121,6 +126,19 @@ class WorkspacesController < ApplicationController
     collision_domain
   end
 
+  def raise_error_if_exists(node, collision_domains)
+    if node["type"] == "hub"
+      vm = collision_domains[node["name"]]
+    else
+      vm = VirtualMachine.find_by_name_and_workspace_id(node["name"], @workspace.id)
+    end
+
+    return if (vm == nil)
+
+    @workspace.errors.add(:base, "Corrupted stage: Node \"#{node["name"]}\" is not unique")
+    raise
+  end
+
   def gen_schema
     definition = JSON.parse @workspace.scene.definition
     collision_domains = {}
@@ -130,20 +148,21 @@ class WorkspacesController < ApplicationController
       @workspace.save!
 
       definition["nodes"].each do |node|
+        raise_error_if_exists(node, collision_domains)
 
         case node["type"]
         when "hub"
-          if collision_domains[node["name"]] == nil
-            collision_domains[node["name"]] = create_collision_domain lan_id
-            collision_domains[node["name"]].save!
-          end
+          collision_domains[node["name"]] = create_collision_domain lan_id
+          collision_domains[node["name"]].save!
         when "pc", "router", "switch"
-          #TODO: Check if this node is in the data base already and throw exception
           virtual_machine = VirtualMachine.new(
             node_type: node["type"],
             name: node["name"])
           virtual_machine.workspace = @workspace
           virtual_machine.save!
+        else
+          @workspace.errors.add(:base, "Corrupted stage: Node \"#{node["name"]}\" has an unprocessable type \"#{node["type"]}\"")
+          raise
         end
       end
 
