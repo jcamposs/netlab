@@ -11,12 +11,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120906133436) do
+ActiveRecord::Schema.define(:version => 20120907081726) do
 
   create_table "collision_domains", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+    t.integer  "workspace_id"
   end
 
   create_table "interfaces", :force => true do |t|
