@@ -42,6 +42,20 @@ class WorkspacesController < ApplicationController
     end
   end
 
+  # GET /workspaces/1/manage
+  def manage
+    @workspace = Workspace.find(params[:id])
+    @module = 'Desktop'
+    @width = 600
+    @height = 500
+    @mode = "view"
+
+    respond_to do |format|
+      format.html # manage.html.erb
+      format.json { render json: @workspace }
+    end
+  end
+
   # GET /workspaces/1/edit
   def edit
     @workspace = Workspace.find(params[:id])

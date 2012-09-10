@@ -16,6 +16,7 @@
     <td><%= workspace.user.first_name %></td>
     <td><%= workspace.scene.name %></td>
     <td><%= link_to 'Show', workspace %></td>
+    <td><%= link_to 'Manage', manage_workspace_path(workspace) %></td>
     <td><%= link_to 'Edit', edit_workspace_path(workspace) %></td>
     <td><%= link_to 'Destroy', workspace, confirm: 'Are you sure?', method: :delete %></td>
   </tr>

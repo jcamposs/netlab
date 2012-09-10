@@ -1,4 +1,10 @@
 Netlab::Application.routes.draw do
+  resources :workspaces do
+    member do
+      get 'manage'
+    end
+  end
+
   resources :workspaces
 
   resources :scenes do
