@@ -59,6 +59,9 @@ class WorkspacesController < ApplicationController
     @workspace = @scene.workspaces.build(params[:workspace])
     @workspace.user = @user
 
+    # TODO: Set proper proxy
+    @workspace.proxy = "193.147.51.218"
+
     @module = 'Desktop'
     @width = 600
     @height = 500
