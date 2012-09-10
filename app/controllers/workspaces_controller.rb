@@ -44,8 +44,9 @@ class WorkspacesController < ApplicationController
 
   #PUT /workspaces/1/start
   def start
-    @vm = VirtualMachine.find(params[:virtual_machine_id])
-    #TODO: Start this virtual machine
+    virtual_machines = [params[:virtual_machine_id]]
+    #TODO: Send request to the proxy
+    cmd = generate_start_cmd virtual_machines
   end
 
   # GET /workspaces/1/manage
@@ -207,5 +208,32 @@ class WorkspacesController < ApplicationController
         end
       end
     end
+  end
+
+  def generate_start_cmd virtual_machines
+    cmd = {}
+    cmd[:user] = current_user.id
+    #TODO: Implement groups
+    cmd[:group] = 1
+    cmd[:parameters] = []
+
+    virtual_machines.each do |id|
+      vm = VirtualMachine.find(id)
+      node = {
+        :name => vm.name,
+        :type => vm.node_type,
+        :network => []
+      }
+
+      Interface.find_all_by_virtual_machine_id(id).each do |iface|
+        node[:network].push({
+          :interface => iface.name,
+          :collision_domain => iface.collision_domain.name
+        })
+      end
+
+      cmd[:parameters].push(node)
+    end
+    cmd.to_json
   end
 end
