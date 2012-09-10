@@ -1,0 +1,18 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @workspace.name %>
+</p>
+
+<%= hidden_field_tag 'workspace_scene_id', @workspace.scene.id %>
+
+<%= render 'scenes/netwidget' %>
+
+<%= form_tag(start_workspace_path(@workspace), :method => :put) do %>
+  <%= label_tag "Virtual machine:" %>
+  <%= select_tag "virtual_machine_id", options_from_collection_for_select(VirtualMachine.find_all_by_workspace_id(@workspace.id), :id, :name) %>
+  <%= submit_tag "Manage" %>
+<% end %>
+
+<%= link_to 'Back', workspaces_path %>

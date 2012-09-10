@@ -42,6 +42,12 @@ class WorkspacesController < ApplicationController
     end
   end
 
+  #PUT /workspaces/1/start
+  def start
+    @vm = VirtualMachine.find(params[:virtual_machine_id])
+    #TODO: Start this virtual machine
+  end
+
   # GET /workspaces/1/manage
   def manage
     @workspace = Workspace.find(params[:id])
