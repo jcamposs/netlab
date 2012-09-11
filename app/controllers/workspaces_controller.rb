@@ -240,4 +240,15 @@ class WorkspacesController < ApplicationController
     end
     cmd.to_json
   end
+
+  def generate_stop_cmd virtual_machines
+    cmd = gen_cmd_header
+
+    virtual_machines.each do |id|
+      vm = VirtualMachine.find(id)
+      cmd[:parameters].push({ :name => vm.name })
+    end
+
+    cmd.to_json
+  end
 end
