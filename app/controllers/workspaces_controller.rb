@@ -44,10 +44,17 @@ class WorkspacesController < ApplicationController
 
   #PUT /workspaces/1/start
   def start
-    @workspace = Workspace.find(params[:id])
-    virtual_machines = [params[:virtual_machine_id]]
-    #TODO: Send request to the proxy
-    cmd = generate_start_cmd virtual_machines
+    respond_to do |format|
+      begin
+        @workspace = Workspace.find(params[:id])
+        virtual_machines = [params[:virtual_machine_id]]
+        #TODO: Send request to the proxy
+        cmd = generate_start_cmd virtual_machines
+        format.js { render :nothing => true }
+      rescue
+        format.js { render :nothing => true, status: :unprocessable_entity }
+      end
+    end
   end
 
   #PUT /workspaces/1/stop
@@ -56,6 +63,14 @@ class WorkspacesController < ApplicationController
     virtual_machines = [params[:virtual_machine_id]]
     #TODO: Send request to the proxy
     cmd = generate_stop_cmd virtual_machines
+  end
+
+  #POST /workspaces/1/configure
+  #AJAX to manipulate virtual machine stuff
+  def configure
+    respond_to do |format|
+      format.js
+    end
   end
 
   # GET /workspaces/1/manage
