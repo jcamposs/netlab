@@ -44,6 +44,7 @@ class WorkspacesController < ApplicationController
 
   #PUT /workspaces/1/start
   def start
+    @workspace = Workspace.find(params[:id])
     virtual_machines = [params[:virtual_machine_id]]
     #TODO: Send request to the proxy
     cmd = generate_start_cmd virtual_machines
@@ -210,12 +211,15 @@ class WorkspacesController < ApplicationController
     end
   end
 
-  def generate_start_cmd virtual_machines
+  def gen_cmd_header
     cmd = {}
-    cmd[:user] = current_user.id
-    #TODO: Implement groups
-    cmd[:group] = 1
+    cmd[:workspace] = @workspace.name
     cmd[:parameters] = []
+    cmd
+  end
+
+  def generate_start_cmd virtual_machines
+    cmd = gen_cmd_header
 
     virtual_machines.each do |id|
       vm = VirtualMachine.find(id)
