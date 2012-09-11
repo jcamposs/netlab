@@ -50,6 +50,14 @@ class WorkspacesController < ApplicationController
     cmd = generate_start_cmd virtual_machines
   end
 
+  #PUT /workspaces/1/stop
+  def stop
+    @workspace = Workspace.find(params[:id])
+    virtual_machines = [params[:virtual_machine_id]]
+    #TODO: Send request to the proxy
+    cmd = generate_stop_cmd virtual_machines
+  end
+
   # GET /workspaces/1/manage
   def manage
     @workspace = Workspace.find(params[:id])

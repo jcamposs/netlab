@@ -3,6 +3,7 @@ Netlab::Application.routes.draw do
     member do
       get 'manage'
       put 'start'
+      put 'stop'
     end
   end
 
