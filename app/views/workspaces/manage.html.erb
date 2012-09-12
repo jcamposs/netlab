@@ -10,7 +10,7 @@
 <%= render 'scenes/netwidget' %>
 
 <%= label_tag "Virtual machine:" %>
-<%= select_tag "virtual_machine_id", options_from_collection_for_select(VirtualMachine.find_all_by_workspace_id(@workspace.id), :id, :name) %>
+<%= select_tag "virtual_machine", options_from_collection_for_select(VirtualMachine.find_all_by_workspace_id(@workspace.id), :name, :name) %>
 <%= button_to "Manage", configure_workspace_path(@workspace), :remote => true %>
 
 <%= link_to 'Back', workspaces_path %>

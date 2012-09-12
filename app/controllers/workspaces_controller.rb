@@ -47,9 +47,8 @@ class WorkspacesController < ApplicationController
     respond_to do |format|
       begin
         @workspace = Workspace.find(params[:id])
-        virtual_machines = [params[:virtual_machine_id]]
         #TODO: Send request to the proxy
-        cmd = generate_start_cmd virtual_machines
+        cmd = generate_start_cmd params[:virtual_machines]
         format.js { render :nothing => true }
       rescue
         format.js { render :nothing => true, status: :unprocessable_entity }
@@ -60,9 +59,8 @@ class WorkspacesController < ApplicationController
   #PUT /workspaces/1/stop
   def stop
     @workspace = Workspace.find(params[:id])
-    virtual_machines = [params[:virtual_machine_id]]
     #TODO: Send request to the proxy
-    cmd = generate_stop_cmd virtual_machines
+    cmd = generate_stop_cmd params[:virtual_machines]
   end
 
   #POST /workspaces/1/configure
@@ -244,15 +242,15 @@ class WorkspacesController < ApplicationController
   def generate_start_cmd virtual_machines
     cmd = gen_cmd_header
 
-    virtual_machines.each do |id|
-      vm = VirtualMachine.find(id)
+    virtual_machines.each do |name|
+      vm = VirtualMachine.find_by_name_and_workspace_id(name, @workspace.id)
       node = {
         :name => vm.name,
         :type => vm.node_type,
         :network => []
       }
 
-      Interface.find_all_by_virtual_machine_id(id).each do |iface|
+      Interface.find_all_by_virtual_machine_id(vm.id).each do |iface|
         node[:network].push({
           :interface => iface.name,
           :collision_domain => iface.collision_domain.name
@@ -267,8 +265,8 @@ class WorkspacesController < ApplicationController
   def generate_stop_cmd virtual_machines
     cmd = gen_cmd_header
 
-    virtual_machines.each do |id|
-      vm = VirtualMachine.find(id)
+    virtual_machines.each do |name|
+      vm = VirtualMachine.find_by_name_and_workspace_id(name, @workspace.id)
       cmd[:parameters].push({ :name => vm.name })
     end
 
