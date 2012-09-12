@@ -150,6 +150,7 @@ class WorkspacesController < ApplicationController
     end
   end
 
+  private
   def create_iface(node, collision_domain)
     vm = VirtualMachine.find_by_name_and_workspace_id(node["name"], @workspace.id)
     if vm == nil
