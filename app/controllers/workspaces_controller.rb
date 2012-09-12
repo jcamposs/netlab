@@ -1,5 +1,13 @@
 class WorkspacesController < ApplicationController
-  before_filter :authenticate_user!
+  before_filter :authenticate_user!, :confWidget
+
+  def confWidget
+    #TODO: Choose the widget that fits better in user's device screen
+    @module = 'Desktop'
+    @width = 600
+    @height = 500
+    @mode = "view"
+  end
 
   # GET /workspaces
   # GET /workspaces.json
@@ -16,10 +24,6 @@ class WorkspacesController < ApplicationController
   # GET /workspaces/1.json
   def show
     @workspace = Workspace.find(params[:id])
-    @module = 'Desktop'
-    @width = 600
-    @height = 500
-    @mode = "view"
 
     respond_to do |format|
       format.html # show.html.erb
@@ -31,10 +35,6 @@ class WorkspacesController < ApplicationController
   # GET /workspaces/new.json
   def new
     @workspace = Workspace.new
-    @module = 'Desktop'
-    @width = 600
-    @height = 500
-    @mode = "view"
 
     respond_to do |format|
       format.html # new.html.erb
@@ -74,10 +74,6 @@ class WorkspacesController < ApplicationController
   # GET /workspaces/1/manage
   def manage
     @workspace = Workspace.find(params[:id])
-    @module = 'Desktop'
-    @width = 600
-    @height = 500
-    @mode = "view"
 
     respond_to do |format|
       format.html # manage.html.erb
@@ -88,10 +84,6 @@ class WorkspacesController < ApplicationController
   # GET /workspaces/1/edit
   def edit
     @workspace = Workspace.find(params[:id])
-    @module = 'Desktop'
-    @width = 600
-    @height = 500
-    @mode = "view"
   end
 
   # POST /workspaces
@@ -104,11 +96,6 @@ class WorkspacesController < ApplicationController
 
     # TODO: Set proper proxy
     @workspace.proxy = "193.147.51.218"
-
-    @module = 'Desktop'
-    @width = 600
-    @height = 500
-    @mode = "view"
 
     respond_to do |format|
       begin
