@@ -227,7 +227,7 @@ class WorkspacesController < ApplicationController
 
   def gen_cmd_header
     cmd = {}
-    cmd[:workspace] = @workspace.name
+    cmd[:workspace] = @workspace.id
     cmd[:parameters] = []
     cmd
   end
