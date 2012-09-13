@@ -1,3 +1,6 @@
+require 'net/http'
+require 'net/https'
+
 class WorkspacesController < ApplicationController
   before_filter :authenticate_user!, :confWidget
 
@@ -49,6 +52,8 @@ class WorkspacesController < ApplicationController
         @workspace = Workspace.find(params[:id])
         #TODO: Send request to the proxy
         cmd = generate_start_cmd params[:virtual_machines]
+        send_cmd(cmd, "/virtual_machine/start")
+
         format.js { render :nothing => true }
       rescue
         format.js { render :nothing => true, status: :unprocessable_entity }
@@ -259,5 +264,17 @@ class WorkspacesController < ApplicationController
     end
 
     cmd.to_json
+  end
+
+  def send_cmd(cmd, path)
+    uri = URI.parse("https://localhost:4000" + path)
+    https = Net::HTTP.new(uri.host,uri.port)
+    https.ca_file = "/home/sancane/project/webnetlab/netproxy/keys/final.crt"
+    https..verify_mode = OpenSSL::SSL::VERIFY_PEER
+    https.use_ssl = true
+    req = Net::HTTP::Post.new(uri.path)
+    req.body = cmd
+    res = https.request(req)
+    #puts "__________________________Response #{res.code}"
   end
 end
