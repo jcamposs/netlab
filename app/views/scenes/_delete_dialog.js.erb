@@ -12,7 +12,10 @@
             url: '<%= scene_path(@scene) %>',
             type: 'post',
             dataType: 'script',
-            data: { '_method': 'delete' },
+            data: {
+              '_method': 'delete',
+              'authenticity_token': '<%= form_authenticity_token %>'
+            },
             success: function() {
               window.location.href = "<%= scenes_path %>";
             },
