@@ -275,6 +275,10 @@ class WorkspacesController < ApplicationController
     req = Net::HTTP::Post.new(uri.path, initheader = {'Content-Type' =>'application/json'})
     req.body = cmd
     res = https.request(req)
-    #puts "__________________________Response #{res.code}"
+
+    raise unless res.kind_of? Net::HTTPSuccess
+
+    puts "__________________________Response #{res.code}"
+    puts "__________________________Response #{res.body}"
   end
 end
