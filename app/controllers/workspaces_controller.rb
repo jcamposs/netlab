@@ -52,11 +52,11 @@ class WorkspacesController < ApplicationController
         @workspace = Workspace.find(params[:id])
         #TODO: Send request to the proxy
         cmd = generate_start_cmd params[:virtual_machines]
-        send_cmd(cmd, "/virtual_machine/start")
+        reply = send_cmd(cmd, "/virtual_machine/start")
+        format.json { render json: '{ "pc0" : { "status" : "error", "cause" : "Can not start virtual machine" } }' }
 
-        format.js { render :nothing => true }
       rescue
-        format.js { render :nothing => true, status: :unprocessable_entity }
+        format.json { render :nothing => true, status: :unprocessable_entity }
       end
     end
   end
