@@ -278,7 +278,6 @@ class WorkspacesController < ApplicationController
 
     raise unless res.kind_of? Net::HTTPSuccess
 
-    puts "__________________________Response #{res.code}"
-    puts "__________________________Response #{res.body}"
+    res.body
   end
 end
