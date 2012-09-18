@@ -15,8 +15,12 @@
       if (!json[virtual_machine])
         return;
 
-      if (json[virtual_machine]["status"] == "error")
+      if (json[virtual_machine]["status"] == "error") {
         alert("Error: " + json[virtual_machine]["cause"]);
+        return;
+      }
+
+      $("#" + virtual_machine).show("fold", null, 1000, null);
     },
     error: function(msg) {
       alert("Something was wrong");
