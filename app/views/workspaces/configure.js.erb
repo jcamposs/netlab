@@ -1,18 +1,22 @@
 (function () {
 
-  var virtual_machines = [$("#virtual_machine").val()];
+  var virtual_machine = $("#virtual_machine").val();
 
   $.ajax({
     url: '<%= start_workspace_path(@workspace) %>',
     type: 'post',
-    dataType: 'script',
+    dataType: 'json',
     data: {
       '_method': 'put',
       'authenticity_token': '<%= form_authenticity_token %>',
-      'virtual_machines': virtual_machines
+      'virtual_machines': [ virtual_machine ]
     },
-    success: function() {
-      alert("TODO: Launch Shellinabox");
+    success: function(json) {
+      if (!json[virtual_machine])
+        return;
+
+      if (json[virtual_machine]["status"] == "error")
+        alert("Error: " + json[virtual_machine]["cause"]);
     },
     error: function(msg) {
       alert("Something was wrong");
