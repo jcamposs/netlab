@@ -1,0 +1,25 @@
+<%= javascript_tag do %>
+
+ConsoleControler = (function () {
+  var module = {};
+  var console = null;
+
+  module.manageConsole = function(name) {
+
+    $("#" + name + " div.container").html('<iframe src="//code-opensocial.googleusercontent.com/gadgets/ifr?url=http%3A%2F%2Fshellinabox.googlecode.com%2Fgit%2Fdemo%2Fdemo.xml&amp;parent=%2F%2Fcode.google.com%2Fhosting&amp;container=code" id="gadget0" name="gadget0" frameborder="1" width="720" height="500"></iframe>');
+
+    if (console) {
+      $("#" + console).hide("blind", null, 1000, function() {
+        $("#" + name).show("blind", null, 1000, null);
+      });
+    } else
+      $("#" + name).show("fold", null, 1000, null);
+
+    console = name;
+  };
+
+  return module;
+
+}());
+
+<% end %>

@@ -20,7 +20,7 @@
         return;
       }
 
-      $("#" + virtual_machine).show("fold", null, 1000, null);
+      ConsoleControler.manageConsole(virtual_machine);
     },
     error: function(msg) {
       alert("Something was wrong");
