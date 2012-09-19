@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120919125000) do
+ActiveRecord::Schema.define(:version => 20120919142743) do
 
   create_table "collision_domains", :force => true do |t|
     t.string   "name"
@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(:version => 20120919125000) do
     t.datetime "created_at",                         :null => false
     t.datetime "updated_at",                         :null => false
     t.string   "state",        :default => "halted"
+    t.integer  "port_number",  :default => -1
   end
 
   create_table "workspaces", :force => true do |t|
