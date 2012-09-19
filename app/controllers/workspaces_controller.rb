@@ -53,8 +53,9 @@ class WorkspacesController < ApplicationController
         #TODO: Send request to the proxy
         cmd = generate_start_cmd params[:virtual_machines]
         reply = send_cmd(cmd, "/virtual_machine/start")
-        format.json { render json: reply }
+        res = process_start_reply reply
 
+        format.json { render json: res }
       rescue
         format.json { render :nothing => true, status: :unprocessable_entity }
       end
@@ -279,5 +280,32 @@ class WorkspacesController < ApplicationController
     raise unless res.kind_of? Net::HTTPSuccess
 
     res.body
+  end
+
+  def configure_virtual_machine(name, port)
+    vm = VirtualMachine.find_by_name_and_workspace_id(name, @workspace.id)
+    vm.state = "running"
+    if vm.save
+      puts "TODO: Start shellinabox for virtual machine #{name}"
+    end
+  end
+
+  def process_start_reply(reply)
+    obj = JSON.parse(reply)
+    res = {}
+    obj.keys.each do |name|
+      result = obj[name]
+      if result["status"] == "success"
+        configure_virtual_machine(name, result["port"])
+        res[name] = {
+          "status" => "success",
+          "port" => 9999
+        }
+      else
+        res[name] = obj[name]
+      end
+    end
+
+    res.to_json
   end
 end
