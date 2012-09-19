@@ -285,6 +285,7 @@ class WorkspacesController < ApplicationController
   def configure_virtual_machine(name, port)
     vm = VirtualMachine.find_by_name_and_workspace_id(name, @workspace.id)
     vm.state = "running"
+    vm.port_number = port
     if vm.save
       puts "TODO: Start shellinabox for virtual machine #{name}"
     end
