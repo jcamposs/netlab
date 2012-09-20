@@ -296,6 +296,11 @@ class WorkspacesController < ApplicationController
     proc_id = fork
     if proc_id
       # parent process
+      shell = Shellinabox.new(
+        pid: proc_id,
+        host_ip: Socket.gethostname
+      )
+      shell.save
       Process.detach(proc_id)
       return true
     else
