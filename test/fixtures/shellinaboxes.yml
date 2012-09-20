@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  pid: 1
+  user_id: 1
+  virtual_machine_id: 1
+  host_ip: MyString
+
+two:
+  pid: 1
+  user_id: 1
+  virtual_machine_id: 1
+  host_ip: MyString
