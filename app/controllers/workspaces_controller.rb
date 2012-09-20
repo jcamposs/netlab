@@ -300,6 +300,8 @@ class WorkspacesController < ApplicationController
         pid: proc_id,
         host_ip: Socket.gethostname
       )
+      shell.virtual_machine = vm
+      shell.user = current_user
       shell.save
       Process.detach(proc_id)
       return true
