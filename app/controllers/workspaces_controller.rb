@@ -298,7 +298,7 @@ class WorkspacesController < ApplicationController
       # parent process
       shell = Shellinabox.new(
         pid: proc_id,
-        host_ip: Socket.gethostname
+        host_name: Socket.gethostname
       )
       shell.virtual_machine = vm
       shell.user = current_user
