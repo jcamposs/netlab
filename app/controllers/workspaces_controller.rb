@@ -282,12 +282,25 @@ class WorkspacesController < ApplicationController
     res.body
   end
 
-  def configure_virtual_machine(name, port)
-    vm = VirtualMachine.find_by_name_and_workspace_id(name, @workspace.id)
+  def configure_virtual_machine(vm, port)
+    return false if not vm
+
     vm.state = "running"
     vm.port_number = port
-    if vm.save
-      puts "TODO: Start shellinabox for virtual machine #{name}"
+    vm.save
+  end
+
+  def start_shellinabox vm
+    return false if vm.state == "halted"
+
+    proc_id = fork
+    if proc_id
+      # parent process
+      Process.detach(proc_id)
+      return true
+    else
+      # child
+      exec 'shellinaboxd -t -p 9999 -s /:sancane:sancane:/home/sancane:"telnet gsyc.es 80"'
     end
   end
 
@@ -295,9 +308,11 @@ class WorkspacesController < ApplicationController
     obj = JSON.parse(reply)
     res = {}
     obj.keys.each do |name|
+      vm = VirtualMachine.find_by_name_and_workspace_id(name, @workspace.id)
       result = obj[name]
+
       if result["status"] == "success"
-        configure_virtual_machine(name, result["port"])
+        configure_virtual_machine(vm, result["port"])
         res[name] = {
           "status" => "success",
           "port" => 9999

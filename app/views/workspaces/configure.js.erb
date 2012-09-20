@@ -20,7 +20,10 @@
         return;
       }
 
-      ConsoleControler.manageConsole(virtual_machine);
+      ConsoleControler.manageConsole({
+        name: virtual_machine,
+        port: json[virtual_machine]["port"]
+      });
     },
     error: function(msg) {
       alert("Something was wrong");
