@@ -271,7 +271,7 @@ class WorkspacesController < ApplicationController
     uri = URI.parse("https://localhost:4000#{path}.json")
     https = Net::HTTP.new(uri.host,uri.port)
     https.ca_file = "/home/sancane/project/webnetlab/netproxy/keys/final.crt"
-    https..verify_mode = OpenSSL::SSL::VERIFY_PEER
+    https.verify_mode = OpenSSL::SSL::VERIFY_PEER
     https.use_ssl = true
     req = Net::HTTP::Post.new(uri.path, initheader = {'Content-Type' =>'application/json'})
     req.body = cmd
