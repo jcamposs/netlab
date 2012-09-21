@@ -344,11 +344,25 @@ class WorkspacesController < ApplicationController
       result = obj[name]
 
       if result["status"] == "success"
-        configure_virtual_machine(vm, result["port"])
-        res[name] = {
-          "status" => "success",
-          "port" => 9999
-        }
+        if configure_virtual_machine(vm, result["port"]) and start_shellinabox vm
+          shell = Shellinabox.find_by_user_id_and_virtual_machine_id(current_user.id, vm.id)
+          if shell
+            res[name] = {
+              "status" => "success",
+              "port" => 9999
+            }
+          else
+            res[name] = {
+              "status" => "error",
+              "cause" => "Can not connect remote console"
+            }
+          end
+        else
+          res[name] = {
+            "status" => "error",
+            "cause" => "Can not configure virtual machine"
+          }
+        end
       else
         res[name] = obj[name]
       end
