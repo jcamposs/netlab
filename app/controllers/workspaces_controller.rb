@@ -293,7 +293,10 @@ class WorkspacesController < ApplicationController
   def start_shellinabox vm
     return false if vm.state == "halted"
 
+    port = 9999
+    r, w = IO.pipe
     proc_id = fork
+
     if proc_id
       # parent process
       shell = Shellinabox.new(
@@ -302,12 +305,30 @@ class WorkspacesController < ApplicationController
       )
       shell.virtual_machine = vm
       shell.user = current_user
-      shell.save
+
+      char = "t"
+      char = "f" if not shell.save
+
       Process.detach(proc_id)
-      return true
+      w.putc char
+      r.close
+      w.close
+      return char == "t"
     else
       # child
-      exec 'shellinaboxd -t -p 9999 -s /:sancane:sancane:/home/sancane:"telnet gsyc.es 80"'
+      char = r.getc
+      r.close
+      w.close
+
+      exit 0 if char == "f" #Shellinabox could not be stored in the data base
+
+      begin
+        cmd = "shellinaboxd -t -p #{port}" + ' -s /:sancane:sancane:/home/sancane:"telnet gsyc.es 80"'
+        exec (cmd)
+      rescue
+        shell = Shellinabox.find_by_user_id_virtual_machine_id(curren_user, vm)
+        shell.destroy
+      end
     end
   end
 
