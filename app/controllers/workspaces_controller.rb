@@ -295,37 +295,47 @@ class WorkspacesController < ApplicationController
 
     cmd = "shellinaboxd"
     user = current_user
-    port = 9999
     r, w = IO.pipe
     proc_id = fork
 
     if proc_id
-      # parent process
+      # Reserve a free port by using it, afterwads we will release it
+      # at the time of launching the shellinabox demon. That's not an infallible
+      # fix due to the port can be reassigned to a different process in the
+      # time it is realeased and assigned again.
+      svc = TCPServer.new 0
+      port = svc.addr[1]
+
       shell = Shellinabox.new(
         pid: proc_id,
-        host_name: Socket.gethostname
+        host_name: Socket.gethostname,
+        port_number: port
       )
       shell.virtual_machine = vm
       shell.user = user
 
-      char = "t"
-      char = "f" if not shell.save
+      port = -1 if not shell.save
 
+      # Release the port so that it can be used by shellinabox demon
+      # Note: This port can be reassigned to a diferent process if a context
+      # switch happens altough it's not very likely getting the same port.
+      svc.close
+
+      Marshal.dump(port, w)
       Process.detach(proc_id)
-      w.putc char
       r.close
       w.close
-      return char == "t"
+      return port >= 0
     else
       # child
-      char = r.getc
+      port = Marshal.load r
       r.close
       w.close
 
-      exit 0 if char == "f" #Shellinabox could not be stored in the data base
+      exit 0 if port < 0 #Shellinabox could not be stored in the data base
 
       begin
-        exec cmd, "-t", "-p 9999", '-s /:sancane:sancane:/home/sancane:"telnet gsyc.es 80"'
+        exec cmd, "-t", "-p #{port}", '-s /:sancane:sancane:/home/sancane:"telnet gsyc.es 80"'
       rescue
         puts "Can not execute #{cmd} command"
         shell = Shellinabox.find_by_user_id_and_virtual_machine_id(user.id, vm.id)
