@@ -43,3 +43,6 @@ gem "jquery-ui-themes", "~> 0.0.7"
 
 # Adde devise
 gem 'devise'
+
+# Add bindata
+gem 'bindata'
