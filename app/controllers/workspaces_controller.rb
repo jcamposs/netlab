@@ -293,6 +293,8 @@ class WorkspacesController < ApplicationController
   def start_shellinabox vm
     return false if vm.state == "halted"
 
+    cmd = "shellinaboxd"
+    user = current_user
     port = 9999
     r, w = IO.pipe
     proc_id = fork
@@ -304,7 +306,7 @@ class WorkspacesController < ApplicationController
         host_name: Socket.gethostname
       )
       shell.virtual_machine = vm
-      shell.user = current_user
+      shell.user = user
 
       char = "t"
       char = "f" if not shell.save
@@ -323,11 +325,13 @@ class WorkspacesController < ApplicationController
       exit 0 if char == "f" #Shellinabox could not be stored in the data base
 
       begin
-        cmd = "shellinaboxd -t -p #{port}" + ' -s /:sancane:sancane:/home/sancane:"telnet gsyc.es 80"'
-        exec (cmd)
+        exec cmd, "-t", "-p 9999", '-s /:sancane:sancane:/home/sancane:"telnet gsyc.es 80"'
       rescue
-        shell = Shellinabox.find_by_user_id_virtual_machine_id(curren_user, vm)
+        puts "Can not execute #{cmd} command"
+        shell = Shellinabox.find_by_user_id_and_virtual_machine_id(user.id, vm.id)
         shell.destroy
+      ensure
+        exit -1
       end
     end
   end
