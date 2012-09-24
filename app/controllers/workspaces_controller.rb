@@ -101,7 +101,7 @@ class WorkspacesController < ApplicationController
     @workspace.user = @user
 
     # TODO: Set proper proxy
-    @workspace.proxy = "193.147.51.218"
+    @workspace.proxy = Socket.gethostname
 
     respond_to do |format|
       begin
