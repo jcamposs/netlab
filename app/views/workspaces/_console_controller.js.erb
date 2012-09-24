@@ -5,10 +5,12 @@ ConsoleControler = (function () {
   var console = null;
 
   module.manageConsole = function(conf) {
-    var name = conf["name"]
-    var port = conf["port"]
+    var name = conf["name"];
+    var port = conf["port"];
+    var url = "http://localhost:" + port;
+    var html_code = '<iframe src="' + url + '" frameborder="1" width="720" height="500"></iframe>';
 
-    $("#" + name + " div.container").html('<iframe src="//code-opensocial.googleusercontent.com/gadgets/ifr?url=http%3A%2F%2Fshellinabox.googlecode.com%2Fgit%2Fdemo%2Fdemo.xml&amp;parent=%2F%2Fcode.google.com%2Fhosting&amp;container=code" id="gadget0" name="gadget0" frameborder="1" width="720" height="500"></iframe>');
+    $("#" + name + " div.container").html(html_code);
 
     if (console) {
       $("#" + console).hide("blind", null, 1000, function() {
