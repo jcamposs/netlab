@@ -5,21 +5,21 @@ ConsoleControler = (function () {
   var console = null;
 
   module.manageConsole = function(conf) {
-    var name = conf["name"];
-    var port = conf["port"];
-    var url = "http://localhost:" + port;
+    var vm_name = conf["name"];
+    var url = "http://" + conf["host"] + ":" + conf["port"];
+
     var html_code = '<iframe src="' + url + '" frameborder="1" width="720" height="500"></iframe>';
 
-    $("#" + name + " div.container").html(html_code);
+    $("#" + vm_name + " div.container").html(html_code);
 
     if (console) {
       $("#" + console).hide("blind", null, 1000, function() {
-        $("#" + name).show("blind", null, 1000, null);
+        $("#" + vm_name).show("blind", null, 1000, null);
       });
     } else
-      $("#" + name).show("fold", null, 1000, null);
+      $("#" + vm_name).show("fold", null, 1000, null);
 
-    console = name;
+    console = vm_name;
   };
 
   return module;
