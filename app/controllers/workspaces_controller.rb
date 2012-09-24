@@ -294,7 +294,6 @@ class WorkspacesController < ApplicationController
   def start_shellinabox vm
     return false if vm.state == "halted"
 
-    cmd = "shellinaboxd"
     user = current_user
     r, w = IO.pipe
     proc_id = fork
@@ -336,9 +335,10 @@ class WorkspacesController < ApplicationController
       exit 0 if port < 0 #Shellinabox could not be stored in the data base
 
       begin
-        exec cmd, "-t", "-p #{port}", '-s /:sancane:sancane:/home/sancane:"telnet gsyc.es 80"'
-      rescue
-        puts "Can not execute #{cmd} command"
+        svc = "telnet #{vm.workspace.proxy} #{vm.port_number} -l #{user.id}"
+        exec "shellinaboxd", "--disable-ssl", "--port=#{port}", "--service=/:nugana:nugana:/home/nugana:#{svc}"
+      rescue Exception => e
+        puts e.message
         shell = Shellinabox.find_by_user_id_and_virtual_machine_id(user.id, vm.id)
         shell.destroy
       ensure
