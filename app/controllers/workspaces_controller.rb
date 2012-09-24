@@ -270,7 +270,8 @@ class WorkspacesController < ApplicationController
   def send_cmd(cmd, path)
     uri = URI.parse("https://localhost:4000#{path}.json")
     https = Net::HTTP.new(uri.host,uri.port)
-    https.ca_file = "/home/sancane/project/webnetlab/netproxy/keys/final.crt"
+    #TODO: Set a proper certification directory
+    https.ca_file = "/home/nugana/Projects/weblab/netproxy/keys/final.crt"
     https.verify_mode = OpenSSL::SSL::VERIFY_PEER
     https.use_ssl = true
     req = Net::HTTP::Post.new(uri.path, initheader = {'Content-Type' =>'application/json'})
