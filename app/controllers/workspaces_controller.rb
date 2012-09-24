@@ -360,7 +360,7 @@ class WorkspacesController < ApplicationController
           if shell
             res[name] = {
               "status" => "success",
-              "port" => 9999
+              "port" => shell.port_number
             }
           else
             res[name] = {
