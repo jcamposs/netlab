@@ -1,4 +1,7 @@
 Netlab::Application.routes.draw do
+
+  match 'vm_notification/:id/change_state' => 'vm_notification#change_state', :via => :put
+
   resources :workspaces do
     member do
       get 'manage'
