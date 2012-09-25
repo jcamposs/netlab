@@ -286,7 +286,7 @@ class WorkspacesController < ApplicationController
   def configure_virtual_machine(vm, port)
     return false if not vm
 
-    vm.state = "running"
+    vm.state = "booting"
     vm.port_number = port
     vm.save
   end
