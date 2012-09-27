@@ -1,6 +1,6 @@
 class VmNotificationController < ApplicationController
 
-  #PUT /vm_notification/1/change_state
+  #PUT /vm_notification/change_state
   def change_state
     vm = VirtualMachine.find_by_name_and_workspace_id(params["virual_machine"], params["workspace_id"])
     vm.state = params["state"]
