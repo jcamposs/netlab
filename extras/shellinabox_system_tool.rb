@@ -53,4 +53,15 @@ module ShellinaboxSystemTool
       end
     end
   end
+
+  def self.stop(shell)
+    begin
+      puts "Sending signal 'SIGTERM' to shellinaboxd #{shell.pid}"
+      Process.kill("SIGTERM", shell.pid)
+      return true
+    rescue Exception => e
+      puts e.message
+      return false
+    end
+  end
 end
