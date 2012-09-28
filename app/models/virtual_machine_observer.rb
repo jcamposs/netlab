@@ -3,7 +3,7 @@ class VirtualMachineObserver < ActiveRecord::Observer
     if vm.state_changed?
       puts "TODO: Send notification to client side"
       if vm.state_was != "halted" and vm.state == "halted"
-        puts "TODO: Kill shellinabox demons for virtual machine #{vm.name}"
+        Shellinabox.destroy_all(["virtual_machine_id = ?", vm.id])
       end
     end
   end
