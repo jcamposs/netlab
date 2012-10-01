@@ -54,8 +54,8 @@ class WorkspacesController < ApplicationController
         cmd = generate_start_cmd halted
         reply = send_cmd(cmd, "/virtual_machine/start")
         res = process_start_reply reply
-
-        format.json { render json: res }
+        append_running_machines(running, res)
+        format.json { render json: res.to_json }
       rescue
         format.json { render :nothing => true, status: :unprocessable_entity }
       end
@@ -307,6 +307,22 @@ class WorkspacesController < ApplicationController
     vm.save
   end
 
+  def get_shellinabox_conf_obj vm
+    shell = Shellinabox.find_by_user_id_and_virtual_machine_id(current_user.id, vm.id)
+    if shell
+      return {
+        "status" => "success",
+        "host" => shell.host_name,
+        "port" => shell.port_number
+      }
+    else
+      return {
+        "status" => "error",
+        "cause" => "Can not connect remote console"
+      }
+    end
+  end
+
   def process_start_reply(reply)
     obj = JSON.parse(reply)
     res = {}
@@ -315,18 +331,13 @@ class WorkspacesController < ApplicationController
       result = obj[name]
 
       if result["status"] == "success"
-        if configure_virtual_machine(vm, result["port"]) and ShellinaboxSystemTool.start(vm, current_user)
-          shell = Shellinabox.find_by_user_id_and_virtual_machine_id(current_user.id, vm.id)
-          if shell
-            res[name] = {
-              "status" => "success",
-              "host" => shell.host_name,
-              "port" => shell.port_number
-            }
+        if configure_virtual_machine(vm, result["port"])
+          if ShellinaboxSystemTool.start(vm, current_user)
+            res[name] = get_shellinabox_conf_obj vm
           else
             res[name] = {
               "status" => "error",
-              "cause" => "Can not connect remote console"
+              "cause" => "Can not execute remote console"
             }
           end
         else
@@ -340,6 +351,38 @@ class WorkspacesController < ApplicationController
       end
     end
 
-    res.to_json
+    res
+  end
+
+  def append_running_machines(running, res)
+    running.each do |name|
+      vm = VirtualMachine.find_by_name_and_workspace_id(name, @workspace.id)
+      if vm.state != "halted"
+        shell = Shellinabox.find_by_user_id_and_virtual_machine_id(current_user.id, vm.id)
+        if shell
+          res[name] = {
+            "status" => "success",
+            "host" => shell.host_name,
+            "port" => shell.port_number
+          }
+        else
+          if ShellinaboxSystemTool.start(vm, current_user)
+            res[name] = get_shellinabox_conf_obj vm
+          else
+            res[name] = {
+              "status" => "error",
+              "cause" => "Can not execute remote console"
+            }
+          end
+        end
+      else
+        # Virtual machine was halted in the time we received the request to boot
+        # it and proxy answered us.
+        res[name] = {
+          "status" => "error",
+          "cause" => "Virtual machine halted unexpectedly"
+        }
+      end
+    end
   end
 end
