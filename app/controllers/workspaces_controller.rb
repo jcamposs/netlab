@@ -50,8 +50,8 @@ class WorkspacesController < ApplicationController
     respond_to do |format|
       begin
         @workspace = Workspace.find(params[:id])
-        #TODO: Send request to the proxy
-        cmd = generate_start_cmd params[:virtual_machines]
+        running, halted = filter_running_machines params[:virtual_machines]
+        cmd = generate_start_cmd halted
         reply = send_cmd(cmd, "/virtual_machine/start")
         res = process_start_reply reply
 
@@ -265,6 +265,22 @@ class WorkspacesController < ApplicationController
     end
 
     cmd.to_json
+  end
+
+  def filter_running_machines virtual_machines
+    running = []
+    halted = []
+
+    virtual_machines.each do |name|
+      vm = VirtualMachine.find_by_name_and_workspace_id(name, @workspace.id)
+      if vm.state != "halted"
+        running.push name
+      else
+        halted.push name
+      end
+    end
+
+    return [running, halted]
   end
 
   def send_cmd(cmd, path)
