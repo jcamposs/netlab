@@ -64,16 +64,31 @@ class WorkspacesController < ApplicationController
 
   #PUT /workspaces/1/stop
   def stop
-    @workspace = Workspace.find(params[:id])
-    #TODO: Send request to the proxy
-    cmd = generate_stop_cmd params[:virtual_machines]
+    respond_to do |format|
+      begin
+        @workspace = Workspace.find(params[:id])
+        #TODO: Send request to the proxy
+        cmd = generate_stop_cmd params[:virtual_machines]
+        format.json { render :nothing => true }
+      rescue
+        format.json { render :nothing => true, status: :unprocessable_entity }
+      end
+    end
   end
 
   #POST /workspaces/1/configure
   #AJAX to manipulate virtual machine stuff
   def configure
     respond_to do |format|
-      format.js
+      format.js #configure.js.erb
+    end
+  end
+
+  #POST /workspaces/1/halt
+  #AJAX to manipulate virtual machine stuff
+  def halt
+    respond_to do |format|
+      format.js #halt.js.erb
     end
   end
 

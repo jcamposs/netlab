@@ -5,9 +5,11 @@ Netlab::Application.routes.draw do
   resources :workspaces do
     member do
       get 'manage'
-      post 'configure'
       put 'start'
       put 'stop'
+      # Next two routes are just for testing purpose
+      post 'configure'
+      post 'halt'
     end
   end
 
