@@ -290,7 +290,8 @@ class WorkspacesController < ApplicationController
     https.ca_file = "/home/nugana/Projects/weblab/netproxy/keys/final.crt"
     https.verify_mode = OpenSSL::SSL::VERIFY_PEER
     https.use_ssl = true
-    req = Net::HTTP::Post.new(uri.path, initheader = {'Content-Type' =>'application/json'})
+    req = Net::HTTP::Post.new(uri.path)
+    req.content_type = 'application/json'
     req.body = cmd
     res = https.request(req)
 
