@@ -67,8 +67,14 @@ class WorkspacesController < ApplicationController
     respond_to do |format|
       begin
         @workspace = Workspace.find(params[:id])
-        #TODO: Send request to the proxy
-        cmd = generate_stop_cmd params[:virtual_machines]
+        running, halted = filter_running_machines params[:virtual_machines]
+
+        if running.length > 0
+          cmd = generate_stop_cmd running
+          reply = send_cmd(cmd, "/virtual_machine/halt")
+          puts reply
+        end
+
         format.json { render :nothing => true }
       rescue
         format.json { render :nothing => true, status: :unprocessable_entity }
