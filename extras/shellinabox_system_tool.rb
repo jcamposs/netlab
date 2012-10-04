@@ -43,7 +43,7 @@ module ShellinaboxSystemTool
 
       begin
         svc = "telnet #{vm.workspace.proxy} #{vm.port_number} -l #{user.id}"
-        exec "shellinaboxd", "--disable-ssl", "--port=#{port}", "--service=/:#{NetlabConf.user}:#{NetlabConf.user}:HOME:#{svc}"
+        exec "shellinaboxd", "--background", "--disable-ssl", "--port=#{port}", "--service=/:#{NetlabConf.user}:#{NetlabConf.user}:HOME:#{svc}"
       rescue Exception => e
         puts e.message
         shell = Shellinabox.find_by_user_id_and_virtual_machine_id(user.id, vm.id)
