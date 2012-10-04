@@ -59,6 +59,9 @@ module ShellinaboxSystemTool
       puts "Sending signal 'SIGTERM' to shellinaboxd #{shell.pid}"
       Process.kill("SIGTERM", shell.pid)
       return true
+    rescue Errno::ESRCH
+      # Process is not running
+      return true
     rescue Exception => e
       puts e.message
       return false

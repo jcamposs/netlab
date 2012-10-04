@@ -3,6 +3,8 @@ class ShellinaboxObserver < ActiveRecord::Observer
     #TODO: If the demon is running on this machine then we only have to
     # kill it, if not, we must send a request to the machine where the
     #shellinaboxd is runing to tell it to kill the process.
-    ShellinaboxSystemTool.stop(shellinabox)
+    if not ShellinaboxSystemTool.stop(shellinabox)
+      puts "Warning! Process #{shellinabox.pid} unmanaged"
+    end
   end
 end
