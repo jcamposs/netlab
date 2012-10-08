@@ -42,8 +42,17 @@ module ShellinaboxSystemTool
       exit 0 if port < 0 #Shellinabox could not be stored in the data base
 
       begin
+        # service option
         svc = "telnet #{vm.workspace.proxy} #{vm.port_number} -l #{user.id}"
-        exec "shellinaboxd", "--background", "--disable-ssl", "--port=#{port}", "--service=/:#{NetlabConf.user}:#{NetlabConf.user}:HOME:#{svc}"
+        # css options
+        wob = "00_White\ On\ Black.css"
+        bow = "00+Black\ on\ White.css"
+        css_dir = "#{NetlabConf.shellinabox_dir}/options-enabled/"
+        css_ops = "Normal:+#{css_dir}#{wob},Reverse:-#{css_dir}#{bow}"
+
+        exec "shellinaboxd", "--background", "--disable-ssl", "--port=#{port}",
+              "--service=/:#{NetlabConf.user}:#{NetlabConf.user}:HOME:#{svc}",
+              "--user-css=#{css_ops}"
       rescue Exception => e
         puts e.message
         shell = Shellinabox.find_by_user_id_and_virtual_machine_id(user.id, vm.id)
