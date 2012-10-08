@@ -5,4 +5,7 @@ NetlabConf.setup do |config|
   # to launh shellinabox command. By default, user is "netlab", uncomment next
   # ot set a different one.
   # config.user = "netlab"
+
+  #Set the Shellinabox installationm directory
+  # config.shellinabox_dir = "/etc/shellinabox/"
 end
