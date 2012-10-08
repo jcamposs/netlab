@@ -93,6 +93,8 @@ class WorkspacesController < ApplicationController
   #POST /workspaces/1/halt
   #AJAX to manipulate virtual machine stuff
   def halt
+    @workspace = Workspace.find(params[:id])
+
     respond_to do |format|
       format.js #halt.js.erb
     end
