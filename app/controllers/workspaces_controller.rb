@@ -85,6 +85,8 @@ class WorkspacesController < ApplicationController
   #POST /workspaces/1/configure
   #AJAX to manipulate virtual machine stuff
   def configure
+    @workspace = Workspace.find(params[:id])
+
     respond_to do |format|
       format.js #configure.js.erb
     end
