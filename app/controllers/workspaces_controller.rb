@@ -49,11 +49,16 @@ class WorkspacesController < ApplicationController
   def start
     respond_to do |format|
       begin
+        res = {}
         @workspace = Workspace.find(params[:id])
         running, halted = filter_running_machines params[:virtual_machines]
-        cmd = generate_start_cmd halted
-        reply = send_cmd(cmd, "/virtual_machine/start")
-        res = process_start_reply reply
+
+        if halted.length > 0
+          cmd = generate_start_cmd halted
+          reply = send_cmd(cmd, "/virtual_machine/start")
+          res = process_start_reply reply
+        end
+
         append_running_machines(running, res)
         format.json { render json: res.to_json }
       rescue
