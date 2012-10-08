@@ -71,16 +71,18 @@ class WorkspacesController < ApplicationController
   def stop
     respond_to do |format|
       begin
+        res = {}
         @workspace = Workspace.find(params[:id])
         running, halted = filter_running_machines params[:virtual_machines]
 
         if running.length > 0
           cmd = generate_stop_cmd running
           reply = send_cmd(cmd, "/virtual_machine/halt")
-          puts reply
+          res = JSON.parse(reply)
         end
 
-        format.json { render :nothing => true }
+        halted.each { |name| res[name] = { "status" => "success" } }
+        format.json { render json: res.to_json }
       rescue
         format.json { render :nothing => true, status: :unprocessable_entity }
       end
