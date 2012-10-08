@@ -49,8 +49,15 @@ module ShellinaboxSystemTool
         # css options
         wob = "00_White\ On\ Black.css"
         bow = "00+Black\ on\ White.css"
-        css_dir = "#{NetlabConf.shellinabox_dir}/options-enabled/"
-        css_opt = "Normal:+#{css_dir}#{wob},Reverse:-#{css_dir}#{bow}"
+        color = "01+Color\ Terminal.css"
+        monochrome = "01_Monochrome.css"
+
+        enabled_dir = "#{NetlabConf.shellinabox_dir}/options-enabled/"
+
+        css_opt = "Normal:+#{enabled_dir}#{wob},"
+        css_opt += "Reverse:-#{enabled_dir}#{bow};"
+        css_opt += "Color:+#{enabled_dir}#{color},"
+        css_opt += "Monochrome:-#{enabled_dir}#{monochrome}"
 
         exec "shellinaboxd", "--background", "--disable-ssl", "--port=#{port}",
               "--service=#{svc_opt}", "--user-css=#{css_opt}"
