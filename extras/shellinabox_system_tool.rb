@@ -60,7 +60,8 @@ module ShellinaboxSystemTool
         css_opt += "Monochrome:-#{enabled_dir}#{monochrome}"
 
         exec "shellinaboxd", "--background", "--disable-ssl", "--port=#{port}",
-              "--service=#{svc_opt}", "--user-css=#{css_opt}"
+             "--user=#{NetlabConf.user}", "--group=#{NetlabConf.user}",
+             "--service=#{svc_opt}", "--user-css=#{css_opt}"
       rescue Exception => e
         puts e.message
         shell = Shellinabox.find_by_user_id_and_virtual_machine_id(user.id, vm.id)
