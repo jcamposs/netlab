@@ -1,4 +1,28 @@
 module ShellinaboxSystemTool
+
+  def self.exec_shellinabox(user, vm, port)
+    # service option
+    svc = "telnet #{vm.workspace.proxy} #{vm.port_number} -l #{user.id}"
+    svc_opt = "/:#{NetlabConf.user}:#{NetlabConf.user}:HOME:#{svc}"
+
+    # css options
+    wob = "00_White\ On\ Black.css"
+    bow = "00+Black\ on\ White.css"
+    color = "01+Color\ Terminal.css"
+    monochrome = "01_Monochrome.css"
+
+    enabled_dir = "#{NetlabConf.shellinabox_dir}/options-enabled/"
+
+    css_opt = "Normal:+#{enabled_dir}#{wob},"
+    css_opt += "Reverse:-#{enabled_dir}#{bow};"
+    css_opt += "Color:+#{enabled_dir}#{color},"
+    css_opt += "Monochrome:-#{enabled_dir}#{monochrome}"
+
+    exec "shellinaboxd", "--disable-ssl", "--port=#{port}",
+         "--user=#{NetlabConf.user}", "--group=#{NetlabConf.user}",
+         "--service=#{svc_opt}", "--user-css=#{css_opt}"
+  end
+
   def self.start(vm, user)
     return false if vm.state == "halted"
 
@@ -42,26 +66,7 @@ module ShellinaboxSystemTool
       exit 0 if port < 0 #Shellinabox could not be stored in the data base
 
       begin
-        # service option
-        svc = "telnet #{vm.workspace.proxy} #{vm.port_number} -l #{user.id}"
-        svc_opt = "/:#{NetlabConf.user}:#{NetlabConf.user}:HOME:#{svc}"
-
-        # css options
-        wob = "00_White\ On\ Black.css"
-        bow = "00+Black\ on\ White.css"
-        color = "01+Color\ Terminal.css"
-        monochrome = "01_Monochrome.css"
-
-        enabled_dir = "#{NetlabConf.shellinabox_dir}/options-enabled/"
-
-        css_opt = "Normal:+#{enabled_dir}#{wob},"
-        css_opt += "Reverse:-#{enabled_dir}#{bow};"
-        css_opt += "Color:+#{enabled_dir}#{color},"
-        css_opt += "Monochrome:-#{enabled_dir}#{monochrome}"
-
-        exec "shellinaboxd", "--disable-ssl", "--port=#{port}",
-             "--user=#{NetlabConf.user}", "--group=#{NetlabConf.user}",
-             "--service=#{svc_opt}", "--user-css=#{css_opt}"
+        exec_shellinabox(user, vm, port)
       rescue Exception => e
         puts e.message
         shell = Shellinabox.find_by_user_id_and_virtual_machine_id(user.id, vm.id)
