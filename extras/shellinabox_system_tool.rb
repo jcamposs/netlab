@@ -59,7 +59,7 @@ module ShellinaboxSystemTool
         css_opt += "Color:+#{enabled_dir}#{color},"
         css_opt += "Monochrome:-#{enabled_dir}#{monochrome}"
 
-        exec "shellinaboxd", "--background", "--disable-ssl", "--port=#{port}",
+        exec "shellinaboxd", "--disable-ssl", "--port=#{port}",
              "--user=#{NetlabConf.user}", "--group=#{NetlabConf.user}",
              "--service=#{svc_opt}", "--user-css=#{css_opt}"
       rescue Exception => e
