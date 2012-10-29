@@ -265,6 +265,9 @@ var KWidgets = (function () {
     }, config));
 
     var group = that.getNode();
+    var top_limit = that.attrs.y + that.attrs.width;
+    var bottom_limit = that.attrs.y + that.attrs.width + that.attrs.height;
+
     group.setX(that.attrs.x);
     group.setY(that.attrs.y);
 
@@ -298,10 +301,18 @@ var KWidgets = (function () {
       x: -that.attrs.width / 2,
       y: that.attrs.width,
       draggable: true,
-      dragConstraint: "vertical",
-      dragBounds: {
-        top: that.attrs.y + that.attrs.width,
-        bottom: that.attrs.y + that.attrs.width + that.attrs.height
+      dragBoundFunc: function(pos) {
+        var ny = pos.y;
+
+        if (ny <= top_limit)
+          ny = top_limit;
+        else if (ny >= bottom_limit)
+          ny = bottom_limit;
+
+        return {
+          x: this.getAbsolutePosition().x,
+          y: ny
+        };
       }
     });
 
@@ -460,12 +471,10 @@ var KWidgets = (function () {
     sum_button.on("click", function() {
       var pos = zoom_button.getAbsolutePosition();
       var attrs = zoom_button.getAttrs();
-      var limit = attrs["dragBounds"]["top"];
       var y = pos.y - that.attrs.height / that.attrs.sections;
 
-      if (y <= limit) {
-        y = limit;
-      }
+      if (y <= top_limit)
+        y = top_limit;
 
       var init = that.attrs.y + that.attrs.width;
       var percent = (y - init) / that.attrs.height;
@@ -486,11 +495,10 @@ var KWidgets = (function () {
     rest_button.on("click", function() {
       var pos = zoom_button.getAbsolutePosition();
       var attrs = zoom_button.getAttrs();
-      var limit = attrs["dragBounds"]["bottom"];
       var y = pos.y + that.attrs.height / that.attrs.sections;
 
-      if (y >= limit)
-        y = limit;
+      if (y >= bottom_limit)
+        y = bottom_limit;
 
       var init = that.attrs.y + that.attrs.width;
       var percent = (y - init) / that.attrs.height;
