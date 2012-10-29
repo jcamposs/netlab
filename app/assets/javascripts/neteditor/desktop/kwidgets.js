@@ -905,7 +905,7 @@ var KWidgets = (function () {
         var pos = image.getAbsolutePosition();
         item.trigger("dragend", pos);
 
-        item.getNode().remove(image);
+        image.remove();
         that.getNode().getLayer().draw();
       });
     };

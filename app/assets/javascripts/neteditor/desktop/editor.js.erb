@@ -388,7 +388,7 @@ var Desktop = (function () {
         easing: "ease-in-out",
         callback: function () {
           var knode = that.getNode();
-          layers.nodes.remove(knode);
+          knode.remove();
           layers.nodes.draw();
         }
       });
@@ -587,7 +587,7 @@ var Desktop = (function () {
       var eth = that.attrs.labels[ifaceId];
 
       eth.link.unregisterWatcher(eth.watcherId);
-      layers.ifaces.remove(eth.node);
+      eth.node.remove();
       that.superius.removeLink(link);
       delete that.attrs.labels[ifaceId];
       layers.ifaces.draw();
@@ -1232,7 +1232,7 @@ var Desktop = (function () {
       if (!that.attrs.fake_link)
             return;
 
-      layers.wires.remove(that.attrs.fake_link.line);
+      that.attrs.fake_link.line.remove();
       that.attrs.fake_link = null;
       that.attrs._picked = null;
     };
@@ -1242,12 +1242,8 @@ var Desktop = (function () {
       dom.removeEventListener('mousemove', that.attrs.mouseMoveHandler, false);
       document.removeEventListener('keydown', that.attrs.keyDownHandler, false);
 
-      if (!that.attrs.fake_link)
-        return;
+      removeFakeLink();
 
-      layers.wires.remove(that.attrs.fake_link.line);
-      that.attrs.fake_link = null;
-      that.attrs._picked = null;
       layers.wires.draw();
     };
 
@@ -1621,7 +1617,7 @@ var Desktop = (function () {
       nodes.node1.removeLink(link);
       nodes.node2.removeLink(link);
 
-      layers.wires.remove(link.getNode());
+      link.getNode().remove();
       layers.wires.draw();
     };
 
