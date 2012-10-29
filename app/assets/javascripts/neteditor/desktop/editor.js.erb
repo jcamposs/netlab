@@ -367,8 +367,8 @@ var Desktop = (function () {
       cornerRadius: 5
     });
 
-    label.setY(MAX_ICON_SIZE / 2 - label.getBoxHeight() / 2);
-    label.setX(-label.getBoxWidth() / 2);
+    label.setY(MAX_ICON_SIZE / 2 - label.getHeight() / 2);
+    label.setX(-label.getWidth() / 2);
 
     group.add(label);
     group.add(img);
@@ -531,8 +531,8 @@ var Desktop = (function () {
       var x = isNaN(pos.x) ? that.getNode().getX() : pos.x;
       var y = isNaN(pos.y) ? that.getNode().getY() : pos.y;
 
-      node.setX(x - node.getBoxWidth() / 2);
-      node.setY(y - node.getBoxHeight() / 2);
+      node.setX(x - node.getWidth() / 2);
+      node.setY(y - node.getHeight() / 2);
 
       layers.ifaces.draw();
     };
@@ -623,8 +623,8 @@ var Desktop = (function () {
 
       var node = that.attrs.labels[ifaceId].node;
 
-      node.setX(pos.x - node.getBoxWidth() / 2);
-      node.setY(pos.y - node.getBoxHeight() / 2);
+      node.setX(pos.x - node.getWidth() / 2);
+      node.setY(pos.y - node.getHeight() / 2);
       setLabelCutEvents(ifaceId);
 
       layers.ifaces.add(that.attrs.labels[ifaceId].node);

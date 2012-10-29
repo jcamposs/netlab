@@ -715,9 +715,9 @@ var KWidgets = (function () {
       label.setFontFamily(that.attrs.fontFamily);
       label.setTextFill(that.attrs.textFill);
 
-      label.setX(item.toolAttrs.maxx - label.getBoxWidth() / 2
+      label.setX(item.toolAttrs.maxx - label.getWidth() / 2
                                                     + that.attrs.max_size / 2);
-      label.setY(item.toolAttrs.maxy - label.getBoxHeight()
+      label.setY(item.toolAttrs.maxy - label.getHeight()
                                                     + item.toolAttrs.maxy / 2);
       label.hide();
     };
