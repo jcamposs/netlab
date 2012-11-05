@@ -43,3 +43,6 @@ gem "jquery-ui-themes", "~> 0.0.7"
 
 # Adde devise
 gem 'devise'
+
+# A Ruby interface for getting process information
+gem 'sys-proctable'
