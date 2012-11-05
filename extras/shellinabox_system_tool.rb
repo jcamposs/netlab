@@ -3,7 +3,8 @@ class ShellinaboxSystemTool
     return false if vm.state == "halted"
 
     user_id = user.id
-    vm_id = vm.id
+    vm_port = vm.port_number
+    vm_proxy = vm.workspace.proxy
 
     # Reserve a free port by using it, afterwads we will release it
     # at the time of launching the shellinabox demon. That's not an infallible
@@ -21,11 +22,9 @@ class ShellinaboxSystemTool
 
     proc_id = fork do
       begin
-        exec_shellinabox(user, vm, port)
+        exec_shellinabox(user_id, vm_port, vm_proxy, port)
       rescue Exception => e
         puts e.message
-        shell = Shellinabox.find_by_user_id_and_virtual_machine_id(user_id, vm_id)
-        shell.destroy
       ensure
         exit -1
       end
@@ -61,9 +60,9 @@ class ShellinaboxSystemTool
     end
   end
 
-  def self.exec_shellinabox(user, vm, port)
+  def self.exec_shellinabox(user_id, vm_port, vm_proxy, port)
     # service option
-    svc = "telnet #{vm.workspace.proxy} #{vm.port_number} -l #{user.id}"
+    svc = "telnet #{vm_proxy} #{vm_port} -l #{user_id}"
     svc_opt = "/:#{NetlabConf.user}:#{NetlabConf.user}:HOME:#{svc}"
 
     # css options
