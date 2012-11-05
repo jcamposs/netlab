@@ -1,5 +1,7 @@
 require 'net/http'
 require 'net/https'
+require 'sys/proctable'
+include Sys
 
 class WorkspacesController < ApplicationController
   before_filter :authenticate_user!, :confWidget
@@ -388,12 +390,41 @@ class WorkspacesController < ApplicationController
     res
   end
 
+  def is_synchronized(shell)
+    return false if not shell
+
+    proc = ProcTable.ps(shell.pid)
+    if not proc
+      # Not such process exists
+      shell.destroy
+      return false
+    end
+
+    # Check process owner
+    if Etc.getpwuid(proc.uid).name != NetlabConf.user
+      shell.destroy
+      return false
+    end
+
+    # Check process id is a shellinabox instance
+    if proc.comm != "shellinaboxd"
+      shell.destroy
+      return false
+    end
+
+    return true if proc.cmdline.include?(" --port=#{shell.port_number} ") or
+            proc.cmdline.include?(" -p #{shell.port_number} ")
+
+    shell.destroy
+    return false
+  end
+
   def append_running_machines(running, res)
     running.each do |name|
       vm = VirtualMachine.find_by_name_and_workspace_id(name, @workspace.id)
       if vm.state != "halted"
         shell = Shellinabox.find_by_user_id_and_virtual_machine_id(current_user.id, vm.id)
-        if shell
+        if is_synchronized(shell)
           res[name] = {
             "status" => "success",
             "host" => shell.host_name,
