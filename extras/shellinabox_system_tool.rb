@@ -30,6 +30,8 @@ class ShellinaboxSystemTool
       end
     end
 
+    Process.detach(proc_id)
+
     shell = Shellinabox.new(
       pid: proc_id,
       host_name: Socket.gethostname,
