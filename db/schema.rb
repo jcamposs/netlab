@@ -11,13 +11,54 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120921153936) do
+ActiveRecord::Schema.define(:version => 20121120022520) do
+
+  create_table "cloudstrg_cloudstrgplugins", :force => true do |t|
+    t.string   "plugin_name"
+    t.string   "version"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  create_table "cloudstrg_configs", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "cloudstrgplugin_id"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
+  create_table "cloudstrg_remoteobjects", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "cloudstrgplugin_id"
+    t.string   "filename"
+    t.string   "filehash"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+    t.string   "file_remote_id"
+  end
 
   create_table "collision_domains", :force => true do |t|
     t.string   "name"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
     t.integer  "workspace_id"
+  end
+
+  create_table "dropboxstrg_params", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "akey"
+    t.string   "asecret"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "gdrivestrg_params", :force => true do |t|
+    t.string   "refresh_token"
+    t.integer  "expires_in"
+    t.date     "issued_at"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+    t.integer  "user_id"
   end
 
   create_table "interfaces", :force => true do |t|
@@ -35,6 +76,7 @@ ActiveRecord::Schema.define(:version => 20120921153936) do
     t.string   "schema"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.integer  "remote_id"
   end
 
   create_table "shellinaboxes", :force => true do |t|

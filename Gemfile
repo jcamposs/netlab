@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '3.2.1'
+gem 'rails', '3.2.8'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -43,3 +43,9 @@ gem "jquery-ui-themes", "~> 0.0.7"
 
 # Adde devise
 gem 'devise'
+
+
+gem 'cloudstrg', :path => '../rails_plugin/engines/cloudstrg'
+gem 'dropboxstrg', :path => '../rails_plugin/engines/dropboxstrg'
+gem 'gdrivestrg', :path => '../rails_plugin/engines/gdrivestrg'
+

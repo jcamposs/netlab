@@ -3,6 +3,12 @@ class User < ActiveRecord::Base
   has_many :workspaces
   has_many :shellinaboxes
 
+  # Cloud storage params
+  has_one :cloudstrgconfig, :class_name => Cloudstrg::Config, :dependent => :destroy
+  has_one :dropboxstrgparams, :class_name => Dropboxstrg::Param, :dependent => :destroy
+  has_one :gdrivestrgparams, :class_name => Gdrivestrg::Param, :dependent => :destroy
+  ###
+
   validates :first_name, :last_name, presence: true
 
   # Include default devise modules. Others available are:
