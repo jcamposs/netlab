@@ -44,11 +44,11 @@ gem "jquery-ui-themes", "~> 0.0.7"
 # Adde devise
 gem 'devise'
 
+
 # A Ruby interface for getting process information
 gem 'sys-proctable'
 
 # Cloud storage drivers
 gem 'dropboxstrg', '~> 0.0.5'
 gem 'gdrivestrg', '~> 0.0.2'
-
 

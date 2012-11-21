@@ -1,3 +1,25 @@
+PATH
+  remote: ../rails_plugin/engines/cloudstrg
+  specs:
+    cloudstrg (0.0.5)
+      rails (~> 3.2.8)
+
+PATH
+  remote: ../rails_plugin/engines/dropboxstrg
+  specs:
+    dropboxstrg (0.0.4)
+      cloudstrg (~> 0.0.5)
+      dropbox-sdk
+      rails (~> 3.2.8)
+
+PATH
+  remote: ../rails_plugin/engines/gdrivestrg
+  specs:
+    gdrivestrg (0.0.1)
+      cloudstrg (~> 0.0.5)
+      google-api-client (~> 0.4.4)
+      rails (~> 3.2.8)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -159,6 +181,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  cloudstrg!
   coffee-rails (~> 3.2.1)
   devise
   dropboxstrg (~> 0.0.5)
