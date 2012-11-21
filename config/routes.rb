@@ -29,6 +29,10 @@ Netlab::Application.routes.draw do
 
   resources :scenes
 
+  mount Cloudstrg::Engine, :at => 'cloudstrg'
+  mount Dropboxstrg::Engine, :at => 'dropbox'
+  mount Gdrivestrg::Engine, :at => 'gdrive'
+
   get "home/index"
   get "home/close"
 
