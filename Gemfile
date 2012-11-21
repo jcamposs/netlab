@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '3.2.1'
+gem 'rails', '3.2.8'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -46,3 +46,9 @@ gem 'devise'
 
 # A Ruby interface for getting process information
 gem 'sys-proctable'
+
+# Cloud storage drivers
+gem 'dropboxstrg', '~> 0.0.5'
+gem 'gdrivestrg', '~> 0.0.2'
+
+
