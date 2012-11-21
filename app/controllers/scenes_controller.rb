@@ -16,8 +16,10 @@ class ScenesController < ApplicationController
   # GET /scenes.json
   def index
     @user = current_user
-    @scenes = @user.scenes.joins(:remote).where(:cloudstrg_remoteobjects => {:cloudstrgplugin_id => @user.cloudstrgconfig.cloudstrgplugin})
-
+    @scenes = []
+    if @user.cloudstrgconfig
+      @scenes = @user.scenes.joins(:remote).where(:cloudstrg_remoteobjects => {:cloudstrgplugin_id => @user.cloudstrgconfig.cloudstrgplugin})
+    end
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @scenes }
