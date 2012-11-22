@@ -203,12 +203,14 @@ class ScenesController < ApplicationController
   def capture_cloudstrg_validation
     @user = current_user
     if @user.cloudstrgconfig and (params.has_key? :code or params.has_key? :error)
-      _params = {:code => params[:code], :error => params[:error], :plugin_id => @user.cloudstrgconfig.cloudstrgplugin, :user => @user, :redirect => "#{request.protocol}#{request.host_with_port}#{request.fullpath}", :session => session}
+      _params = {:code => params[:code], :error => params[:error], :plugin_id => @user.cloudstrgconfig.cloudstrgplugin, :user => @user, :redirect => "#{request.protocol}#{request.host_with_port}#{request.fullpath.split('?')[0]}", :session => session}
       @driver = CloudStrg.new_driver _params
       @driver.config _params
     end
     if session.has_key? :stored_params
-      params.deep_merge!(session[:stored_params])
+      if not params.has_key? :error
+        params.deep_merge!(session[:stored_params])
+      end
       session.delete(:stored_params)
       send(params[:action])
     end
