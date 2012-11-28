@@ -49,6 +49,11 @@ gem 'devise'
 gem 'sys-proctable'
 
 # Cloud storage drivers
-gem 'dropboxstrg', '~> 0.0.6'
-gem 'gdrivestrg', '~> 0.0.3'
+gem 'dropboxstrg', '~> 0.0.7'
+gem 'gdrivestrg', '~> 0.0.4'
+#gem 'cloudstrg', :path => '../rails_plugin/cloudstrg'
+#gem 'dropboxstrg', :path => '../rails_plugin/dropboxstrg'
+#gem 'gdrivestrg', :path => '../rails_plugin/gdrivestrg'
+
+
 
