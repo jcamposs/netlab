@@ -17,10 +17,10 @@ class ScenesController < ApplicationController
   def index
     @user = current_user
     @scenes = []
-    if @user.cloudstrgconfig
+    #if @user.cloudstrgconfig
       #@scenes = @user.scenes.joins(:remote).where(:cloudstrg_remoteobjects => {:cloudstrgplugin_id => @user.cloudstrgconfig.cloudstrgplugin})
-      @scenes = @user.scenes
-    end
+    #end
+    @scenes = @user.scenes
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @scenes }
@@ -81,19 +81,20 @@ class ScenesController < ApplicationController
     respond_to do |format|
       begin
         if @scene.save
-          session = @scene.session
+          session.merge!(@scene.session)
           format.html { redirect_to @scene, notice: 'Scene was successfully created.' }
           format.json { render json: @scene, status: :created, location: @scene }
         else
-          format.html { render action: "new" }
+          format.html { render action: "new", notice: 'Creation failed' }
           format.json { render json: @scene.errors, status: :unprocessable_entity }
         end
       rescue CloudStrg::RONotConfigured => e
-        format.html { redirect_to cloudstrg.configs_path }
+        session[:stored_params] = params
+        format.html { redirect_to cloudstrg.configs_path(:redirection_url => "#{request.protocol}#{request.host_with_port}/scenes", :notice => 'Please, create a plugin configuration before continue.')  }
         #format.json { redirect_to cloudstrg.configs_path }
         #format.js { redirect_to cloudstrg.configs_path }
       rescue CloudStrg::ROValidationRequired => e
-        session = @scene.session
+        session.merge!(@scene.session)
         session[:stored_params] = params
         format.html {redirect_to e.message}
         #format.json { redirect_to e.message }
@@ -101,7 +102,7 @@ class ScenesController < ApplicationController
       rescue Exception => e
         puts e.message
         puts e.backtrace
-        format.html { render action: "new" }
+        format.html { render action: "new", notice: 'Creation failed' }
         format.json { render json: @scene.errors, status: :unprocessable_entity }
       end
     end
@@ -172,6 +173,7 @@ class ScenesController < ApplicationController
   def destroy
     if @scene.user == @user
       @scene.destroy
+      session.merge!(@scene.session)
       respond_to do |format|
         format.html { redirect_to scenes_url }
         format.js { render :nothing => true }
@@ -196,7 +198,8 @@ class ScenesController < ApplicationController
       _params = params
       _params.merge!({:plugin_id => plugin, :user => @user, :redirect => "#{request.protocol}#{request.host_with_port}/scenes}", :session => session})
       driver = CloudStrg.new_driver _params
-      session, url = driver.config _params
+      _session, url = driver.config _params
+      session.merge!(_session)
       if url
         session[:stored_params] = params
         respond_to do |format|
@@ -236,7 +239,8 @@ class ScenesController < ApplicationController
 
     if not @driver
       @driver = CloudStrg.new_driver _params
-      session, url = @driver.config _params
+      _session, url = @driver.config _params
+      session.merge!(_session)
 
       @scene.redirection_url = "#{request.protocol}#{request.host_with_port}/scenes"
       @scene.session = session
