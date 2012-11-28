@@ -3,7 +3,7 @@ require 'cloudstrg/cloudstrg'
 
 class ScenesController < ApplicationController
   before_filter :authenticate_user!, :confWidget, :capture_cloudstrg_validation
-  before_filter :set_cloudstrg_params, :only => [:show, :edit, :update, :back_edit_ajax, :show_edit_ajax]
+  before_filter :set_cloudstrg_params, :only => [:show, :edit, :update, :delete, :destroy, :back_edit_ajax, :show_edit_ajax]
 
   def confWidget
     #TODO: Choose the widget that fits better in user's device screen
@@ -74,7 +74,7 @@ class ScenesController < ApplicationController
   def create
     @user = current_user
     @scene = @user.scenes.build(params[:scene])
-    @scene.redirection_url = "#{request.protocol}#{request.host_with_port}#{request.fullpath}"
+    @scene.redirection_url = "#{request.protocol}#{request.host_with_port}/scenes"
     @scene.session = session
     @mode = "edit"
 
@@ -85,7 +85,6 @@ class ScenesController < ApplicationController
           format.html { redirect_to @scene, notice: 'Scene was successfully created.' }
           format.json { render json: @scene, status: :created, location: @scene }
         else
-          session = @scene.session
           format.html { render action: "new" }
           format.json { render json: @scene.errors, status: :unprocessable_entity }
         end
@@ -112,8 +111,6 @@ class ScenesController < ApplicationController
   # PUT /scenes/1.json
   def update
     @mode = "edit"
-    @scene.redirection_url = "#{request.protocol}#{request.host_with_port}#{request.fullpath}"
-    @scene.session = session
     
     respond_to do |format|
       if @scene.update_attributes(params[:scene])
@@ -128,10 +125,6 @@ class ScenesController < ApplicationController
 
   # Used to manage AJAX delete requests with JQuery dialog
   def delete
-    @scene = Scene.find(params[:id])
-    @user = current_user
-    @scene.redirection_url = "#{request.protocol}#{request.host_with_port}#{request.fullpath}"
-    @scene.session = session
     @err_type = "Error delete"
 
     if @scene.user == @user
@@ -157,7 +150,6 @@ class ScenesController < ApplicationController
   end
 
   def back_edit_ajax
-    @scene = Scene.find(params[:id])
     @warn_msg = "This scene has been modified. Changes done will be lost If you leave without saving. Do you really want to continue?"
     @go_path = scenes_path
 
@@ -167,7 +159,6 @@ class ScenesController < ApplicationController
   end
 
   def show_edit_ajax
-    @scene = Scene.find(params[:id])
     @warn_msg = "This scene has been modified. Changes done will be lost If you leave without saving. Do you really want to continue?"
     @go_path = scene_url(@scene)
 
@@ -179,11 +170,6 @@ class ScenesController < ApplicationController
   # DELETE /scenes/1
   # DELETE /scenes/1.json
   def destroy
-    @scene = Scene.find(params[:id])
-    @user = current_user
-    @scene.redirection_url = "#{request.protocol}#{request.host_with_port}#{request.fullpath}"
-    @scene.session = session
-
     if @scene.user == @user
       @scene.destroy
       respond_to do |format|
@@ -203,10 +189,22 @@ class ScenesController < ApplicationController
   private
   def capture_cloudstrg_validation
     @user = current_user
-    if @user.cloudstrgconfig and (params.has_key? :code or params.has_key? :error)
-      _params = {:code => params[:code], :error => params[:error], :plugin_id => @user.cloudstrgconfig.cloudstrgplugin, :user => @user, :redirect => "#{request.protocol}#{request.host_with_port}#{request.fullpath.split('?')[0]}", :session => session}
+    if session.has_key? :plugin_name
+      plugin = Cloudstrg::Cloudstrgplugin.find_by_plugin_name(session[:plugin_name])
+      session.delete(:plugin_name)
+
+      _params = params
+      _params.merge!({:plugin_id => plugin, :user => @user, :redirect => "#{request.protocol}#{request.host_with_port}/scenes}", :session => session})
       driver = CloudStrg.new_driver _params
-      driver.config _params
+      session, url = driver.config _params
+      if url
+        session[:stored_params] = params
+        respond_to do |format|
+          format.html {redirect_to url}
+          format.json { redirect_to url }
+          format.js {render :js => "window.location.href='#{url}'"}
+        end
+      end
     end
     if session.has_key? :stored_params
       if not params.has_key? :error
@@ -234,12 +232,14 @@ class ScenesController < ApplicationController
       plugin = @scene.remote.cloudstrgplugin
     end
       
-    _params = {:user => @user, :plugin_id => plugin, :redirect => "#{request.protocol}#{request.host_with_port}#{request.fullpath}", :session => session}
+    _params = {:user => @user, :plugin_id => plugin, :redirect => "#{request.protocol}#{request.host_with_port}/scenes", :session => session}
 
     if not @driver
       @driver = CloudStrg.new_driver _params
       session, url = @driver.config _params
 
+      @scene.redirection_url = "#{request.protocol}#{request.host_with_port}/scenes"
+      @scene.session = session
       if url
         session[:stored_params] = params
         respond_to do |format|
