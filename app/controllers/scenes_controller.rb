@@ -18,7 +18,8 @@ class ScenesController < ApplicationController
     @user = current_user
     @scenes = []
     if @user.cloudstrgconfig
-      @scenes = @user.scenes.joins(:remote).where(:cloudstrg_remoteobjects => {:cloudstrgplugin_id => @user.cloudstrgconfig.cloudstrgplugin})
+      #@scenes = @user.scenes.joins(:remote).where(:cloudstrg_remoteobjects => {:cloudstrgplugin_id => @user.cloudstrgconfig.cloudstrgplugin})
+      @scenes = @user.scenes
     end
     respond_to do |format|
       format.html # index.html.erb
@@ -204,8 +205,8 @@ class ScenesController < ApplicationController
     @user = current_user
     if @user.cloudstrgconfig and (params.has_key? :code or params.has_key? :error)
       _params = {:code => params[:code], :error => params[:error], :plugin_id => @user.cloudstrgconfig.cloudstrgplugin, :user => @user, :redirect => "#{request.protocol}#{request.host_with_port}#{request.fullpath.split('?')[0]}", :session => session}
-      @driver = CloudStrg.new_driver _params
-      @driver.config _params
+      driver = CloudStrg.new_driver _params
+      driver.config _params
     end
     if session.has_key? :stored_params
       if not params.has_key? :error
@@ -219,16 +220,21 @@ class ScenesController < ApplicationController
   def set_cloudstrg_params
     @scene = Scene.find(params[:id])
     @user = current_user
-    user_config = @user.cloudstrgconfig
-    if not user_config
-      respond_to do |format|
-        format.html { redirect_to cloudstrg.configs_path }
-        format.json { redirect_to cloudstrg.configs_path }
-        format.js { redirect_to cloudstrg.configs_path }
-      end
+    if not @scene.remote
+      if not @user.cloudstrgconfig
+        respond_to do |format|
+          format.html { redirect_to cloudstrg.configs_path }
+          format.json { redirect_to cloudstrg.configs_path }
+          format.js { redirect_to cloudstrg.configs_path }
+        end
+      else
+        plugin = @user.cloudstrgconfig.cloudstrgplugin
+      end 
+    else
+      plugin = @scene.remote.cloudstrgplugin
     end
       
-    _params = {:user => @user, :plugin_id => user_config.cloudstrgplugin, :redirect => "#{request.protocol}#{request.host_with_port}#{request.fullpath}", :session => session}
+    _params = {:user => @user, :plugin_id => plugin, :redirect => "#{request.protocol}#{request.host_with_port}#{request.fullpath}", :session => session}
 
     if not @driver
       @driver = CloudStrg.new_driver _params

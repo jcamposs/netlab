@@ -21,10 +21,14 @@ class Scene < ActiveRecord::Base
 
   private 
     def create_remoteobject
-      user_config = self.user.cloudstrgconfig
-      raise CloudStrg::RONotConfigured, 'You must select the remote object driver before saving a file.' if not user_config
+      if self.remote
+        _plugin = self.remote.cloudstrgplugin
+      else
+         raise CloudStrg::RONotConfigured, 'You must select the remote object driver before saving a file.' if not self.user.cloudstrgconfig
+         _plugin = self.user.cloudstrgconfig.cloudstrgplugin
+      end
       
-      params = {:user => self.user, :plugin_id => user_config.cloudstrgplugin, :redirect => redirection_url, :session => session}
+      params = {:user => self.user, :plugin_id => _plugin, :redirect => redirection_url, :session => session}
       driver = CloudStrg.new_driver params
       session, url = driver.config params
       raise CloudStrg::ROValidationRequired, url if url
@@ -37,8 +41,8 @@ class Scene < ActiveRecord::Base
         ro_id = driver.update_file params
       else
         ro_id = driver.create_file params
+        self.remote = Cloudstrg::Remoteobject.find(ro_id)
       end
-      self.remote = Cloudstrg::Remoteobject.find(ro_id)
 
       if not self.remote
         return false
@@ -46,10 +50,14 @@ class Scene < ActiveRecord::Base
     end
 
     def remove_remoteobject
-      user_config = self.user.cloudstrgconfig
-      raise CloudStrg::RONotConfigured, 'You must select the remote object driver before removing a file.' if not user_config
+      if self.remote
+        _plugin = self.remote.cloudstrgplugin
+      else
+         raise CloudStrg::RONotConfigured, 'You must select the remote object driver before saving a file.' if not self.user.cloudstrgconfig
+         _plugin = self.user.cloudstrgconfig.cloudstrgplugin
+      end
       
-      params = {:user => self.user, :plugin_id => user_config.cloudstrgplugin, :redirect => redirection_url, :session => session}
+      params = {:user => self.user, :plugin_id => _plugin, :redirect => redirection_url, :session => session}
       driver = CloudStrg.new_driver params
       session, url = driver.config params
       raise CloudStrg::ROValidationRequired, url if url
