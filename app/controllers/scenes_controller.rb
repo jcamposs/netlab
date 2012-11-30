@@ -196,7 +196,7 @@ class ScenesController < ApplicationController
       session.delete(:plugin_name)
 
       _params = params
-      _params.merge!({:plugin_id => plugin, :user => @user, :redirect => "#{request.protocol}#{request.host_with_port}/scenes}", :session => session})
+      _params.merge!({:plugin_id => plugin, :user => @user, :redirect => "#{request.protocol}#{request.host_with_port}/scenes", :session => session})
       driver = CloudStrg.new_driver _params
       _session, url = driver.config _params
       session.merge!(_session)
