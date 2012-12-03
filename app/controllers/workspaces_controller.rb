@@ -40,6 +40,7 @@ class WorkspacesController < ApplicationController
   # GET /workspaces/new.json
   def new
     @workspace = Workspace.new
+    @user = current_user
 
     respond_to do |format|
       format.html # new.html.erb
