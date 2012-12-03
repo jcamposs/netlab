@@ -1,9 +1,11 @@
 
 require 'cloudstrg/cloudstrg'
 
+INCLUDED_METHODS = [:show, :edit, :update, :delete, :destroy, :back_edit_ajax, :show_edit_ajax]
+
 class ScenesController < ApplicationController
   before_filter :authenticate_user!, :confWidget, :capture_cloudstrg_validation
-  before_filter :set_cloudstrg_params, :only => [:show, :edit, :update, :delete, :destroy, :back_edit_ajax, :show_edit_ajax]
+  before_filter :set_cloudstrg_params, :only => INCLUDED_METHODS
 
   def confWidget
     #TODO: Choose the widget that fits better in user's device screen
@@ -41,7 +43,7 @@ class ScenesController < ApplicationController
     @err_msg = "You are not allowed to destroy this scene. Only the owner can delete it."
 
     respond_to do |format|
-      format.html # show.html.erb
+      format.html { render :show }# show.html.erb
       format.js
       format.json { render json: @scene }
     end
@@ -67,6 +69,9 @@ class ScenesController < ApplicationController
     @scene.definition = content
     
     @mode = "edit"
+    respond_to do |format|
+      format.html { render :edit }
+    end
   end
 
   # POST /scenes
@@ -131,11 +136,13 @@ class ScenesController < ApplicationController
     if @scene.user == @user
       @err_msg = "Unexpected error happened."
       respond_to do |format|
+        format.html { redirect_to scenes_path }
         format.js # delete.js.erb
       end
     else
       @err_msg = "You are not allowed to destroy this scene. Only the owner can delete it."
       respond_to do |format|
+        format.html { redirect_to scenes_path }
         format.js { render partial: "error_msg" }
       end
     end
@@ -207,6 +214,7 @@ class ScenesController < ApplicationController
           format.json { redirect_to url }
           format.js {render :js => "window.location.href='#{url}'"}
         end
+        return
       end
     end
     if session.has_key? :stored_params
@@ -214,6 +222,9 @@ class ScenesController < ApplicationController
         params.deep_merge!(session[:stored_params])
       end
       session.delete(:stored_params)
+      if INCLUDED_METHODS.include? params[:action].to_sym
+        set_cloudstrg_params
+      end
       send(params[:action])
     end
   end
