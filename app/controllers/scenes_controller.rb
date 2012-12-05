@@ -245,8 +245,12 @@ class ScenesController < ApplicationController
     else
       plugin = @scene.remote.cloudstrgplugin
     end
-      
-    _params = {:user => @user, :plugin_id => plugin, :redirect => "#{request.protocol}#{request.host_with_port}/scenes", :session => session}
+    
+    if params[:redirect_url]
+      _params = {:user => @user, :plugin_id => plugin, :redirect => params[:redirect_url], :session => session}
+    else
+      _params = {:user => @user, :plugin_id => plugin, :redirect => "#{request.protocol}#{request.host_with_port}/scenes", :session => session}
+    end
 
     if not @driver
       @driver = CloudStrg.new_driver _params
@@ -259,7 +263,7 @@ class ScenesController < ApplicationController
         session[:stored_params] = params
         respond_to do |format|
           format.html {redirect_to url}
-          format.json { redirect_to url }
+          format.json { render :json => { :redirect => url } }
           format.js {render :js => "window.location.href='#{url}'"}
         end
       end
