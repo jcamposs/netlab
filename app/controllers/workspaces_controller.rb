@@ -6,6 +6,7 @@ include Sys
 
 class WorkspacesController < ApplicationController
   before_filter :authenticate_user!, :confWidget
+  before_filter :capture_cloudstrg_validation, :only => [:index]
 
   def confWidget
     #TODO: Choose the widget that fits better in user's device screen
@@ -468,6 +469,21 @@ class WorkspacesController < ApplicationController
           "cause" => "Virtual machine halted unexpectedly"
         }
       end
+    end
+  end
+
+  private
+  def capture_cloudstrg_validation
+    @user = current_user
+    if session.has_key? :plugin_name
+      plugin = Cloudstrg::Cloudstrgplugin.find_by_plugin_name(session[:plugin_name])
+      session.delete(:plugin_name)
+
+      _params = params
+      _params.merge!({:plugin_id => plugin, :user => @user, :redirect => "#{request.protocol}#{request.host_with_port}/workspaces", :session => session})
+      driver = CloudStrg.new_driver _params
+      _session, url = driver.config _params
+      session.merge!(_session)
     end
   end
 end
