@@ -19,10 +19,13 @@
   function loadJSON(sceneId)
   {
     $.ajax({
-      url: '/scenes/' + sceneId,
+      url: '/scenes/' + sceneId + '?redirect_url=' + window.location.protocol + '//' + window.location.host + '/workspaces',
       dataType: 'json',
       success: function(data) {
-        loadStage(data.definition);
+        if(data.redirect)
+          window.location.href = data.redirect; 
+        else
+          loadStage(data.definition);
       }
     })
   };

@@ -1,6 +1,7 @@
 require 'net/http'
 require 'net/https'
 require 'sys/proctable'
+require 'cloudstrg/cloudstrg'
 include Sys
 
 class WorkspacesController < ApplicationController
@@ -17,7 +18,8 @@ class WorkspacesController < ApplicationController
   # GET /workspaces
   # GET /workspaces.json
   def index
-    @workspaces = Workspace.all
+    @user = current_user
+    @workspaces = @user.workspaces
 
     respond_to do |format|
       format.html # index.html.erb
@@ -125,6 +127,7 @@ class WorkspacesController < ApplicationController
   # GET /workspaces/1/edit
   def edit
     @workspace = Workspace.find(params[:id])
+    @user = current_user
   end
 
   # POST /workspaces
@@ -137,13 +140,18 @@ class WorkspacesController < ApplicationController
 
     # TODO: Set proper proxy
     @workspace.proxy = Socket.gethostname
-
+    
     respond_to do |format|
       begin
         gen_schema
         format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
         format.json { render json: @workspace, status: :created, location: @workspace }
-      rescue
+      rescue CloudStrg::ROValidationRequired => e
+        #session[:stored_params] = params
+        format.html {redirect_to e.message}
+      rescue Exception => e
+        puts e.message
+        puts e.backtrace
         format.html { render action: "new" }
         format.json { render json: @workspace.errors, status: :unprocessable_entity }
       end
@@ -215,7 +223,18 @@ class WorkspacesController < ApplicationController
   end
 
   def gen_schema
-    definition = JSON.parse @workspace.scene.definition
+    _plugin = @scene.remote.cloudstrgplugin
+    _params = {:user => @user, :plugin_id => _plugin, :redirect => "#{request.protocol}#{request.host_with_port}/workspaces", :session => session}
+    driver = CloudStrg.new_driver _params
+    _session, url = driver.config _params
+    session.merge!(_session)
+    raise CloudStrg::ROValidationRequired, url if url
+    
+    _params = {:fileid => @scene.remote.file_remote_id}
+
+    _, _, content = driver.get_file _params
+    definition = JSON.parse content
+    
     collision_domains = {}
     lan_id = { id: 0}
 
