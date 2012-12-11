@@ -2,6 +2,7 @@ class User < ActiveRecord::Base
   has_many :scenes, dependent: :destroy
   has_many :workspaces
   has_many :shellinaboxes
+  has_many :netlabsessions, dependent: :destroy
 
   # Cloud storage params
   has_one :cloudstrgconfig, :class_name => Cloudstrg::Config, :dependent => :destroy

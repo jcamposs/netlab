@@ -94,13 +94,23 @@ class ScenesController < ApplicationController
           format.json { render json: @scene.errors, status: :unprocessable_entity }
         end
       rescue CloudStrg::RONotConfigured => e
-        session[:stored_params] = params
+        s = Netlabsession.find_by_user_id_and_session_id(@user, session[:session_id])
+        if not s
+          s = Netlabsession.new :user_id => @user, :session_id => session[:session_id]
+        end
+        s.h_params = params
+        s.save
         format.html { redirect_to cloudstrg.configs_path(:redirection_url => "#{request.protocol}#{request.host_with_port}/scenes", :notice => 'Please, create a plugin configuration before continue.')  }
         #format.json { redirect_to cloudstrg.configs_path }
         #format.js { redirect_to cloudstrg.configs_path }
       rescue CloudStrg::ROValidationRequired => e
         session.merge!(@scene.session)
-        session[:stored_params] = params
+        s = Netlabsession.find_by_user_id_and_session_id(@user, session[:session_id])
+        if not s
+          s = Netlabsession.new :user_id => @user, :session_id => session[:session_id]
+        end
+        s.h_params = params
+        s.save
         format.html {redirect_to e.message}
         #format.json { redirect_to e.message }
         #format.js {render :js => "window.location.href='#{e.message}'"}
@@ -198,6 +208,7 @@ class ScenesController < ApplicationController
   private
   def capture_cloudstrg_validation
     @user = current_user
+    s = Netlabsession.find_by_user_id_and_session_id(@user, session[:session_id])
     if session.has_key? :plugin_name
       plugin = Cloudstrg::Cloudstrgplugin.find_by_plugin_name(session[:plugin_name])
       session.delete(:plugin_name)
@@ -208,20 +219,24 @@ class ScenesController < ApplicationController
       _session, url = driver.config _params
       session.merge!(_session)
       if url
-        session[:stored_params] = params
+        if not s
+          s = Netlabsession.new :user_id => @user, :session_id => session[:session_id]
+        end
+        s.h_params = params
+        s.save
         respond_to do |format|
           format.html {redirect_to url}
-          format.json { redirect_to url }
+          format.json { render :json => { :redirect => url } }
           format.js {render :js => "window.location.href='#{url}'"}
         end
         return
       end
     end
-    if session.has_key? :stored_params
+    if s
       if not params.has_key? :error
-        params.deep_merge!(session[:stored_params])
+        params.deep_merge!(JSON.parse(s.params))
       end
-      session.delete(:stored_params)
+      s.destroy
       if INCLUDED_METHODS.include? params[:action].to_sym
         set_cloudstrg_params
       end
@@ -260,7 +275,12 @@ class ScenesController < ApplicationController
       @scene.redirection_url = "#{request.protocol}#{request.host_with_port}/scenes"
       @scene.session = session
       if url
-        session[:stored_params] = params
+        s = Netlabsession.find_by_user_id_and_session_id(@user, session[:session_id])
+        if not s
+          s = Netlabsession.new :user_id => @user, :session_id => session[:session_id]
+        end
+        s.h_params = params
+        s.save
         respond_to do |format|
           format.html {redirect_to url}
           format.json { render :json => { :redirect => url } }
