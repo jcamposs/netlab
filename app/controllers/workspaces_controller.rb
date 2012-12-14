@@ -144,7 +144,7 @@ class WorkspacesController < ApplicationController
     
     respond_to do |format|
       begin
-        gen_schema
+        gen_schema get_scene(@scene, @user)
         format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
         format.json { render json: @workspace, status: :created, location: @workspace }
       rescue CloudStrg::ROValidationRequired => e
@@ -222,8 +222,8 @@ class WorkspacesController < ApplicationController
     @workspace.errors.add(:base, "Corrupted stage: Node \"#{node["name"]}\" is not unique")
     raise
   end
-
-  def gen_schema
+  
+  def get_scene(user, scene)
     _plugin = @scene.remote.cloudstrgplugin
     _params = {:user => @user, :plugin_id => _plugin, :redirect => "#{request.protocol}#{request.host_with_port}/workspaces", :session => session}
     driver = CloudStrg.new_driver _params
@@ -234,8 +234,10 @@ class WorkspacesController < ApplicationController
     _params = {:fileid => @scene.remote.file_remote_id}
 
     _, _, content = driver.get_file _params
-    definition = JSON.parse content
-    
+    return JSON.parse content
+  end
+
+  def gen_schema definition
     collision_domains = {}
     lan_id = { id: 0}
 
