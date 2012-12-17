@@ -209,6 +209,11 @@ class ScenesController < ApplicationController
   def capture_cloudstrg_validation
     @user = current_user
     s = Netlabsession.find_by_user_id_and_session_id(@user, session[:session_id])
+    puts "Refererrrr:   #{request.referer}"
+    continue_stored = false
+    if request.referer == "#{request.protocol}#{request.host_with_port}/cloudstrg/configs"
+      continue_stored = true
+    end
     if session.has_key? :plugin_name
       plugin = Cloudstrg::Cloudstrgplugin.find_by_plugin_name(session[:plugin_name])
       session.delete(:plugin_name)
@@ -216,31 +221,38 @@ class ScenesController < ApplicationController
       _params = params
       _params.merge!({:plugin_id => plugin, :user => @user, :redirect => "#{request.protocol}#{request.host_with_port}/scenes", :session => session})
       driver = CloudStrg.new_driver _params
-      _session, url = driver.config _params
-      session.merge!(_session)
-      if url
-        if not s
-          s = Netlabsession.new :user_id => @user, :session_id => session[:session_id]
+      if driver.check_referer request.referer
+        continue_stored = true
+        _session, url = driver.config _params
+        session.merge!(_session)
+        if url
+          if not s
+            s = Netlabsession.new :user_id => @user, :session_id => session[:session_id]
+          end
+          s.h_params = params
+          s.save
+          respond_to do |format|
+            format.html {redirect_to url}
+            format.json { render :json => { :redirect => url } }
+            format.js {render :js => "window.location.href='#{url}'"}
+          end
+          return
         end
-        s.h_params = params
-        s.save
-        respond_to do |format|
-          format.html {redirect_to url}
-          format.json { render :json => { :redirect => url } }
-          format.js {render :js => "window.location.href='#{url}'"}
-        end
-        return
       end
     end
     if s
-      if not params.has_key? :error
-        params.deep_merge!(JSON.parse(s.params))
+      if continue_stored
+        if not params.has_key? :error
+          params.deep_merge!(JSON.parse(s.params))
+        end
+        s.destroy
+        if INCLUDED_METHODS.include? params[:action].to_sym
+          set_cloudstrg_params
+        end
+        send(params[:action])
+      else
+        s.destroy
       end
-      s.destroy
-      if INCLUDED_METHODS.include? params[:action].to_sym
-        set_cloudstrg_params
-      end
-      send(params[:action])
     end
   end
 
