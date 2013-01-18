@@ -1351,7 +1351,16 @@ var Desktop = (function () {
       confNewState(state);
     };
 
-    function addBrowserWidgets() {
+    function addBrowserWidgets(stage_callback) {
+      var initializer = {
+        widgets: 2,
+        callback: function () {
+          this.widgets--;
+          if (this.widgets == 0)
+            stage_callback();
+        }
+      };
+
       var zoom = KWidgets.Slider({
         x: 50,
         y: 90,
@@ -1359,6 +1368,11 @@ var Desktop = (function () {
         callback: {
           func: resize,
           data: that,
+        },
+        init_callback: function (zoom) {
+          layers.options.add(zoom.getNode());
+          layers.options.draw();
+          initializer.callback();
         }
       });
 
@@ -1369,12 +1383,13 @@ var Desktop = (function () {
         callback: {
           func: move,
           data: that
+        },
+        init_callback: function (browser) {
+          layers.options.add(browser.getNode());
+          layers.options.draw();
+          initializer.callback();
         }
       });
-
-      layers.options.add(browser.getNode());
-      layers.options.add(zoom.getNode());
-      layers.options.draw();
     };
 
     function addToolMenu() {
@@ -1482,8 +1497,10 @@ var Desktop = (function () {
       that.attrs.stage.add(layers.options);
 
       confDragging();
-      addBrowserWidgets();
+      addBrowserWidgets(finishStage);
+    };
 
+    function finishStage() {
       switch (that.attrs.mode) {
       case "edit":
         addToolMenu();

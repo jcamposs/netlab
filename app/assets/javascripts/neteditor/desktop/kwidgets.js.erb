@@ -24,6 +24,20 @@ var KWidgets = (function () {
 
   var module = {};
 
+  var sources_browser = {
+    center: "<%= asset_path('browser/center.png') %>",
+    arrow: "<%= asset_path('browser/arrow.png') %>",
+  };
+
+  var sources_slider = {
+    plus: "<%= asset_path('browser/plus.png') %>",
+    minus: "<%= asset_path('browser/minus.png') %>",
+    mid: "<%= asset_path('browser/mid.png') %>"
+  };
+
+  var images_browser = {};
+  var images_slider = {};
+
   function merge(conf1, conf2) {
     var attrs = conf1 || {};
 
@@ -32,6 +46,23 @@ var KWidgets = (function () {
     }
 
     return attrs;
+  };
+
+  function loadSources(sources, callback, images) {
+    var loadedImages = 0;
+    var numImages = 0;
+    for(var src in sources) {
+      numImages++;
+    }
+    for(var src in sources) {
+      images[src] = new Image();
+      images[src].onload = function() {
+        if(++loadedImages >= numImages) {
+          callback(images);
+        }
+      };
+      images[src].src = sources[src];
+    }
   };
 
   //////////////////////////////////////////////////////////////////////////////
@@ -65,190 +96,165 @@ var KWidgets = (function () {
       slide_hight: 10
     }, config));
 
-    var group = that.getNode();
-    group.setX(that.attrs.x);
-    group.setY(that.attrs.y);
+    function initBrowser(images) {
+      var group = that.getNode();
+      group.setX(that.attrs.x);
+      group.setY(that.attrs.y);
 
-    var background = new Kinetic.Circle({
-      radius: that.attrs.radius + 5,
-      opacity: 0.6,
-      fill: "white",
-      shadow: {
-        color: 'grey',
-        blur: 15
-      }
-    });
+      var background = new Kinetic.Circle({
+        radius: that.attrs.radius + 5,
+        opacity: 0.6,
+        fill: "white",
+        shadow: {
+          color: 'grey',
+          blur: 15
+        }
+      });
 
-    var circle = new Kinetic.Circle({
-      radius: that.attrs.radius,
-      opacity: 0.8,
-      fill: "white",
-      stroke: "black",
-      strokeWidth: 1
-    });
+      var circle = new Kinetic.Circle({
+        radius: that.attrs.radius,
+        opacity: 0.8,
+        fill: "white",
+        stroke: "black",
+        strokeWidth: 1
+      });
 
-    var len = that.attrs.radius / 3;
+      var len = that.attrs.radius / 3;
 
-    var middleButton = new Kinetic.Rect({
-      x: -len,
-      y: -len,
-      width: 2 * len,
-      height: 2 * len,
-      fill: "white",
-      cornerRadius: that.attrs.width / 4,
-      stroke: "black",
-      strokeWidth: that.attrs.arrow_width
-    });
+      var middleButton = new Kinetic.Image({
+        image: images.center,
+        x: -len,
+        y: -len,
+        width: 2 * len,
+        height: 2 * len
+      });
 
-    // add cursor styling
-    middleButton.on("mouseover", function() {
-      that.attrs.cursor = document.body.style.cursor;
-      document.body.style.cursor = "pointer";
-    });
+      // add cursor styling
+      middleButton.on("mouseover", function() {
+        that.attrs.cursor = document.body.style.cursor;
+        document.body.style.cursor = "pointer";
+      });
 
-    middleButton.on("mouseout", function() {
-      document.body.style.cursor = that.attrs.cursor;
-    });
+      middleButton.on("mouseout", function() {
+        document.body.style.cursor = that.attrs.cursor;
+      });
 
-    var arrows = new Kinetic.Group();
+      var arrows = new Kinetic.Group();
 
-    var points = [{
-      x: 0,
-      y: 0
-    }, {
-      x: len,
-      y: 0
-    }, {
-      x: len,
-      y: len
-    }];
+      var up_line = new Kinetic.Image({
+        image: images.arrow,
+        x: -len,
+        y: -len - 13,
+        width: 2 * len,
+        height: len
+      });
 
-    var cat_pow = Math.pow(len, 2);
-    var dist = Math.sqrt(2 * cat_pow) / 2;
-    var separation = 1.5 * that.attrs.radius / 3;
-    var up_line = new Kinetic.Polygon({
-      x: -dist,
-      y: -separation,
-      points: points,
-      fill: "white",
-      stroke: "black",
-      strokeWidth: that.attrs.arrow_width,
-      lineCap: 'round',
-      lineJoin: 'round',
-      rotation: -Math.PI / 4
-    });
+      // add cursor styling
+      up_line.on("mouseover", function() {
+        that.attrs.cursor = document.body.style.cursor;
+        document.body.style.cursor = "pointer";
+      });
 
-    // add cursor styling
-    up_line.on("mouseover", function() {
-      that.attrs.cursor = document.body.style.cursor;
-      document.body.style.cursor = "pointer";
-    });
+      up_line.on("mouseout", function() {
+        document.body.style.cursor = that.attrs.cursor;
+      });
 
-    up_line.on("mouseout", function() {
-      document.body.style.cursor = that.attrs.cursor;
-    });
+      var down_line = new Kinetic.Image({
+        image: images.arrow,
+        x: len,
+        y: len + 13,
+        width: 2 * len,
+        height: len,
+        rotation: Math.PI
+      });
 
-    var down_line = new Kinetic.Polygon({
-      x: dist,
-      y: separation,
-      points: points,
-      fill: "white",
-      stroke: "black",
-      strokeWidth: that.attrs.arrow_width,
-      lineCap: 'round',
-      lineJoin: 'round',
-      rotation: 3 * Math.PI / 4,
-    });
+      // add cursor styling
+      down_line.on("mouseover", function() {
+        that.attrs.cursor = document.body.style.cursor;
+        document.body.style.cursor = "pointer";
+      });
 
-    // add cursor styling
-    down_line.on("mouseover", function() {
-      that.attrs.cursor = document.body.style.cursor;
-      document.body.style.cursor = "pointer";
-    });
+      down_line.on("mouseout", function() {
+        document.body.style.cursor = that.attrs.cursor;
+      });
 
-    down_line.on("mouseout", function() {
-      document.body.style.cursor = that.attrs.cursor;
-    });
+      var right_line = new Kinetic.Image({
+        image: images.arrow,
+        x: len + 13,
+        y: len - 20,
+        width: 2 * len,
+        height: len,
+        rotation: Math.PI / 2,
+      });
 
-    var right_line = new Kinetic.Polygon({
-      x: separation,
-      y: -dist,
-      points: points,
-      fill: "white",
-      stroke: "black",
-      strokeWidth: that.attrs.arrow_width,
-      lineCap: 'round',
-      lineJoin: 'round',
-      rotation: Math.PI / 4,
-    });
+      // add cursor styling
+      right_line.on("mouseover", function() {
+        that.attrs.cursor = document.body.style.cursor;
+        document.body.style.cursor = "pointer";
+      });
 
-    // add cursor styling
-    right_line.on("mouseover", function() {
-      that.attrs.cursor = document.body.style.cursor;
-      document.body.style.cursor = "pointer";
-    });
+      right_line.on("mouseout", function() {
+        document.body.style.cursor = that.attrs.cursor;
+      });
 
-    right_line.on("mouseout", function() {
-      document.body.style.cursor = that.attrs.cursor;
-    });
+      var left_line = new Kinetic.Image({
+        image: images.arrow,
+        x: -len - 13,
+        y: -len + 20,
+        width: 2 * len,
+        height: len,
+        rotation: -Math.PI / 2,
+      });
 
-    var left_line = new Kinetic.Polygon({
-      x: -separation,
-      y: dist,
-      points: points,
-      fill: "white",
-      stroke: "black",
-      strokeWidth: that.attrs.arrow_width,
-      lineCap: 'round',
-      lineJoin: 'round',
-      rotation: -3 * Math.PI / 4,
-    });
+      // add cursor styling
+      left_line.on("mouseover", function() {
+        that.attrs.cursor = document.body.style.cursor;
+        document.body.style.cursor = "pointer";
+      });
 
-    // add cursor styling
-    left_line.on("mouseover", function() {
-      that.attrs.cursor = document.body.style.cursor;
-      document.body.style.cursor = "pointer";
-    });
+      left_line.on("mouseout", function() {
+        document.body.style.cursor = that.attrs.cursor;
+      });
 
-    left_line.on("mouseout", function() {
-      document.body.style.cursor = that.attrs.cursor;
-    });
+      arrows.add(up_line);
+      arrows.add(down_line);
+      arrows.add(right_line);
+      arrows.add(left_line);
 
-    arrows.add(up_line);
-    arrows.add(down_line);
-    arrows.add(right_line);
-    arrows.add(left_line);
+      that.getNode().add(background);
+      that.getNode().add(circle);
+      that.getNode().add(middleButton);
+      that.getNode().add(arrows);
 
-    that.getNode().add(background);
-    that.getNode().add(circle);
-    that.getNode().add(middleButton);
-    that.getNode().add(arrows);
+      // Events
+      middleButton.on("click", function() {
+        if (that.attrs.callback && that.attrs.callback.func)
+          that.attrs.callback.func("Center", that.attrs.callback.data);
+      });
 
-    // Events
-    middleButton.on("click", function() {
-      if (that.attrs.callback && that.attrs.callback.func)
-        that.attrs.callback.func("Center", that.attrs.callback.data);
-    });
+      up_line.on("click", function() {
+        if (that.attrs.callback && that.attrs.callback.func)
+          that.attrs.callback.func("Up", that.attrs.callback.data);
+      });
 
-    up_line.on("click", function() {
-      if (that.attrs.callback && that.attrs.callback.func)
-        that.attrs.callback.func("Up", that.attrs.callback.data);
-    });
+      down_line.on("click", function() {
+        if (that.attrs.callback && that.attrs.callback.func)
+          that.attrs.callback.func("Down", that.attrs.callback.data);
+      });
 
-    down_line.on("click", function() {
-      if (that.attrs.callback && that.attrs.callback.func)
-        that.attrs.callback.func("Down", that.attrs.callback.data);
-    });
+      right_line.on("click", function() {
+        if (that.attrs.callback && that.attrs.callback.func)
+          that.attrs.callback.func("Right", that.attrs.callback.data);
+      });
 
-    right_line.on("click", function() {
-      if (that.attrs.callback && that.attrs.callback.func)
-        that.attrs.callback.func("Right", that.attrs.callback.data);
-    });
+      left_line.on("click", function() {
+        if (that.attrs.callback && that.attrs.callback.func)
+          that.attrs.callback.func("Left", that.attrs.callback.data);
+      });
+      that.attrs.init_callback(that);
+    };
 
-    left_line.on("click", function() {
-      if (that.attrs.callback && that.attrs.callback.func)
-        that.attrs.callback.func("Left", that.attrs.callback.data);
-    });
+    loadSources(sources_browser, initBrowser, images_browser);
 
     return that;
   }
@@ -264,257 +270,189 @@ var KWidgets = (function () {
       slide_hight: 10
     }, config));
 
-    var group = that.getNode();
-    var top_limit = that.attrs.y + that.attrs.width;
-    var bottom_limit = that.attrs.y + that.attrs.width + that.attrs.height;
+    function initSlider(images) {
+      var group = that.getNode();
+      var top_limit = that.attrs.y + that.attrs.width;
+      var bottom_limit = that.attrs.y + that.attrs.width + that.attrs.height;
 
-    group.setX(that.attrs.x);
-    group.setY(that.attrs.y);
+      group.setX(that.attrs.x);
+      group.setY(that.attrs.y);
 
-    var line = new Kinetic.Line({
-      points: [{
-        x: 0,
+      var line = new Kinetic.Line({
+        points: [{
+          x: 0,
+          y: that.attrs.width,
+        }, {
+          x: 0,
+          y: that.attrs.width + that.attrs.height + that.attrs.slide_hight
+        }],
+        troke: "black",
+        strokeWidth: 2,
+      });
+
+      var background = new Kinetic.Rect({
+        x: -that.attrs.width / 2,
+        y: that.attrs.width - that.attrs.width / 4,
+        width: that.attrs.width,
+        height: that.attrs.width + that.attrs.height + 2 * that.attrs.width / 4
+                + that.attrs.slide_hight - that.attrs.width,
+        opacity: 0.6,
+        fill: "white",
+        shadow: {
+          color: 'grey',
+          blur: 15
+        }
+      });
+
+      var zoom_button = new Kinetic.Group({
+        x: -that.attrs.width / 2,
         y: that.attrs.width,
-      }, {
-        x: 0,
+        draggable: true,
+        dragBoundFunc: function(pos) {
+          var ny = pos.y;
+
+          if (ny <= top_limit)
+            ny = top_limit;
+          else if (ny >= bottom_limit)
+            ny = bottom_limit;
+
+          return {
+            x: this.getAbsolutePosition().x,
+            y: ny
+          };
+        }
+      });
+
+      var button = new Kinetic.Image({
+        image: images.mid,
+        width: that.attrs.width,
+        height: that.attrs.slide_hight
+      });
+
+      // add cursor styling
+      button.on("mouseover", function() {
+        that.attrs.cursor = document.body.style.cursor;
+        document.body.style.cursor = "move";
+      });
+
+      button.on("mouseout", function() {
+        document.body.style.cursor = that.attrs.cursor;
+      });
+
+      zoom_button.add(button);
+
+      var sum_button = new Kinetic.Group({
+        x: -that.attrs.width / 2
+      });
+
+      var plus_rect = new Kinetic.Image({
+        image: images.plus,
+        width: that.attrs.width,
+        height: that.attrs.width
+      });
+
+      // add cursor styling
+      plus_rect.on("mouseover", function() {
+        that.attrs.cursor = document.body.style.cursor;
+        document.body.style.cursor = "pointer";
+      });
+
+      plus_rect.on("mouseout", function() {
+        document.body.style.cursor = that.attrs.cursor;
+      });
+
+      sum_button.add(plus_rect);
+
+      var rest_button = new Kinetic.Group({
+        x: -that.attrs.width / 2,
         y: that.attrs.width + that.attrs.height + that.attrs.slide_hight
-      }],
-      troke: "black",
-      strokeWidth: 2,
-    });
-
-    var background = new Kinetic.Rect({
-      x: -that.attrs.width / 2,
-      y: that.attrs.width - that.attrs.width / 4,
-      width: that.attrs.width,
-      height: that.attrs.width + that.attrs.height + 2 * that.attrs.width / 4
-              + that.attrs.slide_hight - that.attrs.width,
-      opacity: 0.6,
-      fill: "white",
-      shadow: {
-        color: 'grey',
-        blur: 15
-       }
-    });
-
-    var zoom_button = new Kinetic.Group({
-      x: -that.attrs.width / 2,
-      y: that.attrs.width,
-      draggable: true,
-      dragBoundFunc: function(pos) {
-        var ny = pos.y;
-
-        if (ny <= top_limit)
-          ny = top_limit;
-        else if (ny >= bottom_limit)
-          ny = bottom_limit;
-
-        return {
-          x: this.getAbsolutePosition().x,
-          y: ny
-        };
-      }
-    });
-
-    var button = new Kinetic.Rect({
-      width: that.attrs.width,
-      height: that.attrs.slide_hight,
-      fill: "white",
-      stroke: "black",
-      strokeWidth: 1,
-      cornerRadius: that.attrs.width / 4,
-      shadow: {
-        color: 'grey',
-        blur: 10
-      }
-    });
-
-    // add cursor styling
-    button.on("mouseover", function() {
-      that.attrs.cursor = document.body.style.cursor;
-      document.body.style.cursor = "move";
-    });
-
-    button.on("mouseout", function() {
-      document.body.style.cursor = that.attrs.cursor;
-    });
-
-    var bline = new Kinetic.Line({
-      points: [{
-        x: that.attrs.width / 4,
-        y: that.attrs.slide_hight / 2
-      }, {
-        x: that.attrs.width - (that.attrs.width / 4),
-        y: that.attrs.slide_hight / 2
-      }],
-      stroke: "black",
-      strokeWidth: 2
-    });
-
-    zoom_button.add(button);
-    zoom_button.add(bline);
-
-    var sum_button = new Kinetic.Group({
-      x: -that.attrs.width / 2
-    });
-
-    var plus_rect = new Kinetic.Rect({
-      width: that.attrs.width,
-      height: that.attrs.width,
-      fill: "white",
-      stroke: "black",
-      strokeWidth: 1,
-      cornerRadius: that.attrs.width / 4,
-      shadow: {
-        color: 'grey',
-        blur: 10
-      }
-    });
-
-    // add cursor styling
-    plus_rect.on("mouseover", function() {
-      that.attrs.cursor = document.body.style.cursor;
-      document.body.style.cursor = "pointer";
-    });
-
-    plus_rect.on("mouseout", function() {
-      document.body.style.cursor = that.attrs.cursor;
-    });
-
-    var plus_h = new Kinetic.Line({
-      points: [{
-        x: that.attrs.width / 4,
-        y: that.attrs.width / 2
-      }, {
-        x: that.attrs.width - (that.attrs.width / 4),
-        y: that.attrs.width / 2
-      }],
-      stroke: "black",
-      strokeWidth: 2
-    });
-
-    var plus_v = new Kinetic.Line({
-      points: [{
-        x: that.attrs.width / 2,
-        y: that.attrs.width / 4
-      }, {
-        x: that.attrs.width / 2,
-        y: that.attrs.width - (that.attrs.width / 4)
-      }],
-      stroke: "black",
-      strokeWidth: 2
-    });
-
-    sum_button.add(plus_rect);
-    sum_button.add(plus_h);
-    sum_button.add(plus_v);
-
-    var rest_button = new Kinetic.Group({
-      x: -that.attrs.width / 2,
-      y: that.attrs.width + that.attrs.height + that.attrs.slide_hight
-    });
-
-    var sub_rect = new Kinetic.Rect({
-      width: that.attrs.width,
-      height: that.attrs.width,
-      fill: "white",
-      stroke: "black",
-      strokeWidth: 1,
-      cornerRadius: that.attrs.width / 4,
-      shadow: {
-        color: 'grey',
-        blur: 10
-      }
-    });
-
-    // add cursor styling
-    sub_rect.on("mouseover", function() {
-      that.attrs.cursor = document.body.style.cursor;
-      document.body.style.cursor = "pointer";
-    });
-
-    sub_rect.on("mouseout", function() {
-      document.body.style.cursor = that.attrs.cursor;
-    });
-
-    var sub_h = new Kinetic.Line({
-      points: [{
-        x: that.attrs.width / 4,
-        y: that.attrs.width / 2
-      }, {
-        x: that.attrs.width - (that.attrs.width / 4),
-        y: that.attrs.width / 2
-      }],
-      stroke: "black",
-      strokeWidth: 2
-    });
-
-    rest_button.add(sub_rect);
-    rest_button.add(sub_h);
-
-    that.getNode().add(background);
-    that.getNode().add(line);
-    that.getNode().add(zoom_button);
-    that.getNode().add(sum_button);
-    that.getNode().add(rest_button);
-
-    // Events
-    zoom_button.on("dragmove", function() {
-      var pos = this.getAbsolutePosition();
-      var init = that.attrs.y + that.attrs.width;
-      var percent = (pos.y - init) / that.attrs.height;
-
-      if (that.attrs.callback && that.attrs.callback.func)
-        that.attrs.callback.func(percent, true, that.attrs.callback.data);
-    });
-
-    sum_button.on("click", function() {
-      var pos = zoom_button.getAbsolutePosition();
-      var attrs = zoom_button.getAttrs();
-      var y = pos.y - that.attrs.height / that.attrs.sections;
-
-      if (y <= top_limit)
-        y = top_limit;
-
-      var init = that.attrs.y + that.attrs.width;
-      var percent = (y - init) / that.attrs.height;
-
-      // Set global to local position
-      y = Math.abs(y - that.attrs.y);
-
-      zoom_button.transitionTo({
-        y: y,
-        duration: 0.2,
-        easing: 'ease-in-out'
       });
 
-      if (that.attrs.callback && that.attrs.callback.func)
-        that.attrs.callback.func(percent, false, that.attrs.callback.data);
-    });
-
-    rest_button.on("click", function() {
-      var pos = zoom_button.getAbsolutePosition();
-      var attrs = zoom_button.getAttrs();
-      var y = pos.y + that.attrs.height / that.attrs.sections;
-
-      if (y >= bottom_limit)
-        y = bottom_limit;
-
-      var init = that.attrs.y + that.attrs.width;
-      var percent = (y - init) / that.attrs.height;
-
-      // Set global to local position
-      y = Math.abs(y - that.attrs.y);
-
-      zoom_button.transitionTo({
-        y: y,
-        duration: 0.2,
-        easing: 'ease-in-out'
+      var sub_rect = new Kinetic.Image({
+        image: images.minus,
+        width: that.attrs.width,
+        height: that.attrs.width
       });
-      
-      if (that.attrs.callback && that.attrs.callback.func)
-        that.attrs.callback.func(percent, false, that.attrs.callback.data);
-    });
+
+      // add cursor styling
+      sub_rect.on("mouseover", function() {
+        that.attrs.cursor = document.body.style.cursor;
+        document.body.style.cursor = "pointer";
+      });
+
+      sub_rect.on("mouseout", function() {
+        document.body.style.cursor = that.attrs.cursor;
+      });
+
+      rest_button.add(sub_rect);
+
+      that.getNode().add(background);
+      that.getNode().add(line);
+      that.getNode().add(zoom_button);
+      that.getNode().add(sum_button);
+      that.getNode().add(rest_button);
+
+      // Events
+      zoom_button.on("dragmove", function() {
+        var pos = this.getAbsolutePosition();
+        var init = that.attrs.y + that.attrs.width;
+        var percent = (pos.y - init) / that.attrs.height;
+
+        if (that.attrs.callback && that.attrs.callback.func)
+          that.attrs.callback.func(percent, true, that.attrs.callback.data);
+      });
+
+      sum_button.on("click", function() {
+        var pos = zoom_button.getAbsolutePosition();
+        var attrs = zoom_button.getAttrs();
+        var y = pos.y - that.attrs.height / that.attrs.sections;
+
+        if (y <= top_limit)
+          y = top_limit;
+
+        var init = that.attrs.y + that.attrs.width;
+        var percent = (y - init) / that.attrs.height;
+
+        // Set global to local position
+        y = Math.abs(y - that.attrs.y);
+
+        zoom_button.transitionTo({
+          y: y,
+          duration: 0.2,
+          easing: 'ease-in-out'
+        });
+
+        if (that.attrs.callback && that.attrs.callback.func)
+          that.attrs.callback.func(percent, false, that.attrs.callback.data);
+      });
+
+      rest_button.on("click", function() {
+        var pos = zoom_button.getAbsolutePosition();
+        var attrs = zoom_button.getAttrs();
+        var y = pos.y + that.attrs.height / that.attrs.sections;
+
+        if (y >= bottom_limit)
+          y = bottom_limit;
+
+        var init = that.attrs.y + that.attrs.width;
+        var percent = (y - init) / that.attrs.height;
+
+        // Set global to local position
+        y = Math.abs(y - that.attrs.y);
+
+        zoom_button.transitionTo({
+          y: y,
+          duration: 0.2,
+          easing: 'ease-in-out'
+        });
+
+        if (that.attrs.callback && that.attrs.callback.func)
+          that.attrs.callback.func(percent, false, that.attrs.callback.data);
+      });
+      that.attrs.init_callback(that);
+    };
+
+    loadSources(sources_slider, initSlider, images_slider);
 
     return that;
   };
