@@ -143,10 +143,10 @@ var KWidgets = (function () {
 
       var up_line = new Kinetic.Image({
         image: images.arrow,
-        x: -len,
-        y: -len - 13,
-        width: 2 * len,
-        height: len
+        x: -(len + len / 2) / 2,
+        y: -len * 2 + (-len / 4),
+        width: len + len / 2,
+        height: 4 * len / 5
       });
 
       // add cursor styling
@@ -161,10 +161,10 @@ var KWidgets = (function () {
 
       var down_line = new Kinetic.Image({
         image: images.arrow,
-        x: len,
-        y: len + 13,
-        width: 2 * len,
-        height: len,
+        x: (len + len / 2) / 2,
+        y: len * 2 + (len / 4),
+        width: len + len / 2,
+        height: 4 * len / 5,
         rotation: Math.PI
       });
 
@@ -180,10 +180,10 @@ var KWidgets = (function () {
 
       var right_line = new Kinetic.Image({
         image: images.arrow,
-        x: len + 13,
-        y: len - 20,
-        width: 2 * len,
-        height: len,
+        x: len * 2 + (len / 4),
+        y: -(len + len / 2) / 2,
+        width: len + len / 2,
+        height: 4 * len / 5,
         rotation: Math.PI / 2,
       });
 
@@ -199,10 +199,10 @@ var KWidgets = (function () {
 
       var left_line = new Kinetic.Image({
         image: images.arrow,
-        x: -len - 13,
-        y: -len + 20,
-        width: 2 * len,
-        height: len,
+        x: -len * 2 - (len / 4),
+        y: (len + len / 2) / 2,
+        width: len + len / 2,
+        height: 4 * len / 5,
         rotation: -Math.PI / 2,
       });
 
