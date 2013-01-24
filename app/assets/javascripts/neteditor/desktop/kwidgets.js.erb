@@ -105,10 +105,9 @@ var KWidgets = (function () {
         radius: that.attrs.radius + 5,
         opacity: 0.6,
         fill: "white",
-        shadow: {
-          color: 'grey',
-          blur: 15
-        }
+        shadowColor: 'grey',
+        shadowBlur: 15,
+        shadowOpacity: 0.6
       });
 
       var circle = new Kinetic.Circle({
@@ -292,16 +291,14 @@ var KWidgets = (function () {
 
       var background = new Kinetic.Rect({
         x: -that.attrs.width / 2,
-        y: that.attrs.width - that.attrs.width / 4,
+        y: 0,
         width: that.attrs.width,
-        height: that.attrs.width + that.attrs.height + 2 * that.attrs.width / 4
-                + that.attrs.slide_hight - that.attrs.width,
+        height: that.attrs.width * 2 + that.attrs.height + that.attrs.slide_hight,
         opacity: 0.6,
         fill: "white",
-        shadow: {
-          color: 'grey',
-          blur: 15
-        }
+        shadowColor: 'grey',
+        shadowBlur: 15,
+        shadowOpacity: 0.6
       });
 
       var zoom_button = new Kinetic.Group({
@@ -493,7 +490,7 @@ var KWidgets = (function () {
 
     var line = new Kinetic.Line({
       points: points,
-      stroke: "black",
+      stroke: "grey",
       strokeWidth: that.attrs.width,
       lineCap: "round",
       lineJoin: "round"
@@ -515,24 +512,34 @@ var KWidgets = (function () {
     var events = {};
 
     if (that.attrs.label) {
-      var label = new Kinetic.Text({
+      var txt = new Kinetic.Text({
         name: "label",
         text: that.attrs.label,
         align: "center",
-        fontSize: 20,
+        fontSize: 30,
         fill: "white",
         padding: 8,
         opacity: 0.6,
         stroke: 'grey',
+        strokeWidth: 1
+      });
+
+      var rect = new Kinetic.Rect({
+        name: "background",
+        stroke: 'grey',
         strokeWidth: 1,
-        shadow: {
-          color: 'grey',
-          blur: 15
-        },
+        fill: 'white',
+        width: txt.getWidth(),
+        height: txt.getHeight(),
+        opacity: 0.8,
+        shadowColor: 'grey',
+        shadowBlur: 15,
+        shadowOpacity: 0.6,
         cornerRadius: 10
       });
 
-      that.getNode().add(label);
+      that.getNode().add(rect);
+      that.getNode().add(txt);
     }
 
     if (that.attrs.image) {
@@ -642,30 +649,48 @@ var KWidgets = (function () {
           x: item.toolAttrs.minx + that.attrs.min_size / 2,
           y: item.toolAttrs.miny + that.attrs.min_size / 2
         },
-        shadow: {
-          color: 'grey',
-          blur: 6,
-          offset: [2, 2],
-          opacity: 0.6
-        }
+        shadowColor: 'grey',
+        shadowBlur: 6,
+        shadowOffset: 2,
+        shadowOpacity: 0.6
       });
     };
 
-    function confLabel(item) {
+    function confTxt(item) {
       var label = item.toolAttrs.label;
-
-      if (!label)
-        return;
 
       label.setFontSize(that.attrs.fontSize);
       label.setFontFamily(that.attrs.fontFamily);
-      label.setTextFill(that.attrs.textFill);
+      label.setFill(that.attrs.textFill);
 
       label.setX(item.toolAttrs.maxx - label.getWidth() / 2
                                                     + that.attrs.max_size / 2);
       label.setY(item.toolAttrs.maxy - label.getHeight()
                                                     + item.toolAttrs.maxy / 2);
       label.hide();
+    };
+
+    function confBackground(item) {
+      var label = item.toolAttrs.label;
+      var background = item.toolAttrs.background;
+
+      background.hide();
+
+      if (!label)
+        return;
+
+      background.setX(label.getX());
+      background.setY(label.getY());
+      background.setHeight(label.getHeight());
+      background.setWidth(label.getWidth());
+    };
+
+    function confLabel(item) {
+      if (item.toolAttrs.label)
+        confTxt(item);
+
+      if (item.toolAttrs.background)
+        confBackground(item);
     };
 
     function configureItem(item) {
@@ -680,10 +705,33 @@ var KWidgets = (function () {
 
       item.toolAttrs.img = item.getNode().get(".icon")[0];
       item.toolAttrs.label = item.getNode().get(".label")[0];
+      item.toolAttrs.background = item.getNode().get(".background")[0];
 
       confIcon(item);
       confLabel(item);
     }
+
+    function showLabel(item) {
+      var label = item.toolAttrs.label;
+      var background = item.toolAttrs.background;
+
+      if (label)
+        label.show();
+
+      if (background)
+        background.show();
+    };
+
+    function hideLabel(item) {
+      var label = item.toolAttrs.label;
+      var background = item.toolAttrs.background;
+
+      if (label)
+        label.hide();
+
+      if (background)
+        background.hide();
+    };
 
     function confItemNode(item) {
       var node = item.getNode();
@@ -692,7 +740,6 @@ var KWidgets = (function () {
 
       node.on("mouseover touchstart", function() {
         var image = item.toolAttrs.img;
-        var label = item.toolAttrs.label;
 
         that.attrs.cursor = document.body.style.cursor;
         if (item.attrs.draggable)
@@ -712,24 +759,17 @@ var KWidgets = (function () {
             y: item.toolAttrs.maxy + that.attrs.min_size / 2,
             width: that.attrs.max_size,
             height: that.attrs.max_size,
-            shadow: {
-              offset: {
-                x: 10,
-                y: 10
-              }
-            },
+            shadowOffset: 10,
             duration: that.attrs.duration,
             easing: that.attrs.easing
           });
         }
 
-        if (label)
-          label.show();
+        showLabel(item);
       });
 
       node.on("mouseout touchend", function() {
         var image = item.toolAttrs.img;
-        var label = item.toolAttrs.label;
 
         document.body.style.cursor = that.attrs.cursor;
 
@@ -744,19 +784,13 @@ var KWidgets = (function () {
             y: item.toolAttrs.miny + that.attrs.min_size / 2,
             width: that.attrs.min_size,
             height: that.attrs.min_size,
-            shadow: {
-              offset: {
-                x: 2,
-                y: 2
-              }
-            },
+            shadowOffset: 2,
             duration: that.attrs.duration,
             easing: that.attrs.easing
           });
         }
 
-        if (label)
-          label.hide();
+        hideLabel(item);
       });
 
       node.on("click", function() {
@@ -781,12 +815,9 @@ var KWidgets = (function () {
 
       image.setDraggable(true);
       image.on("dragstart", function() {
-        var label = item.toolAttrs.label;
-
         confDrag(image, that.attrs.max_size);
 
-        if (label)
-          label.hide();
+        hideLabel(item);
 
         item.toolAttrs.regenerated = false;
       });
@@ -817,12 +848,10 @@ var KWidgets = (function () {
             x: item.toolAttrs.minx + that.attrs.min_size / 2,
             y: item.toolAttrs.miny + that.attrs.min_size / 2
           },
-          shadow: {
-            color: 'grey',
-            blur: 6,
-            offset: [2, 2],
-            opacity: 0.6
-          }
+          shadowColor: 'grey',
+          shadowBlur: 6,
+          shadowOffset: 2,
+          shadowOpacity: 0.6
         });
 
         item.toolAttrs.regenerated = true;
@@ -861,10 +890,9 @@ var KWidgets = (function () {
         name: "padding",
         fill: "white",
         opacity: 0.6,
-        shadow: {
-          color: 'grey',
-          blur: 15
-        }
+        shadowColor: 'grey',
+        shadowBlur: 15,
+        shadowOpacity: 0.6
       });
 
       updatePadding(padding);

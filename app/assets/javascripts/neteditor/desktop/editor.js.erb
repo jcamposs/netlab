@@ -115,6 +115,56 @@ var Desktop = (function () {
   };
 
   //////////////////////////////////////////////////////////////////////////////
+  // Network Interface Object
+  //////////////////////////////////////////////////////////////////////////////
+  Interface = function(config) {
+    var that = Node(merge({
+      name: "undefined",
+    }, config));
+
+    var group = that.getNode();
+
+    var txt = new Kinetic.Text({
+      x: 0,
+      y: 0,
+      text: that.attrs.name,
+      fontSize: 10,
+      fontFamily: "Calibri",
+      align: "center",
+      verticalAlign: "middle",
+      fontStyle: "bold",
+      fill: "blue",
+      padding: 8,
+      opacity: 0.6,
+    });
+
+    var rect = new Kinetic.Rect({
+      x: txt.getX(),
+      y: txt.getY(),
+      stroke: 'white',
+      strokeWidth: 1,
+      fill: 'white',
+      width: txt.getWidth(),
+      height: txt.getHeight(),
+      opacity: 0.6,
+      cornerRadius: 5
+    });
+
+    group.add(rect);
+    group.add(txt);
+
+    that.setX = function(x) {
+      group.setX(x - txt.getWidth() / 2);
+    };
+
+    that.setY = function(y) {
+      group.setY(y - txt.getHeight() / 2);
+    };
+
+    return that;
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
   // Network element interface
   //////////////////////////////////////////////////////////////////////////////
   NetElementIface = {
@@ -159,12 +209,10 @@ var Desktop = (function () {
         x: MAX_ICON_SIZE / 2,
         y: MAX_ICON_SIZE / 2
       },
-      shadow: {
-        color: 'grey',
-        blur: 6,
-        offset: [2, 2],
-        opacity: 0.6
-      }
+      shadowColor: 'grey',
+      shadowBlur: 6,
+      shadowOffset: 2,
+      shadowOpacity: 0.6
     });
 
     function setLinksColor(color) {
@@ -276,9 +324,7 @@ var Desktop = (function () {
       processEvt("mouseover");
 
       group.moveToTop();
-      img.setShadow({
-        offset: [10, 10]
-      });
+      img.setShadowOffset(10);
       this.transitionTo({
         scale: {
           x: 1.3,
@@ -295,9 +341,7 @@ var Desktop = (function () {
 
       processEvt("mouseout");
 
-      img.setShadow({
-        offset: [2, 2]
-      });
+      img.setShadowOffset(2);
       this.transitionTo({
         scale: {
           x: 1,
@@ -352,26 +396,39 @@ var Desktop = (function () {
       text: that.attrs.name,
       fontSize: 12,
       fontFamily: "Calibri",
-      textFill: "black",
       align: "center",
       fontStyle: "bold",
-      fill: "white",
+      fill: "black",
       padding: 3,
       opacity: 0.6,
-      shadow: {
-        color: 'grey',
-        blur: 6,
-        offset: [2, 2],
-        opacity: 0.6
-      },
+      shadowColor: 'grey',
+      shadowBlur: 6,
+      shadowOffset: 2,
+      shadowOpacity: 0.6,
       cornerRadius: 5
     });
 
     label.setY(MAX_ICON_SIZE / 2 - label.getHeight() / 2);
     label.setX(-label.getWidth() / 2);
 
-    group.add(label);
+    var rect = new Kinetic.Rect({
+      x: label.getX(),
+      y: label.getY(),
+      stroke: 'grey',
+      strokeWidth: 1,
+      fill: 'white',
+      width: label.getWidth(),
+      height: label.getHeight(),
+      opacity: 0.8,
+      shadowColor: 'grey',
+      shadowBlur: 15,
+      shadowOpacity: 0.6,
+      cornerRadius: 5
+    });
+
     group.add(img);
+    group.add(rect);
+    group.add(label);
 
     that.remove = function() {
       removeLinks();
@@ -526,13 +583,13 @@ var Desktop = (function () {
 
     function updateInterface(id, link) {
       var pos = calculatePoint(link);
-      var node = that.attrs.labels[id].node;
+      var interface = that.attrs.labels[id].iface;
 
       var x = isNaN(pos.x) ? that.getNode().getX() : pos.x;
       var y = isNaN(pos.y) ? that.getNode().getY() : pos.y;
 
-      node.setX(x - node.getWidth() / 2);
-      node.setY(y - node.getHeight() / 2);
+      interface.setX(x);
+      interface.setY(y);
 
       layers.ifaces.draw();
     };
@@ -547,9 +604,10 @@ var Desktop = (function () {
     };
 
     function setLabelCutEvents(ifaceId) {
+      var node = that.attrs.labels[ifaceId].iface.getNode()
       var color;
 
-      that.attrs.labels[ifaceId].node.on("mouseover", function(evt) {
+      node.on("mouseover", function(evt) {
         if (scene.getState() != "cut")
           return;
 
@@ -559,7 +617,7 @@ var Desktop = (function () {
         layers.wires.draw();
       });
 
-      that.attrs.labels[ifaceId].node.on("mouseout", function(evt) {
+      node.on("mouseout", function(evt) {
         if (scene.getState() != "cut")
           return;
 
@@ -568,11 +626,11 @@ var Desktop = (function () {
         layers.wires.draw();
       });
 
-      that.attrs.labels[ifaceId].node.on("click", function(evt) {
+      node.on("click", function(evt) {
         if (scene.getState() != "cut")
           return;
 
-        that.attrs.labels[ifaceId].node.off("mouseout");
+        node.off("mouseout");
         scene.removeConnection(that.attrs.labels[ifaceId].link);
         restoreCursor();
       });
@@ -587,7 +645,7 @@ var Desktop = (function () {
       var eth = that.attrs.labels[ifaceId];
 
       eth.link.unregisterWatcher(eth.watcherId);
-      eth.node.remove();
+      eth.iface.getNode().remove();
       that.superius.removeLink(link);
       delete that.attrs.labels[ifaceId];
       layers.ifaces.draw();
@@ -605,29 +663,16 @@ var Desktop = (function () {
         watcherId: link.registerWatcher(null, function() {
           updateInterface(ifaceId, link);
         }),
-        node: new Kinetic.Text({
-          x: pos.x,
-          y: pos.y,
-          text: ifaceId,
-          fontSize: 8,
-          fontFamily: "Calibri",
-          textFill: "blue",
-          align: "center",
-          verticalAlign: "middle",
-          fontStyle: "bold",
-          fill: "white",
-          padding: 8,
-          opacity: 0.6,
-        })
+        iface: Interface({ name: ifaceId })
       };
 
-      var node = that.attrs.labels[ifaceId].node;
+      var interface = that.attrs.labels[ifaceId].iface;
 
-      node.setX(pos.x - node.getWidth() / 2);
-      node.setY(pos.y - node.getHeight() / 2);
+      interface.setX(pos.x);
+      interface.setY(pos.y);
       setLabelCutEvents(ifaceId);
 
-      layers.ifaces.add(that.attrs.labels[ifaceId].node);
+      layers.ifaces.add(interface.getNode());
       layers.ifaces.draw();
 
       return true;
@@ -1238,7 +1283,7 @@ var Desktop = (function () {
     };
 
     function clearConnectState() {
-      var dom = that.attrs.stage.getDOM();
+      var dom = that.attrs.stage.getContainer();
       dom.removeEventListener('mousemove', that.attrs.mouseMoveHandler, false);
       document.removeEventListener('keydown', that.attrs.keyDownHandler, false);
 
@@ -1274,7 +1319,7 @@ var Desktop = (function () {
         layers.wires.draw();
       }
 
-      var dom = that.attrs.stage.getDOM();
+      var dom = that.attrs.stage.getContainer();
       dom.addEventListener('mousemove', that.attrs.mouseMoveHandler, false);
       document.addEventListener('keydown', that.attrs.keyDownHandler, false);
     };
@@ -1398,7 +1443,7 @@ var Desktop = (function () {
         y: that.attrs.stage.getHeight() - MAX_ICON_SIZE,
         min_size: MIN_ICON_SIZE,
         max_size: MAX_ICON_SIZE,
-        fontSize: 10,
+        fontSize: 15,
         separation: 15,
         padding: {
           horizontal: 3,
