@@ -7,12 +7,26 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-<p class="notice"><%= notice %></p>
-<p class="alert"><%= alert %></p>
 
-<div id="dialog"></div>
+  <div class="navbar navbar-fixed-top">
 
-<%= yield %>
+    <div class="navbar-inner">
+
+      <div class="container-fluid" style="width: auto;">
+
+        <a id="title" href="#">Netlab</a>
+
+        <% if user_signed_in? %>
+          <%= render :file => "/home/index" %>
+        <% end %>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <%= yield %>
 
 </body>
 </html>
