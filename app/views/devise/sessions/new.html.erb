@@ -1,17 +1,47 @@
-<h2>Sign in</h2>
+<div class="navbar navbar-fixed-top">
 
-<%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-  <div><%= f.label :email %><br />
-  <%= f.email_field :email %></div>
+  <ul id="form_sign-in" class="nav pull-right">
 
-  <div><%= f.label :password %><br />
-  <%= f.password_field :password %></div>
+    <%= form_for(resource, :as => resource_name, :url => session_path(resource_name), :html => {:class => "form-inline"}) do |f| %>
+      <br><%= f.email_field :email, :placeholder => "Email" %>
 
-  <% if devise_mapping.rememberable? -%>
-    <div><%= f.check_box :remember_me %> <%= f.label :remember_me %></div>
-  <% end -%>
+      <%= f.password_field :password, :placeholder => "Password" %>
 
-  <div><%= f.submit "Sign in" %></div>
-<% end %>
+      <%= f.submit "Sign in", :class => "btn btn-primary" %>
 
-<%= render "links" %>
+      <% if devise_mapping.rememberable? -%>
+        <br><%= f.label :remember_me, :class => "checkbox" do %>
+          <%= f.check_box :remember_me %> Remember me
+        <% end %>
+      <% end %>
+
+      <div id="links">
+        <% if devise_mapping.recoverable? && controller_name != 'passwords' %>
+          <%= link_to "Forgot your password?", new_password_path(resource_name) %><br />
+        <% end %>
+        <% if devise_mapping.confirmable? && controller_name != 'confirmations' %>
+          <%= link_to "Didn't receive confirmation instructions?", new_confirmation_path(resource_name) %><br />
+        <% end %>
+      <div>
+    <% end %>
+
+  </ul>
+
+</div>
+
+<div class="container-fluid">
+
+  <div class="row-fluid">
+
+    <div id="logo" class="span6">
+      <center><h2>Free Network Simulator Machines<h2></center><br /><br />
+      <%= image_tag("logo.png") %>
+    </div>
+
+    <div id="form-register" class="span4 offset2">
+      <%= render :file => "devise/registrations/new" %>
+    </div>
+
+  </div>
+
+</div>
