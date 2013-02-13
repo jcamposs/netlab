@@ -55,5 +55,5 @@ gem 'gdrivestrg', '~> 0.0.6'
 #gem 'dropboxstrg', :path => '../rails_plugin/dropboxstrg'
 #gem 'gdrivestrg', :path => '../rails_plugin/gdrivestrg'
 
-
-
+# Simple form style
+gem 'simple_form'
