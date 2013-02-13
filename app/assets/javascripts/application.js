@@ -18,3 +18,8 @@
 //= require jquery-ui
 //= require jquery_ujs
 //= require_tree .
+
+$(document).ready(function (){
+  // Remove flash messages
+  setTimeout("$('.alert').remove()", 5000);
+});

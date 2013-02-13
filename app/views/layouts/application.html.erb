@@ -24,6 +24,12 @@
 
     </div>
 
+    <% flash.each do |type, message| %>
+      <div id="alert" class="<%= flash_class(type) %>">
+        <%=  message %>
+      </div>
+    <% end %>
+
   </div>
 
   <%= yield %>
