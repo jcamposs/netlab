@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130305111144) do
+ActiveRecord::Schema.define(:version => 20130305123737) do
 
   create_table "cloudstrg_cloudstrgplugins", :force => true do |t|
     t.string   "plugin_name"
@@ -113,6 +113,14 @@ ActiveRecord::Schema.define(:version => 20130305111144) do
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+
+  create_table "users_workspaces", :id => false, :force => true do |t|
+    t.integer "user_id"
+    t.integer "workspace_id"
+  end
+
+  add_index "users_workspaces", ["user_id", "workspace_id"], :name => "index_users_workspaces_on_user_id_and_workspace_id"
+  add_index "users_workspaces", ["workspace_id", "user_id"], :name => "index_users_workspaces_on_workspace_id_and_user_id"
 
   create_table "virtual_machines", :force => true do |t|
     t.integer  "workspace_id"

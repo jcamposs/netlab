@@ -3,6 +3,7 @@ class User < ActiveRecord::Base
   has_many :workspaces
   has_many :shellinaboxes
   has_many :netlabsessions, dependent: :destroy
+  has_and_belongs_to_many :editorworkspaces, :class_name => Workspace
 
   # Cloud storage params
   has_one :cloudstrgconfig, :class_name => Cloudstrg::Config, :dependent => :destroy

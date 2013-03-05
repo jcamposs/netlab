@@ -31,6 +31,7 @@ class WorkspacesController < ApplicationController
   # GET /workspaces/1
   # GET /workspaces/1.json
   def show
+    @user = current_user
     @workspace = Workspace.find(params[:id])
 
     respond_to do |format|
