@@ -1,28 +1,6 @@
 <div class="row">
   <div class="span10">
 
-  <%= simple_form_for(resource, :as => resource_name, :url => registration_path(resource_name), html: {class: "well"}) do |f| %>
-    <%= devise_error_messages! %>
-
-      <legend><h2>Sign Up</h2></legend>
-
-      <br><%= f.text_field :first_name, :placeholder => "First Name" %><br />
-
-      <br><%= f.text_field :last_name, :placeholder => "Last Name" %><br />
-
-      <br><%= f.email_field :email, :placeholder => "Email" %><br />
-
-      <br><%= f.password_field :password, :placeholder => "Password" %><br />
-
-      <br><%= f.password_field :password_confirmation, :placeholder => "Re-enter Password" %><br />
-
-      <br><%= f.submit "Sign up", :class => "btn btn-success"  %><br />
-
-  <% end %>
-
-  <% if current_page?(new_user_registration_path) %>
-    <%= render "links" %>
-  <% end %>
 
   </div>
 </div>
