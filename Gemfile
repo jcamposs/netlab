@@ -43,15 +43,14 @@ gem "jquery-ui-themes", "~> 0.0.7"
 
 # Adde devise
 gem 'devise'
+gem 'omniauth-google-oauth2'
 
 
 # A Ruby interface for getting process information
 gem 'sys-proctable'
 
 # Cloud storage drivers
-gem 'dropboxstrg', '~> 0.0.8'
-gem 'gdrivestrg', '~> 0.0.6'
-#gem 'cloudstrg', :path => '../rails_plugin/cloudstrg'
+gem 'gdrivestrg', '~> 0.0.7'
 #gem 'dropboxstrg', :path => '../rails_plugin/dropboxstrg'
 #gem 'gdrivestrg', :path => '../rails_plugin/gdrivestrg'
 
