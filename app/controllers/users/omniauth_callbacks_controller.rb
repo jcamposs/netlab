@@ -11,10 +11,10 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
              :plugin_id => Cloudstrg::Cloudstrgplugin.find_by_plugin_name("gdrive"), 
              :redirect => "https://localhost:3000/users/auth/google_oauth2/callback", 
              :refresh_token => request.env["omniauth.auth"].credentials["refresh_token"], 
-             :access_token => request.env["omniauth.auth"].credentials["access_token"], 
+             :access_token => request.env["omniauth.auth"].credentials["token"], 
              :expires_in => request.env["omniauth.auth"].credentials["expires_at"], 
              :session => session}
-      p _params
+      
       driver = CloudStrg.new_driver _params
       _session, url = driver.config _params
       
