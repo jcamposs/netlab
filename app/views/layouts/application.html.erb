@@ -17,7 +17,32 @@
         <a id="title" href="#">Netlab</a>
 
         <% if user_signed_in? %>
-          <%= render :file => "/home/index" %>
+
+		<div id="navbar-home" class="nav pull-right">
+
+		    <!--
+		    <IFRAME SRC=<%= @shell_url %> id="gadget0" name="gadget0" frameborder="1" width="720" height="500">
+		    If you can see this, your browser doesn't understand IFRAME.
+		    </IFRAME>
+		    -->
+
+		    <!--
+		    <p>
+		    <%= link_to "Close", home_close_path %>
+		    </p>
+		    -->
+
+		    <div id="menu">
+		      <h7><%= link_to "Home #{@user.first_name}", root_path %></h7>
+		      |
+		      <%= link_to 'Workspaces', workspaces_path %>
+		      |
+		      <%= link_to 'Scenes', scenes_path %>
+		      |
+		      <%= link_to 'Logout', destroy_user_session_path, method: :delete %>
+		    </div>
+
+		</div>
         <% end %>
 
       </div>
