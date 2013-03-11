@@ -21,6 +21,7 @@ class WorkspacesController < ApplicationController
   def index
     @user = current_user
     @workspaces = @user.workspaces
+    @workspaces += @user.editorworkspaces
 
     respond_to do |format|
       format.html # index.html.erb
@@ -180,7 +181,13 @@ class WorkspacesController < ApplicationController
   # DELETE /workspaces/1.json
   def destroy
     @workspace = Workspace.find(params[:id])
-    @workspace.destroy
+    user = current_user
+    if user == @workspace.user
+      @workspace.destroy
+    else
+      @workspace.editors.delete(user)
+      @workspace.save
+    end
 
     respond_to do |format|
       format.html { redirect_to workspaces_url }

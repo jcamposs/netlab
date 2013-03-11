@@ -1,3 +1,4 @@
+<br/><br/><br/>
 <%= form_for(@workspace) do |f| %>
   <% if @workspace.errors.any? %>
     <div id="error_explanation">
@@ -10,26 +11,56 @@
       </ul>
     </div>
   <% end %>
+  <div class="container-fluid">
 
-  <div class="field">
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
+  <div class="row-fluid">
+
+    <div id="netlab_params" class="span4">
+
+	<div class="tabbable"> <!-- Only required for left/right tabs -->
+	  <ul class="nav nav-tabs">
+		<li class="active"><a href="#tab1" data-toggle="tab">Params</a></li>
+		<li><a href="#tab2" data-toggle="tab">Team</a></li>
+	  </ul>
+	  <div class="tab-content">
+		<div class="tab-pane active" id="tab1">
+		  <div class="field">
+		    <%= f.label :name %><br />
+		    <%= f.text_field :name %>
+		  </div>
+
+		  <div class="field">
+		    <%= f.label :scene %><br />
+
+		    <% if @workspace.scene %>
+		      <%= f.select :scene_id, options_from_collection_for_select(@user.scenes, :id, :name, @workspace.scene.id) %>
+		    <% else %>
+		      <%= f.select :scene_id, options_from_collection_for_select(@user.scenes, :id, :name) %>
+		    <% end %>
+		  </div>
+		</div>
+		<div class="tab-pane" id="tab2">
+                  <% User.find(:all, :conditions => ["id != ?", @user.id]).each do |user| -%>
+		      	<label class="checkbox">
+		  	<%= check_box_tag "#{user.first_name} #{user.last_name}", user.id, @workspace.editors.include?(user), {:onchange => "js:switchEditor(this,'#{user.id}');", :id => "cb_#{user.id}"} %> <%= "#{user.first_name} #{user.last_name}" %>
+ 			</label><br/>
+		  <% end -%>
+		  <%= f.hidden_field :share_ids %>
+		  <%= f.hidden_field :unshare_ids %>
+		</div>
+	  </div>
+	</div>
+
+	  <div class="actions">
+	    <%= f.submit %>
+	  </div>
+    </div>
+
+    <div id="scene_view" class="span6 offset1">
+  	<%= render 'scenes/netwidget' %>
+    </div>
+
   </div>
 
-  <%= render 'scenes/netwidget' %>
-
-  <div class="field">
-    <%= f.label :scene %><br />
-
-    <% if @workspace.scene %>
-      <%= f.select :scene_id, options_from_collection_for_select(@user.scenes, :id, :name, @workspace.scene.id) %>
-    <% else %>
-      <%= f.select :scene_id, options_from_collection_for_select(@user.scenes, :id, :name) %>
-    <% end %>
-
-  </div>
-
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+</div>
 <% end %>

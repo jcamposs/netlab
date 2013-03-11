@@ -1,5 +1,10 @@
 <h1>Listing workspaces</h1>
 
+<br/>
+<br/>
+<br/>
+<br/>
+
 <table>
   <tr>
     <th>Name</th>
@@ -17,12 +22,15 @@
     <td><%= workspace.scene.name %></td>
     <td><%= link_to 'Show', workspace %></td>
     <td><%= link_to 'Manage', manage_workspace_path(workspace) %></td>
+    <% if @user.id == workspace.user.id %>
     <td><%= link_to 'Edit', edit_workspace_path(workspace) %></td>
     <td><%= link_to 'Destroy', workspace, confirm: 'Are you sure?', method: :delete %></td>
+    <% else %>
+    <td><%= link_to 'Leave', workspace, confirm: 'Are you sure?', method: :delete %></td>
+    <% end %>
   </tr>
 <% end %>
 </table>
 
 <br />
-
 <%= link_to 'New Workspace', new_workspace_path %>
