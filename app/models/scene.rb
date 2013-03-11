@@ -50,6 +50,7 @@ class Scene < ActiveRecord::Base
     end
 
     def remove_remoteobject
+      """
       if self.remote
         _plugin = self.remote.cloudstrgplugin
       else
@@ -66,6 +67,7 @@ class Scene < ActiveRecord::Base
         params[:fileid] = self.remote.file_remote_id
         driver.remove_file params
       end
+      """
     end
 
 end
