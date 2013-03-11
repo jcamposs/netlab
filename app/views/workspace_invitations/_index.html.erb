@@ -1,0 +1,19 @@
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+<h5><%= "#{@user.first_name}'s invitations" %></h5>
+<table>
+<% @workspace_invitations.each do |workspace_invitation| %>
+  <tr>
+    <td><%= "#{workspace_invitation.workspace.user.first_name} #{workspace_invitation.workspace.user.last_name} wants you to join to the workspace #{workspace_invitation.workspace.name}" %></td>
+    <td><%= link_to 'Accept', workspace_invitation %></td>
+    <td><%= link_to 'Reject', workspace_invitation, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>

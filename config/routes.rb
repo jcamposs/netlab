@@ -1,5 +1,7 @@
 Netlab::Application.routes.draw do
 
+  resources :workspace_invitations
+
   match 'vm_notification/change_state' => 'vm_notification#change_state', :via => :put
 
   resources :workspaces do

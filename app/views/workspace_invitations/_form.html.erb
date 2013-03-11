@@ -1,0 +1,29 @@
+<%= form_for(@workspace_invitation) do |f| %>
+  <% if @workspace_invitation.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@workspace_invitation.errors.count, "error") %> prohibited this workspace_invitation from being saved:</h2>
+
+      <ul>
+      <% @workspace_invitation.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :user_id %><br />
+    <%= f.number_field :user_id %>
+  </div>
+  <div class="field">
+    <%= f.label :host_id %><br />
+    <%= f.number_field :host_id %>
+  </div>
+  <div class="field">
+    <%= f.label :workspace_id %><br />
+    <%= f.number_field :workspace_id %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,20 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>User:</b>
+  <%= @workspace_invitation.user_id %>
+</p>
+
+<p>
+  <b>Host:</b>
+  <%= @workspace_invitation.host_id %>
+</p>
+
+<p>
+  <b>Workspace:</b>
+  <%= @workspace_invitation.workspace_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_workspace_invitation_path(@workspace_invitation) %> |
+<%= link_to 'Back', workspace_invitations_path %>
