@@ -7,9 +7,9 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     if @user.persisted?
     
-     _params = {:user => @user, 
+      _params = {:user => @user, 
              :plugin_id => Cloudstrg::Cloudstrgplugin.find_by_plugin_name("gdrive"), 
-             :redirect => "https://localhost:3000/users/auth/google_oauth2/callback", 
+             :redirect => "#{request.protocol}#{request.host_with_port}/users/auth/google_oauth2/callback", 
              :refresh_token => request.env["omniauth.auth"].credentials["refresh_token"], 
              :access_token => request.env["omniauth.auth"].credentials["token"], 
              :expires_in => request.env["omniauth.auth"].credentials["expires_at"], 
@@ -17,6 +17,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       
       driver = CloudStrg.new_driver _params
       _session, url = driver.config _params
+      session.merge!(_session)
       
       flash[:notice] = I18n.t "devise.omniauth_callbacks.success", :kind => "Google"
       sign_in_and_redirect @user, :event => :authentication
