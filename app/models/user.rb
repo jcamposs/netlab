@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
   has_many :shellinaboxes
   has_many :netlabsessions, dependent: :destroy
   has_and_belongs_to_many :editorworkspaces, :class_name => Workspace
+  has_many :workspace_invitations, dependent: :destroy
 
   # Cloud storage params
   has_one :cloudstrgconfig, :class_name => Cloudstrg::Config, :dependent => :destroy
@@ -33,9 +34,10 @@ class User < ActiveRecord::Base
     end
     unless user.cloudstrgconfig
       config = user.build_cloudstrgconfig
-      config.cloudstrgplugin_id = Cloudstrg::Cloudstrgplugin.find_by_plugin_name("gdrive")
+      config.cloudstrgplugin_id = Cloudstrg::Cloudstrgplugin.find_by_plugin_name("gdrive").id
       config.save
     end
+    user.save
     user
   end
 
