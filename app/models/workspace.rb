@@ -17,9 +17,12 @@ class Workspace < ActiveRecord::Base
       if share_ids
         User.find(share_ids.gsub('_', '').split(',')).each do |user|
           #self.editors << user
-          if not self.editors.include? user
-            inv = user.workspace_invitations.build(:workspace_id => self.id)
-            inv.save
+          if not self.editors.include?(user)
+            inv = user.workspace_invitations.find_by_workspace_id(self.id)
+            if not inv
+              inv = user.workspace_invitations.build(:workspace_id => self.id)
+              inv.save
+            end
           end
         end
       end
