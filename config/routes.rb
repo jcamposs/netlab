@@ -30,7 +30,7 @@ Netlab::Application.routes.draw do
   end
 
   resources :scenes
-  resources :users
+  resources :profiles
 
   mount Cloudstrg::Engine, :at => 'cloudstrg'
   mount Gdrivestrg::Engine, :at => 'gdrive'

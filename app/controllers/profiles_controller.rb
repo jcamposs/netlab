@@ -1,8 +1,8 @@
-class UsersController < ApplicationController
+class ProfilesController < ApplicationController
   before_filter :authenticate_user!
 
-  # GET /users/1
-  # GET /users/1.json
+  # GET /profiles/1
+  # GET /profiles/1.json
   def show 
     @user = User.find(params[:id])
     respond_to do |format|
@@ -12,7 +12,7 @@ class UsersController < ApplicationController
     end
   end
 
-  # GET /users/1/edit
+  # GET /profiles/1/edit
   def edit
     @user = User.find(params[:id])
     
@@ -28,15 +28,15 @@ class UsersController < ApplicationController
     end
   end
 
-  # PUT /users/1
-  # PUT /users/1.json
+  # PUT /profiles/1
+  # PUT /profiles/1.json
   def update
     @user = User.find(params[:id])
 
     respond_to do |format|
       if current_user == @user
         if @user.update_attributes(params[:user])
-          format.html { redirect_to @user, notice: 'Workspace was successfully updated.' }
+          format.html { redirect_to "/profiles/#{@user.id}", notice: 'User was successfully updated.' }
           format.json { head :no_content }
         else
           format.html { render action: "edit" }
@@ -50,8 +50,8 @@ class UsersController < ApplicationController
     end
   end
 
-  # DELETE /users/1
-  # DELETE /users/1.json
+  # DELETE /profiles/1
+  # DELETE /profiles/1.json
   def destroy
     @user = User.find(params[:id])
 

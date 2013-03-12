@@ -39,7 +39,7 @@
 		      |
 		      <%= link_to 'Scenes', scenes_path %>
 		      |
-		      <%= link_to 'My profile', current_user %>
+		      <%= link_to 'My profile', "/profiles/#{current_user.id}" %>
 		      |
 		      <%= link_to 'Logout', destroy_user_session_path, method: :delete %>
 		    </div>
