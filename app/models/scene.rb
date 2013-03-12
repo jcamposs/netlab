@@ -14,6 +14,7 @@ class Scene < ActiveRecord::Base
   attr_accessor :redirection_url
   attr_accessor :session
   attr_accessor :file_content
+  attr_accessor :definition
 
   before_save :create_remoteobject
   before_destroy :remove_remoteobject
@@ -34,8 +35,8 @@ class Scene < ActiveRecord::Base
       raise CloudStrg::ROValidationRequired, url if url
 
       params[:filename] = self.name
-      params[:file_content] = self.definition
-      self.definition = ""
+      params[:file_content] = definition
+      definition = ""
       if self.remote
         params[:fileid] = self.remote.file_remote_id
         ro_id = driver.update_file params

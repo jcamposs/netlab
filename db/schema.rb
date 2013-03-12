@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130312113716) do
+ActiveRecord::Schema.define(:version => 20130312133327) do
 
   create_table "cloudstrg_cloudstrgplugins", :force => true do |t|
     t.string   "plugin_name"
@@ -72,7 +72,6 @@ ActiveRecord::Schema.define(:version => 20130312113716) do
   create_table "scenes", :force => true do |t|
     t.integer  "user_id"
     t.string   "name"
-    t.text     "definition"
     t.string   "schema"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false

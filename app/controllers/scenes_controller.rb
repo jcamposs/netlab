@@ -45,7 +45,12 @@ class ScenesController < ApplicationController
     respond_to do |format|
       format.html { render :show }# show.html.erb
       format.js
-      format.json { render json: @scene }
+      format.json { render json: { :id => @scene.id, 
+                                   :name => @scene.name, 
+                                   :user_id => @scene.user_id, 
+                                   :definition => @scene.definition
+                                 } 
+                  }
     end
   end
 
