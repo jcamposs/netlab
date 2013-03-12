@@ -68,15 +68,22 @@ class ScenesController < ApplicationController
 
   # GET /scenes/1/edit
   def edit
-    _params = {:fileid => @scene.remote.file_remote_id}
-
-    _, _, content = @driver.get_file _params
-    @scene.definition = content
-    
-    @mode = "edit"
     respond_to do |format|
-      format.html { render :edit }
+      
+      if @user == @scene.user
+        _params = {:fileid => @scene.remote.file_remote_id}
+
+        _, _, content = @driver.get_file _params  
+        @scene.definition = content
+        @mode = "edit"
+
+        format.html { render :edit }
+      else
+        flash[:notice] = "You are not allowed to edit this scene"
+        format.html { redirect_to scenes_path }
+      end
     end
+   
   end
 
   # POST /scenes
