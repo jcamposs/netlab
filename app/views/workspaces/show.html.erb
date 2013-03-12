@@ -19,5 +19,7 @@
 
 <%= render 'scenes/netwidget' %>
 
-<%= link_to 'Edit', edit_workspace_path(@workspace) %> |
+<% if current_user == @workspace.user %>
+  <%= link_to 'Edit', edit_workspace_path(@workspace) %> |
+<% end %>
 <%= link_to 'Back', workspaces_path %>

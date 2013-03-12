@@ -130,7 +130,19 @@ class WorkspacesController < ApplicationController
   # GET /workspaces/1/edit
   def edit
     @workspace = Workspace.find(params[:id])
-    @user = current_user
+    
+    respond_to do |format|
+      @user = current_user
+      if @user == @workspace.user
+        format.html # manage.html.erb
+        format.json { render json: @workspace }
+      else
+        flash[:notice] = "Forbidden action"
+        format.html { redirect_to workspaces_path }
+        format.json { render json: {:error => "Forbidden action"} }
+      end
+    end
+    
   end
 
   # POST /workspaces
@@ -167,12 +179,18 @@ class WorkspacesController < ApplicationController
     @workspace = Workspace.find(params[:id])
 
     respond_to do |format|
-      if @workspace.update_attributes(params[:workspace])
-        format.html { redirect_to @workspace, notice: 'Workspace was successfully updated.' }
-        format.json { head :no_content }
+      if user == @workspace.user
+        if @workspace.update_attributes(params[:workspace])
+          format.html { redirect_to @workspace, notice: 'Workspace was successfully updated.' }
+          format.json { head :no_content }
+        else
+          format.html { render action: "edit" }
+          format.json { render json: @workspace.errors, status: :unprocessable_entity }
+        end
       else
+        flash[:notice] = "You are not allowed to do this action"
         format.html { render action: "edit" }
-        format.json { render json: @workspace.errors, status: :unprocessable_entity }
+        format.json { render json: {:error => "not allowed"} }
       end
     end
   end
@@ -182,6 +200,7 @@ class WorkspacesController < ApplicationController
   def destroy
     @workspace = Workspace.find(params[:id])
     user = current_user
+    
     if user == @workspace.user
       @workspace.destroy
     else
