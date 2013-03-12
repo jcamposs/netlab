@@ -42,21 +42,17 @@
   margin: 170px 0 0 0;
 }
 
-#form-register {
-  margin-top: 170px;
-}
-
-#form_sign-in {
-  margin: 15px 20px 0 0;
-}
-
-#links {
-  margin-left: 225px;
-  margin-top: -20px;
-}
-
 #alert {
   margin: -80px 0 0 320px;
   width: 250px;
   float:left;
+}
+
+#login {
+  margin: 350px 0 0 0;
+ }
+
+#btn-sign_in {
+  margin: 0 0 0 120px;
+  text-decoration: none;
 }

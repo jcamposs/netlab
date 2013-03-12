@@ -1,58 +1,22 @@
-<div class="navbar navbar-fixed-top">
-
-  <ul id="form_sign-in" class="nav pull-right">
-
-  </ul>
-
-</div>
-
 <div class="container-fluid">
 
   <div class="row-fluid">
 
-    <div id="logo" class="span6">
-      <center><h2>Free Network Simulator Machines</h2></center><br /><br />
-      <%= image_tag("logo.png") %>
+    <div id="logo" class="span7">
+      <center>
+        <h2>Free Network Simulator Machines</h2><br />
+        <%= image_tag("logo.png") %>
+      </center>
     </div>
 
-    <div id="form-register" class="span4 offset2">
-
-	    <%= form_for(resource, :as => resource_name, :url => session_path(resource_name), :html => {:class => "form-inline"}) do |f| %>
-	      
-
-	      <div id="links">
-
-		<%- if devise_mapping.omniauthable? %>
-		  <%- resource_class.omniauth_providers.each do |provider| %>
-		    <!--<a href='#<%= "#{provider.to_s}" %>' role="button" class="btn btn-primary" data-toggle="modal"><%= "Sign in with #{provider.to_s.titleize}" %></a> 
-		    <%= link_to "Sign in with #{provider.to_s.titleize}", omniauth_authorize_path(resource_name, provider) %><br />-->
-		    <a href='#' onclick="js:login('<%= omniauth_authorize_path(resource_name, provider) %>', '<%= "#{request.protocol}#{request.host_with_port}" %>', '<%= "#{request.protocol}#{request.host_with_port}" %>');" class="btn"><%= "Sign in with #{provider.to_s.titleize}" %></a>
-		  <% end -%>
-		<% end -%>
-	      <div>
-	    <% end %>
-	    <%= render :file => "devise/registrations/new" %>
+    <div id="login" class="span5">
+      <%- if devise_mapping.omniauthable? %>
+        <%- resource_class.omniauth_providers.each do |provider| %>
+          <a href='#' onclick="js:login('<%= omniauth_authorize_path(resource_name, provider) %>', '<%= "#{request.protocol}#{request.host_with_port}" %>', '<%= "#{request.protocol}#{request.host_with_port}" %>');" class="btn-large btn-info" id="btn-sign_in"><%= "Sign in with #{provider.to_s.titleize}" %></a>
+        <% end -%>
+      <% end -%>
     </div>
 
   </div>
 
 </div>
-
-
-<!--
-        <%- if devise_mapping.omniauthable? %>
-          <%- resource_class.omniauth_providers.each do |provider| %>
-	    <div id='<%= "#{provider.to_s}" %>' class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-	        <h3 id="myModalLabel"><%= "#{provider.to_s.titleize}" %></h3>
-	      </div>
-	      <div class="modal-body">
-	        <IFRAME SRC="http://www.bing.com" id="login_iframe" name="login_iframe" frameborder="0"  width="100%" height="100%">
-                  If you can see this, your browser doesn't understand IFRAME.
-                </IFRAME>
-	      </div> 
-	    </div>
-          <% end -%>
-        <% end -%>
--->
