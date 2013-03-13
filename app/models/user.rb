@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
   # Cloud storage params
   has_one :cloudstrgconfig, :class_name => Cloudstrg::Config, :dependent => :destroy
   has_one :gdrivestrgparams, :class_name => Gdrivestrg::Param, :dependent => :destroy
+  has_one :gdrivestrgfolder, :class_name => Gdrivestrg::Folder, :dependent => :destroy
   ###
 
   validates :first_name, :last_name, presence: true

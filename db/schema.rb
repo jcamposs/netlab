@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130312133327) do
+ActiveRecord::Schema.define(:version => 20130313124939) do
 
   create_table "cloudstrg_cloudstrgplugins", :force => true do |t|
     t.string   "plugin_name"
@@ -42,6 +42,14 @@ ActiveRecord::Schema.define(:version => 20130312133327) do
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
     t.integer  "workspace_id"
+  end
+
+  create_table "gdrivestrg_folders", :force => true do |t|
+    t.string   "folder_name"
+    t.string   "remote_id"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+    t.integer  "user_id"
   end
 
   create_table "gdrivestrg_params", :force => true do |t|
