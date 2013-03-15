@@ -24,13 +24,19 @@ class WorkspaceInvitationsController < ApplicationController
     plugin = scene.remote.cloudstrgplugin
 
     _session = {}
-    _params = {:user => user,:plugin_id => plugin,:redirect => "#{request.protocol}#{request.host_with_port}/scenes",:file_id => scene.remote.file_remote_id,:share_email => current_user.email,:session => _session}
+    _params = {:user => user,
+               :plugin_id => plugin,
+               :redirect => "#{request.protocol}#{request.host_with_port}/scenes",
+               :file_id => scene.remote.file_remote_id,
+               :share_email => current_user.email,
+               :local_file_id => scene.remote.id,
+               :user_id => current_user.id,
+               :session => _session}
 
     driver = CloudStrg.new_driver _params
     _session, url = driver.config _params
     
     if not url
-      p _params
       driver.share_file _params
 
       ws.editors << current_user

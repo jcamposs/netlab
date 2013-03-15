@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
   has_one :cloudstrgconfig, :class_name => Cloudstrg::Config, :dependent => :destroy
   has_one :gdrivestrgparams, :class_name => Gdrivestrg::Param, :dependent => :destroy
   has_one :gdrivestrgfolder, :class_name => Gdrivestrg::Folder, :dependent => :destroy
+  has_many :gdrivestrgpermissions, :class_name => Gdrivestrg::PermissionId, :dependent => :destroy
   ###
 
   validates :first_name, :last_name, presence: true

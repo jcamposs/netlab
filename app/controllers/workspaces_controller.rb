@@ -177,9 +177,9 @@ class WorkspacesController < ApplicationController
   # PUT /workspaces/1.json
   def update
     @workspace = Workspace.find(params[:id])
-
+    @workspace.session = session
     respond_to do |format|
-      if user == @workspace.user
+      if current_user == @workspace.user
         if @workspace.update_attributes(params[:workspace])
           format.html { redirect_to @workspace, notice: 'Workspace was successfully updated.' }
           format.json { head :no_content }
@@ -199,13 +199,31 @@ class WorkspacesController < ApplicationController
   # DELETE /workspaces/1.json
   def destroy
     @workspace = Workspace.find(params[:id])
-    user = current_user
+    @user = current_user
     
-    if user == @workspace.user
+    if @user == @workspace.user
       @workspace.destroy
     else
-      @workspace.editors.delete(user)
+      @workspace.editors.delete(@user)
       @workspace.save
+      scene = @workspace.scene
+      user = scene.user
+      plugin = scene.remote.cloudstrgplugin
+
+      _session = {}
+      _params = {:user => user,
+               :plugin_id => plugin,
+               :redirect => "#{request.protocol}#{request.host_with_port}/workspaces",
+               :file_id => scene.remote.file_remote_id,
+               :local_file_id => scene.remote.id,
+               :user_id => @user.id,
+               :session => _session}
+
+      driver = CloudStrg.new_driver _params
+      _session, url = driver.config _params
+      if not url
+        driver.unshare_file _params
+      end
     end
 
     respond_to do |format|
