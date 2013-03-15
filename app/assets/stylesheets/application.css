@@ -72,3 +72,15 @@
   margin: 0 0 0 120px;
   text-decoration: none;
 }
+
+#list-scenes {
+  margin: 120px 0 0 0;
+}
+
+#container_title {
+  width: 560px;
+}
+
+#widget {
+  margin: -21px 0 0 0;
+}

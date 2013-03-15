@@ -1,25 +1,67 @@
-<h1>Listing scenes</h1>
+<div class="container-fluid">
 
-<table>
-  <tr>
-    <th>Owner</th>
-    <th>Name</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
+  <div id="list-scenes" class="row-fluid">
 
-<% @scenes.each do |scene| %>
-  <tr>
-    <td><%= scene.user.first_name %></td>
-    <td><%= scene.name %></td>
-    <td><%= link_to 'Show', scene, :remote => true %></td>
-    <td><%= link_to 'Edit', edit_scene_path(scene) %></td>
-    <td><%= link_to 'Delete', delete_scene_path(scene), :remote => true %></td>
-  </tr>
-<% end %>
-</table>
+    <div id="netlab_params" class="span5">
 
-<br />
+      <%= link_to '<i class="icon-plus icon-white"></i> New Scene'.html_safe, new_scene_path, :class => 'btn btn-primary pull-right' %>
 
-<%= link_to 'New Scene', new_scene_path %>
+      <div class="tabbable">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#tab1" data-toggle="tab"><h4>Listing scenes</h4></a></li>
+        </ul>
+        <div class="tab-pane active" id="tab1">
+          <table id="table_scenes" class="table table-hover">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Owner</th>
+                <th>Name</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if @scene.nil? %>
+                <div class="alert alert-info">
+                  You don't have any scenes yet.
+                </div>
+              <% end %>
+              <% @scenes.each_with_index  do |scene, i| %>
+                <tr>
+                  <td>
+                    <% if i == 0 %>
+                      <%= check_box_tag scene.name, scene.id, false, :class => 'scene_id', :checked => true %>
+                    <% else %>
+                       <%= check_box_tag scene.name, scene.id, false, :class => 'scene_id'%>
+                    <% end %>
+                  </td>
+                  <td><%= scene.user.first_name %></td>
+                  <td><%= scene.name %></td>
+                  <td>
+                    </i><%= link_to '<i class="icon-edit"></i> Edit'.html_safe, edit_scene_path(scene), :class => 'btn btn-mini' %>
+                    <%= link_to '<i class="icon-trash icon-white"></i> Delete'.html_safe, delete_scene_path(scene), :class => 'btn btn-mini btn-danger', :remote => true %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <% if not @scene.nil? %>
+      <div id="scene_view" class="span6 offset1" >
+        <div class="navbar">
+          <div id="container_title" class="navbar-inner">
+            <a id="scene_title" href="#" class="brand">Loading...</a>
+          </div>
+        </div>
+
+        <%= render 'netwidget' %>
+      </div>
+   <% end %>
+
+  </div>
+
+</div>

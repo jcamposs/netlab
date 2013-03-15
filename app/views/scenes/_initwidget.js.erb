@@ -17,21 +17,48 @@
   };
 
   function initJSON() {
-    $('#container').show();
-    $('#spinner').remove();
-    var json =
-      <% if @scene.definition %>
-        "<%=j @scene.definition.html_safe %>";
-      <% else %>
-        "";
-      <% end %>
-    loadStage(json);
+    $('#table_scenes input').each(function() {
+      if ($(this).is(':checked')) {
+        sceneId = $(this).attr('id');
+        sceneValue = $(this).val();
+      }
+    });
+
+    <% if @scene.definition %>
+      sceneId = '<%= @scene.name %>';
+      sceneValue = '<%= @scene.id %>';
+    <% else %>
+      $('#container').show();
+      $('#spinner').hide();
+      loadStage("");
+    <% end %>
+
+    loadJSON(sceneId, sceneValue);
+  };
+
+  function loadJSON(sceneId, sceneValue){
+    $('#container').hide();
+    $('#spinner').show();
+    $.ajax({
+      url: '/scenes/' + sceneValue + '?redirect_url=' + window.location.protocol + '//' + window.location.host + '/workspaces',
+      dataType: 'json',
+      success: function(data) {
+        if(data.redirect){
+          window.location.href = data.redirect;
+        }else{
+          $('#container').show();
+          $('#spinner').hide();
+          $('#scene_title').html(sceneId);
+          loadStage(data.definition);
+        }
+      }
+    })
   };
 
   function initSpinner() {
     $('#spinner').css('width', <%= @width %>);
     $('#spinner').css('height', <%= @height %>);
-    $('#spinner').css('border', '1px solid #9C9898');
+    $('#spinner').css('border', '1px solid #D4D4D4');
     var opts = {
       lines: 15,
       length: 20,
@@ -46,6 +73,14 @@
   };
 
   function initWidget() {
+    $('#table_scenes input').bind('click', function() {
+      $('#table_scenes input').attr('checked', false);
+      $(this).attr('checked', true);
+      $('#scene_title').html('Loading...');
+      clearScene();
+      loadJSON($(this).attr('id'), $(this).val());
+    });
+
     <%= @module %>.initWidget({
       container: "container",
       width: <%= @width %>,

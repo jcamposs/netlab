@@ -23,6 +23,7 @@ class ScenesController < ApplicationController
       #@scenes = @user.scenes.joins(:remote).where(:cloudstrg_remoteobjects => {:cloudstrgplugin_id => @user.cloudstrgconfig.cloudstrgplugin})
     #end
     @scenes = @user.scenes
+    @scene = @scenes[0] # Default scene
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @scenes }
