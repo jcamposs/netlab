@@ -17,34 +17,15 @@
         <a id="title" href="#">Netlab</a>
 
         <% if user_signed_in? %>
-
-		<div id="navbar-home" class="nav pull-right">
-
-		    <!--
-		    <IFRAME SRC=<%= @shell_url %> id="gadget0" name="gadget0" frameborder="1" width="720" height="500">
-		    If you can see this, your browser doesn't understand IFRAME.
-		    </IFRAME>
-		    -->
-
-		    <!--
-		    <p>
-		    <%= link_to "Close", home_close_path %>
-		    </p>
-		    -->
-
-		    <div id="menu">
-		      <h7><%= link_to "Home #{current_user.first_name}", root_path %></h7>
-		      |
-		      <%= link_to 'Workspaces', workspaces_path %>
-		      |
-		      <%= link_to 'Scenes', scenes_path %>
-		      |
-		      <%= link_to 'My profile', "/profiles/#{current_user.id}" %>
-		      |
-		      <%= link_to 'Logout', destroy_user_session_path, method: :delete %>
-		    </div>
-
-		</div>
+          <div class="navbar pull-right" id="user-nav">
+            <ul class="nav btn-group">
+              <li class="btn"><%= link_to '<i class="icon-home"></i> Home '.html_safe + "#{current_user.first_name}", root_path %></li>
+              <li class="btn"><%= link_to '<i class="icon-pencil"></i> Workspaces'.html_safe, workspaces_path %></li>
+              <li class="btn"><%= link_to '<i class="icon-list"></i> Scenes'.html_safe, scenes_path %></li>
+              <li class="btn"><%= link_to '<i class="icon-user"></i> My profile'.html_safe, "/profiles/#{current_user.id}" %></li>
+              <li class="btn"><%= link_to '<i class="icon-share-alt"></i> Logout'.html_safe, destroy_user_session_path, method: :delete %></li>
+            </ul>
+          </div>
         <% end %>
 
       </div>

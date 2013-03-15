@@ -16,26 +16,42 @@
 #title {
   display: block;
   float: left;
-  padding: 10px 20px 10px;
-  margin-top: 30px;
+  padding: 10px 20px 40px;
+  margin-top: 20px;
   margin-left: 30px;
-  font-size: 70px;
+  font-size: 60px;
   font-weight: 200;
   color: #777777;
   text-shadow: 0 1px 0 #ffffff;
+  text-decoration: none;
 }
 
-.navbar-inner {
-  height: 110px;
+#user-nav {
+  margin: 0;
+  position: absolute;
+  right: 30px;
+  top: 25px;
+  z-index: 20;
 }
 
-#navbar-home {
-  margin: 10px 20px 0 0;
+#user-nav > ul {
+  list-style: none outside none;
+  margin: 0;
+  padding: 0;
 }
 
-#menu {
-  margin: 30px 30px 0 0;
-  font-size: 120%;
+#user-nav > ul > li {
+  float: left;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+#user-nav > ul > li > a {
+  display: block;
+  font-size: 10px;
+  padding: 5px 10px;
 }
 
 #logo {
@@ -50,7 +66,7 @@
 
 #login {
   margin: 350px 0 0 0;
- }
+}
 
 #btn-sign_in {
   margin: 0 0 0 120px;
