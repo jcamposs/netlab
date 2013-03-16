@@ -83,3 +83,16 @@
 #widget {
   margin: -21px 0 0 0;
 }
+
+#container-widget {
+  margin: 120px 0 0 0;
+}
+
+#form-actions {
+  margin: -3px 0 0 0;
+  width: 560px;
+}
+
+#error_explanation {
+  margin-top: 120px;
+}

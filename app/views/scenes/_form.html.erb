@@ -1,27 +1,42 @@
 <%= form_for @scene, :html => { :onSubmit => 'return fillForm();' } do |f| %>
-  <% if @scene.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@scene.errors.count, "error") %> prohibited this scene from being saved:</h2>
+    <% if @scene.errors.any? %>
+      <div id="error_explanation" class="alert alert-error span7 offset4">
+        <h4><%= pluralize(@scene.errors.count, "error") %> prohibited this scene from being saved:</h4>
+        <ul>
+          <% @scene.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
 
-      <ul>
-      <% @scene.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
+  <div class="container-fluid">
+
+    <div id="container-widget" class="row-fluid">
+
+      <div id="scene_view" class="span4 offset3">
+        <div class="navbar">
+          <div id="container_title" class="navbar-inner">
+            <a id="scene_title" href="#" class="brand">Loading...</a>
+          </div>
+        </div>
+        <%= render 'netwidget' %>
+
+        <div class="field">
+          <%= f.hidden_field :name %>
+        </div>
+        <div class="field">
+          <%= f.hidden_field :definition %>
+        </div>
+
+        <div id="form-actions" class="form-actions">
+          <%= f.submit "Save", :class => 'btn btn-primary' %>
+          <%= button_to_function "Clear", "clearScene()", :class => 'btn' %>
+        </div>
+      </div>
+
     </div>
-  <% end %>
 
-  <%= render 'netwidget' %>
-
-  <div class="field">
-    <%= f.hidden_field :name %>
-  </div>
-  <div class="field">
-    <%= f.hidden_field :definition %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Save" %>
-    <%= button_to_function "Clear", "clearScene()" %>
   </div>
 <% end %>

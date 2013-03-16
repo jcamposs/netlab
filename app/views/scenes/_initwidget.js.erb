@@ -21,19 +21,20 @@
       if ($(this).is(':checked')) {
         sceneId = $(this).attr('id');
         sceneValue = $(this).val();
+        loadJSON(sceneId, sceneValue);
       }
     });
 
-    <% if @scene.definition %>
+    <% if @scene.name %>
       sceneId = '<%= @scene.name %>';
       sceneValue = '<%= @scene.id %>';
+      loadJSON(sceneId, sceneValue);
     <% else %>
       $('#container').show();
       $('#spinner').hide();
+      $('#scene_title').html('New Scene');
       loadStage("");
     <% end %>
-
-    loadJSON(sceneId, sceneValue);
   };
 
   function loadJSON(sceneId, sceneValue){
