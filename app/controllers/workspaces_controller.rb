@@ -177,8 +177,10 @@ class WorkspacesController < ApplicationController
   # PUT /workspaces/1
   # PUT /workspaces/1.json
   def update
+    @user = current_user
     @workspace = Workspace.find(params[:id])
     @workspace.session = session
+
     respond_to do |format|
       if current_user == @workspace.user
         if @workspace.update_attributes(params[:workspace])

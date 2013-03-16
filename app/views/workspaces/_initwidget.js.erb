@@ -70,8 +70,9 @@
 
   function initWidget() {
     $("#workspace_scene_id").change(function() {
+        $('#workspace_title').html('Loading...');
         clearScene();
-        loadJSON($('#workspace_scene_id').val());
+        loadJSON($('#workspace_scene_id').val(), $("#workspace_scene_id :selected").text());
     });
 
     $('#table_workspaces input').bind('click', function() {
