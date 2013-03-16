@@ -21,8 +21,8 @@ class WorkspacesController < ApplicationController
   def index
     @user = current_user
     @workspaces = @user.workspaces
-    @workspace = @workspaces[0] # Default workspace
     @workspaces += @user.editorworkspaces
+    @workspace = @workspaces[0] # Default workspace
 
     respond_to do |format|
       format.html # index.html.erb
