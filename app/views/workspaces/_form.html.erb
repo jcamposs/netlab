@@ -1,9 +1,7 @@
-<br/><br/><br/>
-<%= form_for(@workspace) do |f| %>
+<%= form_for(@workspace, :html => { :class => 'form-horizontal'}) do |f| %>
   <% if @workspace.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@workspace.errors.count, "error") %> prohibited this workspace from being saved:</h2>
-
+    <div id="error_explanation" class="alert alert-error span7 offset4">
+      <h4><%= pluralize(@workspace.errors.count, "error") %> prohibited this workspace from being saved:</h4>
       <ul>
       <% @workspace.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
@@ -11,56 +9,75 @@
       </ul>
     </div>
   <% end %>
+
   <div class="container-fluid">
 
-  <div class="row-fluid">
+    <div id="new-workspace" class="row-fluid">
 
-    <div id="netlab_params" class="span4">
+      <div id="netlab_params" class="span5">
 
-	<div class="tabbable"> <!-- Only required for left/right tabs -->
-	  <ul class="nav nav-tabs">
-		<li class="active"><a href="#tab1" data-toggle="tab">Params</a></li>
-		<li><a href="#tab2" data-toggle="tab">Team</a></li>
-	  </ul>
-	  <div class="tab-content">
-		<div class="tab-pane active" id="tab1">
-		  <div class="field">
-		    <%= f.label :name %><br />
-		    <%= f.text_field :name %>
-		  </div>
+        <div class="tabbable">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab1" data-toggle="tab"><h4>New Workspace</h4></a></li>
+            <li><a href="#tab2" data-toggle="tab"><h4>Team</h4></a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab1">
+              <% if @user.scenes.empty? %>
+                <div class="alert alert-info">
+                  You don't have any scenes yet.
+                </div>
+              <% end %>
+              <div class="control-group">
+                <%= f.label :name, :class => 'control-label' %>
+                <div class="controls">
+                  <%= f.text_field :name %>
+                </div>
+              </div>
 
-		  <div class="field">
-		    <%= f.label :scene %><br />
+              <div class="control-group">
+                <%= f.label :scene, :class => 'control-label' %>
 
-		    <% if @workspace.scene %>
-		      <%= f.select :scene_id, options_from_collection_for_select(@user.scenes, :id, :name, @workspace.scene.id) %>
-		    <% else %>
-		      <%= f.select :scene_id, options_from_collection_for_select(@user.scenes, :id, :name) %>
-		    <% end %>
-		  </div>
-		</div>
-		<div class="tab-pane" id="tab2">
-                  <% User.find(:all, :conditions => ["id != ?", @user.id]).each do |user| -%>
-		      	<label class="checkbox">
-		  	<%= check_box_tag "#{user.first_name} #{user.last_name}", user.id, @workspace.editors.include?(user), {:onchange => "js:switchEditor(this,'#{user.id}');", :id => "cb_#{user.id}"} %> <%= "#{user.first_name} #{user.last_name}" %>
- 			</label><br/>
-		  <% end -%>
-		  <%= f.hidden_field :share_ids %>
-		  <%= f.hidden_field :unshare_ids %>
-		</div>
-	  </div>
-	</div>
+                <div class="controls">
+                  <% if @workspace.scene %>
+                    <%= f.select :scene_id, options_from_collection_for_select(@user.scenes, :id, :name, @workspace.scene.id) %>
+                  <% else %>
+                    <%= f.select :scene_id, options_from_collection_for_select(@user.scenes, :id, :name) %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane" id="tab2">
+              <div id="team-list">
+                <% User.find(:all, :conditions => ["id != ?", @user.id]).each do |user| -%>
+                  <label class="checkbox">
+                    <%= check_box_tag "#{user.first_name} #{user.last_name}", user.id, @workspace.editors.include?(user), {:onchange => "js:switchEditor(this,'#{user.id}');", :id => "cb_#{user.id}"} %> <%= "#{user.first_name} #{user.last_name}" %>
+                  </label>
+                <% end -%>
+                <%= f.hidden_field :share_ids %>
+                <%= f.hidden_field :unshare_ids %>
+              </div>
+            </div>
+          </div>
+        </div>
 
-	  <div class="actions">
-	    <%= f.submit %>
-	  </div>
-    </div>
+        <div class="form-actions">
+          <%= f.submit :class => 'btn btn-primary' %>
+        </div>
+      </div>
 
-    <div id="scene_view" class="span6 offset1">
-  	<%= render 'scenes/netwidget' %>
+      <% if not @user.scenes.empty? %>
+        <div id="scene_view" class="span6 offset1">
+          <div class="navbar">
+            <div id="container_title" class="navbar-inner">
+              <a id="workspace_title" href="#" class="brand">Loading...</a>
+            </div>
+          </div>
+          <%= render 'scenes/netwidget' %>
+        </div>
+      <% end %>
+
     </div>
 
   </div>
-
-</div>
 <% end %>
