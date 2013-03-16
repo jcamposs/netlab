@@ -16,7 +16,7 @@
     Netlab.loadJSON(widget, json);
   };
 
-  function loadJSON(sceneId)
+  function loadJSON(sceneId, sceneValue)
   {
     $('#container').hide();
     $('#spinner').show();
@@ -29,6 +29,7 @@
         }else{
           $('#container').show();
           $('#spinner').hide();
+          $('#workspace_title').html(sceneValue);
           loadStage(data.definition);
         }
       }
@@ -36,10 +37,18 @@
   };
 
   function initJSON() {
+    $('#table_workspaces input').each(function() {
+      if ($(this).is(':checked')) {
+        sceneValue = $(this).attr('id');
+        sceneId = $(this).val();
+        loadJSON(sceneId, sceneValue);
+      }
+    });
+
     var sceneId = $('#workspace_scene_id').val();
 
     if (sceneId >= 0)
-      loadJSON(sceneId);
+      loadJSON(sceneId, '');
   };
 
   function initSpinner() {
@@ -63,6 +72,14 @@
     $("#workspace_scene_id").change(function() {
         clearScene();
         loadJSON($('#workspace_scene_id').val());
+    });
+
+    $('#table_workspaces input').bind('click', function() {
+      $('#table_workspaces input').attr('checked', false);
+      $(this).attr('checked', true);
+      $('#workspace_title').html('Loading...');
+      clearScene();
+      loadJSON($(this).val(), $(this).attr('id'));
     });
 
     <%= @module %>.initWidget({

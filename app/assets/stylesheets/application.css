@@ -103,3 +103,7 @@ span.icon {
   opacity: 0.7;
   padding: 10px 0 10px 18px;
 }
+
+#list-workspaces {
+  margin: 120px 0 0 0;
+}

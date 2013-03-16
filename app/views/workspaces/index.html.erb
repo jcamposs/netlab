@@ -1,36 +1,74 @@
-<h1>Listing workspaces</h1>
+<div class="container-fluid">
 
-<br/>
-<br/>
-<br/>
-<br/>
+  <div id="list-workspaces" class="row-fluid">
 
-<table>
-  <tr>
-    <th>Name</th>
-    <th>User</th>
-    <th>Scene</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
+    <div id="netlab_params" class="span5">
 
-<% @workspaces.each do |workspace| %>
-  <tr>
-    <td><%= workspace.name %></td>
-    <td><%= workspace.user.first_name %></td>
-    <td><%= workspace.scene.name %></td>
-    <td><%= link_to 'Show', workspace %></td>
-    <td><%= link_to 'Manage', manage_workspace_path(workspace) %></td>
-    <% if @user.id == workspace.user.id %>
-    <td><%= link_to 'Edit', edit_workspace_path(workspace) %></td>
-    <td><%= link_to 'Destroy', workspace, confirm: 'Are you sure?', method: :delete %></td>
-    <% else %>
-    <td><%= link_to 'Leave', workspace, confirm: 'Are you sure?', method: :delete %></td>
+      <%= link_to '<i class="icon-plus icon-white"></i> New Workspace'.html_safe, new_workspace_path, :class => 'btn btn-primary pull-right' %>
+
+      <div class="tabbable">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#tab1" data-toggle="tab"><h4>Listing workspaces</h4></a></li>
+        </ul>
+        <div class="tab-pane active" id="tab1">
+          <table id="table_workspaces" class="table table-hover">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Name</th>
+                <th>User</th>
+                <th>Scene</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if @workspace.nil? %>
+                <div class="alert alert-info">
+                  You don't have any workspaces yet.
+                </div>
+              <% end %>
+              <% @workspaces.each_with_index do |workspace, i| %>
+                <tr>
+                  <td>
+                    <% if i == 0 %>
+                      <%= check_box_tag workspace.name, workspace.id, false, :class => 'workspace_id', :checked => true %>
+                    <% else %>
+                       <%= check_box_tag workspace.name, workspace.id, false, :class => 'workspace_id'%>
+                    <% end %>
+                  </td>
+                  <td><%= workspace.name %></td>
+                  <td><%= workspace.user.first_name %></td>
+                  <td><%= workspace.scene.name %></td>
+                  <td>
+                    <%= link_to '<i class="icon-wrench icon-white"></i> Manage'.html_safe, manage_workspace_path(workspace), :class => 'btn btn-warning btn-mini' %>
+                    <% if @user.id == workspace.user.id %>
+                      <%= link_to '<i class="icon-edit"></i> Edit'.html_safe, edit_workspace_path(workspace), :class => 'btn btn-mini' %>
+                      <%= link_to '<i class="icon-trash icon-white"></i> Delete'.html_safe, workspace, confirm: 'Are you sure?', method: :delete, :class => 'btn btn-mini btn-danger'%>
+                    <% else %>
+                      <%= link_to '<i class="icon-remove icon-white"></i> Leave'.html_safe, workspace, confirm: 'Are you sure?', method: :delete, :class => 'btn btn-mini btn-danger' %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <% if not @workspace.nil? %>
+      <div id="workspace_view" class="span6 offset1" >
+        <div class="navbar">
+          <div id="container_title" class="navbar-inner">
+            <a id="workspace_title" href="#" class="brand">Loading...</a>
+          </div>
+        </div>
+
+        <%= render 'scenes/netwidget' %>
+      </div>
     <% end %>
-  </tr>
-<% end %>
-</table>
 
-<br />
-<%= link_to 'New Workspace', new_workspace_path %>
+  </div>
+
+</div>
