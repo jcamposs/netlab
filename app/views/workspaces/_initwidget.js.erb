@@ -46,7 +46,16 @@
     });
 
     var sceneId = $('#workspace_scene_id').val();
-    var sceneValue = $("#workspace_scene_id :selected").text();
+    <% if @workspace.name %>
+      if ($('#scene_name').length == 0) {
+        var sceneValue = $('#workspace_scene_id :selected').text();
+      }else{
+        var sceneValue = $('#scene_name').text();
+      }
+    <% else %>
+      var sceneValue = $('#workspace_scene_id :selected').text();
+    <% end %>
+
     if (sceneId >= 0)
       loadJSON(sceneId,  sceneValue);
   };

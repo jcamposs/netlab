@@ -1,25 +1,45 @@
-<p id="notice"><%= notice %></p>
+<div class="container-fluid">
 
-<p>
-  <b>Name:</b>
-  <%= @workspace.name %>
-</p>
+  <div id="list-workspaces" class="row-fluid">
 
-<p>
-  <b>User:</b>
-  <%= @workspace.user.first_name %>
-</p>
+    <div id="netlab_params" class="span5">
 
-<p>
-  <b>Scene:</b>
-  <%= @workspace.scene.name %>
-</p>
+      <div class="tabbable">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#tab1" data-toggle="tab"><h4>Workspace Info</h4></a></li>
+        </ul>
+        <div class="tab-pane active" id="tab1">
+          <div id="workspace-info">
+            <h4>Name</h4>
+            <p><%= @workspace.name %></p><hr>
 
-<%= hidden_field_tag 'workspace_scene_id', @workspace.scene.id %>
+            <h4>User</h4>
+            <p><%= @workspace.user.first_name %></p><hr>
 
-<%= render 'scenes/netwidget' %>
+            <h4>Scene</h4>
+            <p id="scene_name"><%= @workspace.scene.name %></p>
+          </div>
+        </div>
 
-<% if current_user == @workspace.user %>
-  <%= link_to 'Edit', edit_workspace_path(@workspace) %> |
-<% end %>
-<%= link_to 'Back', workspaces_path %>
+      </div>
+
+    </div>
+
+    <%= hidden_field_tag 'workspace_scene_id', @workspace.scene.id %>
+
+    <div id="workspace_view" class="span6 offset1" >
+      <div class="navbar">
+        <div id="container_title" class="navbar-inner">
+          <a id="workspace_title" href="#" class="brand">Loading...</a>
+          <span class="icon pull-right">
+            <%= link_to '<i class="icon-edit"></i>'.html_safe, edit_workspace_path(@workspace) %>
+          </span>
+        </div>
+      </div>
+
+      <%= render 'scenes/netwidget' %>
+    </div>
+
+  </div>
+
+</div>
