@@ -26,9 +26,17 @@
     });
 
     <% if @scene.name %>
-      sceneId = '<%= @scene.name %>';
-      sceneValue = '<%= @scene.id %>';
-      loadJSON(sceneId, sceneValue);
+      <% if @mode == 'edit' %>
+        <% if @scene.id %>
+          sceneId = 'Editing ' + '<%= @scene.name %>';
+        <% else %>
+          sceneId = 'New Scene';
+        <% end %>
+      <% else %>
+        sceneId = '<%= @scene.name %>';
+      <% end %>
+        sceneValue = '<%= @scene.id %>';
+        loadJSON(sceneId, sceneValue);
     <% else %>
       $('#container').show();
       $('#spinner').hide();

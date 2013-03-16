@@ -19,6 +19,11 @@
         <div class="navbar">
           <div id="container_title" class="navbar-inner">
             <a id="scene_title" href="#" class="brand">Loading...</a>
+            <% if @scene.id %>
+              <span class="icon pull-right">
+                <%= link_to '<i class="icon-eye-open"></i>'.html_safe, @scene %>
+              </span>
+            <% end %>
           </div>
         </div>
         <%= render 'netwidget' %>

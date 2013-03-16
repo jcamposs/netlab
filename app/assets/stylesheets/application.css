@@ -96,3 +96,10 @@
 #error_explanation {
   margin-top: 120px;
 }
+
+span.icon {
+  border-left: 1px solid #CDCDCD;
+  float: right;
+  opacity: 0.7;
+  padding: 10px 0 10px 18px;
+}
