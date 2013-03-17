@@ -2,6 +2,7 @@ require 'net/http'
 
 class HomeController < ApplicationController
   before_filter :authenticate_user!
+  before_filter :check_notifications
 
   def index
     @user = current_user

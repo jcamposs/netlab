@@ -2,6 +2,8 @@ require 'cloudstrg/cloudstrg'
 
 class WorkspaceInvitationsController < ApplicationController
   before_filter :authenticate_user!
+  before_filter :check_notifications
+
   # GET /workspace_invitations
   # GET /workspace_invitations.json
   def index

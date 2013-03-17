@@ -23,6 +23,14 @@
               <li class="btn"><%= link_to '<i class="icon-pencil"></i> Workspaces'.html_safe, workspaces_path %></li>
               <li class="btn"><%= link_to '<i class="icon-list"></i> Scenes'.html_safe, scenes_path %></li>
               <li class="btn"><%= link_to '<i class="icon-user"></i> My profile'.html_safe, "/profiles/#{current_user.id}" %></li>
+              <li class="btn">
+                <%= link_to (root_path) do %>
+                  <%= '<i class="icon-globe"></i> Notifications'.html_safe %>
+                  <% if @num_notifications != 0 %>
+                    <%= '<span class="badge badge-important">'.html_safe + "#{@num_notifications}" + '</span>'.html_safe %>
+                  <% end %>
+                <% end %>
+              </li>
               <li class="btn"><%= link_to '<i class="icon-share-alt"></i> Logout'.html_safe, destroy_user_session_path, method: :delete %></li>
             </ul>
           </div>

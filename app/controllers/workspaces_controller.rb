@@ -7,6 +7,7 @@ include Sys
 class WorkspacesController < ApplicationController
   before_filter :authenticate_user!, :confWidget
   before_filter :capture_cloudstrg_validation, :only => [:index]
+  before_filter :check_notifications
 
   def confWidget
     #TODO: Choose the widget that fits better in user's device screen

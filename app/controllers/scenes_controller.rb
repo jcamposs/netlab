@@ -6,6 +6,7 @@ INCLUDED_METHODS = [:show, :edit, :update, :delete, :destroy, :back_edit_ajax, :
 class ScenesController < ApplicationController
   before_filter :authenticate_user!, :confWidget, :capture_cloudstrg_validation
   before_filter :set_cloudstrg_params, :only => INCLUDED_METHODS
+  before_filter :check_notifications
 
   def confWidget
     #TODO: Choose the widget that fits better in user's device screen

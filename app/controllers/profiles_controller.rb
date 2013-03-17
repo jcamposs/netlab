@@ -1,5 +1,6 @@
 class ProfilesController < ApplicationController
   before_filter :authenticate_user!
+  before_filter :check_notifications
 
   # GET /profiles/1
   # GET /profiles/1.json
