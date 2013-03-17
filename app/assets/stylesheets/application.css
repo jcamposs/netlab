@@ -123,3 +123,24 @@ span.icon {
 #workspace-info {
   margin: 0 30px 0 30px;
 }
+
+#list-notifications {
+  border: 1px solid #DDDDDD;
+  margin-top: -20px;
+}
+
+.table-list .list-image {
+  vertical-align: middle;
+  border-right: 2px solid #DDDDDD;
+}
+
+.table-list span.minor {
+  color: #888888;
+  font-size: 11px;
+}
+
+.table-list .list-text {
+  display: block;
+  font-weight: normal;
+  line-height: 1.2;
+}
