@@ -146,3 +146,11 @@ span.icon {
   margin-top: 0;
   position: relative;
 }
+
+.formSep {
+  margin: 0;
+}
+.formSep {
+  clear: both;
+  padding: 10px 20px;
+}
