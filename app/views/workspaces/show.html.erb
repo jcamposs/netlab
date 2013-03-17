@@ -8,19 +8,21 @@
         <ul class="nav nav-tabs">
           <li class="active"><a href="#tab1" data-toggle="tab"><h4>Workspace Info</h4></a></li>
         </ul>
-        <div class="tab-pane active" id="tab1">
-          <div id="workspace-info">
-            <h4>Name</h4>
-            <p><%= @workspace.name %></p><hr>
-
-            <h4>User</h4>
-            <p><%= @workspace.user.first_name %></p><hr>
-
-            <h4>Scene</h4>
-            <p id="scene_name"><%= @workspace.scene.name %></p>
+        <div id="tab-content" class="tab-content">
+          <div class="tab-pane active" id="tab1">
+            <table id="workspace-info" class="table table-list">
+              <tbody>
+                <tr>
+                  <td>
+                    <p class="formSep"><small class="muted">Name: </small><%= @workspace.name %></p>
+                    <p class="formSep"><small class="muted">User: </small><%= @workspace.user.first_name %></p>
+                    <p class="formSep"><small class="muted">Scene: </small><span id="scene_name"><%= @workspace.scene.name %></span></p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
-
       </div>
 
     </div>
