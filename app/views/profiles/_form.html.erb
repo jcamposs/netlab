@@ -1,7 +1,7 @@
-<%= form_for(@user, :url => "/profiles/#{@user.id}") do |f| %>
+<%= form_for(@user, :url => "/profiles/#{@user.id}", :html => { :class => 'form-horizontal'}) do |f| %>
   <% if @user.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+    <div id="error_explanation" class="alert alert-error span7 offset4">
+      <h4><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h4>
 
       <ul>
       <% @user.errors.full_messages.each do |msg| %>
@@ -11,15 +11,41 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :first_name %><br />
-    <%= f.text_field :first_name %>
+  <div class="container-fluid">
+
+    <div class="row-fluid container-widget">
+
+      <div class="span5">
+
+        <div class="tabbable tabbable-bordered">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab1" data-toggle="tab"><h4>Editing User</h4></a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab1">
+              <div class="control-group">
+                <%= f.label :first_name, :class => 'control-label' %>
+                <div class="controls">
+                  <%= f.text_field :first_name %>
+                </div>
+              </div>
+              <div class="control-group">
+                <%= f.label :last_name, :class => 'control-label' %>
+                <div class="controls">
+                  <%= f.text_field :last_name %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <%= f.submit :class => 'btn btn-primary' %>
+        </div>
+      </div>
+
+    </div>
+
   </div>
-  <div class="field">
-    <%= f.label :last_name %><br />
-    <%= f.text_field :last_name %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+
 <% end %>
