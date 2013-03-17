@@ -15,8 +15,17 @@
                 <tr>
                   <td>
                     <p class="formSep"><small class="muted">Name: </small><%= @workspace.name %></p>
-                    <p class="formSep"><small class="muted">User: </small><%= @workspace.user.first_name %></p>
+                    <p class="formSep"><small class="muted">Owner: </small><%= link_to "#{@workspace.user.first_name} #{@workspace.user.last_name}", profile_path(@workspace.user) %></p>
                     <p class="formSep"><small class="muted">Scene: </small><span id="scene_name"><%= @workspace.scene.name %></span></p>
+                    <p class="formSep"><small class="muted">Collaborators: </small>
+                    <% User.find(:all, :conditions => ["id != ?", @user.id]).each_with_index do |user, i| -%>
+                      <% if @workspace.editors.include?(user) %>
+                        <div class="span6">
+                          <ul><%= link_to "#{user.first_name} #{user.last_name}", profile_path(user) %></ul>
+                       </div>
+                      <% end %>
+                    <% end -%>
+                    </p>
                   </td>
                 </tr>
               </tbody>
