@@ -38,8 +38,23 @@
                   <td><%= scene.user.first_name %></td>
                   <td><%= scene.name %></td>
                   <td>
-                    </i><%= link_to '<i class="icon-edit"></i> Edit'.html_safe, edit_scene_path(scene), :class => 'btn btn-mini' %>
-                    <%= link_to '<i class="icon-trash icon-white"></i> Delete'.html_safe, delete_scene_path(scene), :class => 'btn btn-mini btn-danger', :remote => true %>
+                    <% if scene.workspaces.empty? %>
+                      <%= link_to '<i class="icon-edit"></i> Edit'.html_safe, edit_scene_path(scene), :class => 'btn btn-mini' %>
+                      <%= link_to '<i class="icon-trash icon-white"></i> Delete'.html_safe, delete_scene_path(scene), :class => 'btn btn-mini btn-danger', :remote => true %>
+                    <% else %>
+                      <div class="btn-group">
+                        <a class="btn dropdown-toggle btn-mini btn-info" data-toggle="dropdown" href="#">
+                        <i class="icon-eye-open icon-white"></i>
+                        Workspaces
+                        <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                          <% scene.workspaces.each  do |workspace| %>
+                            <li><%= link_to "#{workspace.name}", workspace_path(workspace) %></li>
+                          <% end %>
+                        </ul>
+                      </div>
+                    <% end %>
                   </td>
                 </tr>
               <% end %>
