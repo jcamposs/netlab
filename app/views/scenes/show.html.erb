@@ -2,7 +2,31 @@
 
   <div class="row-fluid container-widget">
 
-    <div id="scene_view" class="span4 offset3">
+    <div id="netlab_params" class="span5">
+
+      <div class="tabbable tabbable-bordered">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#tab1" data-toggle="tab"><h4>Scene Info</h4></a></li>
+        </ul>
+        <div id="tab-content" class="tab-content">
+          <div class="tab-pane active" id="tab1">
+            <table class="table table-list info">
+              <tbody>
+                <tr>
+                  <td>
+                    <p class="formSep"><small class="muted">Name: </small><%= @scene.name %></p>
+                    <p class="formSep"><small class="muted">Creation Date: </small><%= @scene.created_at.strftime("%B %d %Y") %> at <%= @scene.created_at.strftime("%X") %></span></p>
+                    <p class="formSep"><small class="muted">Last Modified: </small><%= @scene.updated_at.strftime("%B %d %Y") %> at <%= @scene.updated_at.strftime("%X") %></span></p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="scene_view" class="span4 offset1">
 
       <div class="navbar">
         <div id="container_title" class="navbar-inner">
