@@ -31,9 +31,9 @@
                 <tr>
                   <td>
                     <% if i == 0 %>
-                      <%= radio_button_tag :id, workspace.id, true, :class => workspace.name %>
+                      <%= radio_button_tag :id, workspace.scene_id, true, :class => workspace.name %>
                     <% else %>
-                      <%= radio_button_tag :id, workspace.id, false, :class => workspace.name %>
+                      <%= radio_button_tag :id, workspace.scene_id, false, :class => workspace.name %>
                     <% end %>
                   </td>
                   <td><%= workspace.name %></td>
