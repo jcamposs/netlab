@@ -17,6 +17,7 @@
 //= require jquery
 //= require jquery-ui
 //= require jquery_ujs
+//= require gdrivestrg
 //= require_tree .
 
 $(document).ready(function (){
