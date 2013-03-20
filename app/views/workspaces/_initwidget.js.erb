@@ -39,7 +39,7 @@
   function initJSON() {
     $('#table_workspaces input').each(function() {
       if ($(this).is(':checked')) {
-        sceneValue = $(this).attr('id');
+        sceneValue = $(this).attr('class');
         sceneId = $(this).val();
         loadJSON(sceneId, sceneValue);
       }
@@ -85,11 +85,9 @@
     });
 
     $('#table_workspaces input').bind('click', function() {
-      $('#table_workspaces input').attr('checked', false);
-      $(this).attr('checked', true);
       $('#workspace_title').html('Loading...');
       clearScene();
-      loadJSON($(this).val(), $(this).attr('id'));
+      loadJSON($(this).val(), $(this).attr('class'));
     });
 
     <%= @module %>.initWidget({

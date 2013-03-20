@@ -31,9 +31,9 @@
                 <tr>
                   <td>
                     <% if i == 0 %>
-                      <%= check_box_tag workspace.name, workspace.scene_id, false, :class => 'workspace_id', :checked => true %>
+                      <%= radio_button_tag :id, workspace.id, true, :class => workspace.name %>
                     <% else %>
-                       <%= check_box_tag workspace.name, workspace.scene_id, false, :class => 'workspace_id'%>
+                      <%= radio_button_tag :id, workspace.id, false, :class => workspace.name %>
                     <% end %>
                   </td>
                   <td><%= workspace.name %></td>
