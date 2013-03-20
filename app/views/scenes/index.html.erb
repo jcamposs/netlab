@@ -30,9 +30,9 @@
                 <tr>
                   <td>
                     <% if i == 0 %>
-                      <%= check_box_tag scene.name, scene.id, false, :class => 'scene_id', :checked => true %>
+                      <%= radio_button_tag :id, scene.id, true, :class => scene.name %>
                     <% else %>
-                       <%= check_box_tag scene.name, scene.id, false, :class => 'scene_id'%>
+                      <%= radio_button_tag :id, scene.id, false, :class => scene.name %>
                     <% end %>
                   </td>
                   <td><%= scene.user.first_name %></td>

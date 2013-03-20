@@ -19,7 +19,7 @@
   function initJSON() {
     $('#table_scenes input').each(function() {
       if ($(this).is(':checked')) {
-        sceneId = $(this).attr('id');
+        sceneId = $(this).attr('class');
         sceneValue = $(this).val();
         loadJSON(sceneId, sceneValue);
       }
@@ -83,11 +83,9 @@
 
   function initWidget() {
     $('#table_scenes input').bind('click', function() {
-      $('#table_scenes input').attr('checked', false);
-      $(this).attr('checked', true);
       $('#scene_title').html('Loading...');
       clearScene();
-      loadJSON($(this).attr('id'), $(this).val());
+      loadJSON($(this).attr('class'), $(this).val());
     });
 
     <%= @module %>.initWidget({
