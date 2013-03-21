@@ -28,10 +28,17 @@
         if(data.redirect){
           window.location.href = data.redirect; 
         }else{
-          $('#container').show();
-          $('#spinner').hide();
-          $('#workspace_title').html(sceneValue);
-          loadStage(data.definition);
+          $('#table_workspaces input').each(function() {
+            if ($(this).is(':checked')) {
+              checkedId = $(this).val();
+            }
+          });
+          if (checkedId == sceneId) {
+            $('#container').show();
+            $('#spinner').hide();
+            $('#workspace_title').html(sceneValue);
+            loadStage(data.definition);
+          }
         }
       },
       error: function (xhr, ajaxOptions, thrownError) {
