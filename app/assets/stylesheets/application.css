@@ -63,6 +63,19 @@
   float:left;
 }
 
+.alert-block {
+  height: 60px;
+  width: 300px;
+  margin: 170px 0 0 130px;
+  padding: 8px 35px 8px 14px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  background-color: #fcf8e3;
+  border: 1px solid #fbeed5;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+}
+
 #login {
   margin: 350px 0 0 0;
 }
