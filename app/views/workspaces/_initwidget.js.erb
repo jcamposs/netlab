@@ -28,12 +28,20 @@
         if(data.redirect){
           window.location.href = data.redirect; 
         }else{
+          checkedId = 0;
           $('#table_workspaces input').each(function() {
             if ($(this).is(':checked')) {
               checkedId = $(this).val();
             }
           });
-          if (checkedId == sceneId) {
+          if($('#table_workspaces').length){
+            if (checkedId == sceneId) {
+              $('#container').show();
+              $('#spinner').hide();
+              $('#workspace_title').html(sceneValue);
+              loadStage(data.definition);
+            }
+          }else{
             $('#container').show();
             $('#spinner').hide();
             $('#workspace_title').html(sceneValue);
