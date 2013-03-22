@@ -1,0 +1,39 @@
+<%= form_for(workspace_task) do |f| %>
+  <% if workspace_task.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(workspace_task.errors.count, "error") %> prohibited this workspace_task from being saved:</h2>
+
+      <ul>
+      <% workspace_task.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+    <%= f.hidden_field :author_id, :value => "#{current_user.id}" %>
+    <%= f.hidden_field :workspace_id, :value => "#{workspace.id}" %>
+  <div class="field">
+    <%= f.label :assigned_id, "Assigned to", :class => 'control-label' %>
+    <%= f.select :assigned_id, options_from_collection_for_select([workspace.user] + workspace.editors, :id, :full_name) %>
+  </div>
+  <div class="field">
+    <%= f.label :state %><br />
+    <%= f.select :state, 0..5 %>
+  </div>
+  <div class="field">
+    <%= f.label :priority %><br />
+    <%= f.select :priority, 0..5 %>
+  </div>
+  <div class="field">
+    <%= f.label :subject %><br />
+    <%= f.text_field :subject %>
+  </div>
+  <div class="field">
+    <%= f.label :description %><br />
+    <%= f.text_area :description %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

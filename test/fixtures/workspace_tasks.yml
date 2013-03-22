@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  author_id: 1
+  assigned_id: 1
+  state: 1
+  priority: 1
+  subject: MyString
+  description: MyText
+  auto_task: MyString
+
+two:
+  author_id: 1
+  assigned_id: 1
+  state: 1
+  priority: 1
+  subject: MyString
+  description: MyText
+  auto_task: MyString

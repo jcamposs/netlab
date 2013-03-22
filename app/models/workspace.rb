@@ -5,6 +5,7 @@ class Workspace < ActiveRecord::Base
   has_many :virtual_machines, dependent: :destroy
   has_many :collision_domains, dependent: :destroy
   has_many :workspace_invitations, dependent: :destroy
+  has_many :workspace_tasks, dependent: :destroy
 
   validates :user_id, :scene_id, :name, presence: true
   

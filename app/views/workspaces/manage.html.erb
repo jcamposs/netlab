@@ -2,21 +2,62 @@
 
 <p id="notice"><%= notice %></p>
 
-<p>
-  <b>Name:</b>
-  <%= @workspace.name %>
-</p>
-
 <%= hidden_field_tag 'workspace_scene_id', @workspace.scene.id %>
 
-<%= render 'scenes/netwidget' %>
+  <div class="container-fluid">
 
-<%= label_tag "Virtual machine:" %>
-<%= select_tag "virtual_machine", options_from_collection_for_select(VirtualMachine.find_all_by_workspace_id(@workspace.id), :name, :name) %>
-<%= button_to "Manage", configure_workspace_path(@workspace), :remote => true %>
-<%= button_to "Stop", halt_workspace_path(@workspace), :remote => true %>
+    <div class="row-fluid container-widget">
 
-<div class="consoles">
+      <div id="netlab_params" class="span5">
+
+        <div class="tabbable tabbable-bordered">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab1" data-toggle="tab"><h4>Workspace management</h4></a></li>
+            <li><a href="#tab2" data-toggle="tab"><h4>Tasks</h4></a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab1">
+              <div>
+                <%= label_tag "Virtual machine:" %>
+                <div class="controls">
+		  <%= select_tag "virtual_machine", options_from_collection_for_select(VirtualMachine.find_all_by_workspace_id(@workspace.id), :name, :name) %>
+		  <%= button_to "Manage", configure_workspace_path(@workspace), :remote => true %>
+		  <%= button_to "Stop", halt_workspace_path(@workspace), :remote => true %>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane" id="tab2">
+              <div><br/>
+                <%= render partial: 'workspace_tasks/workspace_tasks', :locals => {:workspace => @workspace} %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <% if not @workspace.scene.nil? %>
+        <div id="scene_view" class="span6 offset1">
+          <div class="navbar">
+            <div id="container_title" class="navbar-inner">
+              <a id="workspace_title" href="#" class="brand">Loading...</a>
+              <% if @workspace.id %>
+                <span class="icon pull-right">
+                  <%= link_to '<i class="icon-eye-open"></i>'.html_safe, @workspace %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+          <%= render 'scenes/netwidget' %>
+        </div>
+      <% end %>
+
+    </div>
+
+  </div>
+
+
+<div>
   <% VirtualMachine.find_all_by_workspace_id(@workspace.id).each do |vm| %>
     <div id="<%= vm.name %>" class="ui-widget-content ui-corner-all" style="display: none">
       <h3 class="ui-widget-header ui-corner-all"><%= vm.name %></h3>

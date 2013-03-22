@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130314171523) do
+ActiveRecord::Schema.define(:version => 20130321113449) do
 
   create_table "cloudstrg_cloudstrgplugins", :force => true do |t|
     t.string   "plugin_name"
@@ -142,6 +142,19 @@ ActiveRecord::Schema.define(:version => 20130314171523) do
   create_table "workspace_invitations", :force => true do |t|
     t.integer  "user_id"
     t.integer  "workspace_id"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  create_table "workspace_tasks", :force => true do |t|
+    t.integer  "author_id"
+    t.integer  "assigned_id"
+    t.integer  "workspace_id"
+    t.integer  "state"
+    t.integer  "priority"
+    t.string   "subject"
+    t.text     "description"
+    t.string   "auto_task"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
   end

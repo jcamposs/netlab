@@ -1,0 +1,40 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Author:</b>
+  <%= @workspace_task.author_id %>
+</p>
+
+<p>
+  <b>Assigned:</b>
+  <%= @workspace_task.assigned_id %>
+</p>
+
+<p>
+  <b>State:</b>
+  <%= @workspace_task.state %>
+</p>
+
+<p>
+  <b>Priority:</b>
+  <%= @workspace_task.priority %>
+</p>
+
+<p>
+  <b>Subject:</b>
+  <%= @workspace_task.subject %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%= @workspace_task.description %>
+</p>
+
+<p>
+  <b>Auto task:</b>
+  <%= @workspace_task.auto_task %>
+</p>
+
+
+<%= link_to 'Edit', edit_workspace_task_path(@workspace_task) %> |
+<%= link_to 'Back', workspace_tasks_path %>
