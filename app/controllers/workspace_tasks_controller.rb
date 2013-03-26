@@ -48,7 +48,7 @@ class WorkspaceTasksController < ApplicationController
 
     respond_to do |format|
       if @workspace_task.save
-        format.html { redirect_to @workspace_task.workspace, notice: 'Workspace task was successfully created.' }
+        format.html { redirect_to manage_workspace_path(@workspace_task.workspace), notice: 'Workspace task was successfully created.' }
         format.json { render json: @workspace_task, status: :created, location: @workspace_task }
       else
         format.html { render @workspace_task.workspace }
@@ -64,7 +64,7 @@ class WorkspaceTasksController < ApplicationController
 
     respond_to do |format|
       if @workspace_task.update_attributes(params[:workspace_task])
-        format.html { redirect_to @workspace_task.workspace, notice: 'Workspace task was successfully updated.' }
+        format.html { redirect_to manage_workspace_path(@workspace_task.workspace), notice: 'Workspace task was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { redirect_to @workspace_task.workspace, notice: 'Error saving task' }
@@ -100,17 +100,16 @@ class WorkspaceTasksController < ApplicationController
                  :plugin_id => plugin,
                  :redirect => "#{request.protocol}#{request.host_with_port}/scenes",
                  :file_id => scene.remote.file_remote_id,
-                 :share_email => current_user.email,
+                 :share_email => workspace_task.author.email,
                  :local_file_id => scene.remote.id,
                  :user_id => workspace_task.author.id,
                  :session => session}
-
       driver = CloudStrg.new_driver _params
       _session, url = driver.config _params
       session.merge!(_session)
       if not url
         driver.share_file _params
-        workspace_task.status = 5
+        workspace_task.state = 5
         workspace_task.save
       else
         message = "Scene not found"
@@ -123,7 +122,7 @@ class WorkspaceTasksController < ApplicationController
 
     respond_to do |format|
       flash[:notice] = message
-      format.html { redirect_to workspace_task.workspace }
+      format.html { redirect_to manage_workspace_path(ws) }
       format.json { render json: {:message => message}, status: code }
     end
   end
