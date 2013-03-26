@@ -39,25 +39,27 @@ class WorkspaceInvitationsController < ApplicationController
     _session, url = driver.config _params
     
     if not url
+
+      ws.editors << current_user
+      ws.save
+      @workspace_invitation.destroy
       begin
         driver.share_file _params
-
-        ws.editors << current_user
-        ws.save
-        @workspace_invitation.destroy
-    
-        respond_to do |format|
-          format.html { redirect_to ws }
-          format.json { render json: @workspace_invitation }
-        end
       catch Exception, e
         user.assigned_workspace_tasks.build({ :author_id => current_user.id, 
                                               :workspace_id => ws.id,
                                               :auto_task => "SHARE SCENE",
-                                              :subject => "Share scene #{scene.name} with #{user.first_name} #{user.last_name}",
-                                              :priority => 5,
-                                              :state => 0,
+                                              :subject => "Share scene #{scene.name} with #{user.full_name}",
+                                              :priority => 4,
+                                              :state => 0
                                               })
+        user.save()
+      end
+
+    
+      respond_to do |format|
+        format.html { redirect_to ws }
+        format.json { render json: @workspace_invitation }
       end
     else
       respond_to do |format|
