@@ -11,19 +11,42 @@
     </div>
   <% end %>
 
-    <%= f.hidden_field :author_id, :value => "#{current_user.id}" %>
-    <%= f.hidden_field :workspace_id, :value => "#{workspace.id}" %>
+    <% if workspace_task.author.nil? %>
+      <%= f.hidden_field :author_id, :value => "#{current_user.id}" %>
+    <% else %>
+      <%= f.hidden_field :author_id, :value => "#{workspace_task.author.id}" %>
+    <% end %>
+
+    <% if workspace_task.workspace.nil? %>
+      <%= f.hidden_field :workspace_id, :value => "#{workspace.id}" %>
+    <% else %>
+      <%= f.hidden_field :workspace_id, :value => "#{workspace_task.workspace.id}" %>
+    <% end %>
+
   <div class="field">
     <%= f.label :assigned_id, "Assigned to", :class => 'control-label' %>
-    <%= f.select :assigned_id, options_from_collection_for_select([workspace.user] + workspace.editors, :id, :full_name) %>
+    <% if workspace_task.assigned_id.nil? %>
+      <%= f.select :assigned_id, options_from_collection_for_select([workspace.user] + workspace.editors, :id, :full_name) %>
+    <% else %>
+      <%= f.select :assigned_id, options_from_collection_for_select([workspace.user] + workspace.editors, :id, :full_name, workspace_task.assigned_id) %>
+    <% end %>
   </div>
   <div class="field">
-    <%= f.label :state %><br />
-    <%= f.select :state, 0..5 %>
+    <%= f.label :state, "Status" %><br />
+    <% if workspace_task.state.nil? %>
+      <%= f.select :state, options_for_select(["Open", "Resolved", "Feedback", "Fixed", "Closed"].each_with_index.map { |v,i| [v, i] }) %>
+    <% else %>
+      <%= f.select :state, options_for_select(["Open", "Resolved", "Feedback", "Fixed", "Closed"].each_with_index.map { |v,i| [v, i] }, workspace_task.state) %>
+    <% end %>
   </div>
   <div class="field">
     <%= f.label :priority %><br />
-    <%= f.select :priority, 0..5 %>
+    <% if workspace_task.priority.nil? %>
+      <%= f.select :priority, options_for_select(["Very low", "Low", "Medium", "High", "Very High"].each_with_index.map { |v,i| [v, i] }, 2) %>
+    <% else %>
+      <%= f.select :priority, options_for_select(["Very low", "Low", "Medium", "High", "Very High"].each_with_index.map { |v,i| [v, i] }, workspace_task.priority) %>
+    <% end %>
+
   </div>
   <div class="field">
     <%= f.label :subject %><br />

@@ -18,7 +18,7 @@
               </td>
               <td>
                 <% if not wtask.auto_task.nil? %>
-                  <%= link_to '<i class="icon-ok icon-white"></i> Ok'.html_safe, wtask, :class => 'btn btn-mini btn-success' %>
+                  <%= link_to '<i class="icon-ok icon-white"></i> Ok'.html_safe, do_auto_task_workspace_task_path(wtask), method: :put, :class => 'btn btn-mini btn-success' %>
                 <% else %>
                   <%= link_to '<i class="icon-ok icon-white"></i> Show'.html_safe, wtask, :class => 'btn btn-mini btn-success' %>
                 <% end %>

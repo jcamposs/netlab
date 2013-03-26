@@ -10,20 +10,22 @@
             </tr>
           </thead>
           <tbody>
-          <% workspace.workspace_tasks.each do |wtask| %>
+          <% workspace.workspace_tasks.where("state < 4").each do |wtask| %>
             <tr>
               <td class="list-image"><i class="icon-envelope"></i></td>
               <td><%= "#{wtask.assigned.full_name}" %></td>
-              <td><%= "#{wtask.priority}" %></td>
+              <td><%= "#{wtask.get_priority}" %></td>
               <td><%= "#{wtask.subject}" %></td>
               <td><%= '<span class="minor">'.html_safe + ' On ' + ("#{wtask.created_at}").to_time.strftime("%B %d %Y %X") + '</span>'.html_safe %></td>
               <td>
-                <% if not wtask.auto_task.nil? %>
-                  <%= link_to '<i class="icon-ok icon-white"></i> Ok'.html_safe, wtask, :class => 'btn btn-mini btn-success' %>
+                <% if not wtask.auto_task.nil? and current_user == wtask.assigned %>
+                  <%= link_to '<i class="icon-ok icon-white"></i> Ok'.html_safe, do_auto_task_workspace_task_path(wtask), method: :put, :class => 'btn btn-mini btn-success' %>
                 <% else %>
                   <%= link_to '<i class="icon-ok icon-white"></i> Show'.html_safe, wtask, :class => 'btn btn-mini btn-success' %>
                 <% end %>
-                <%= link_to '<i class="icon-remove icon-white"></i> Reject'.html_safe, wtask, method: :delete, data: { confirm: 'Are you sure?' }, :class => 'btn btn-mini btn-danger' %>
+                <% if current_user == wtask.assigned or current_user == wtask.author %>
+                  <%= link_to '<i class="icon-remove icon-white"></i> Reject'.html_safe, wtask, method: :delete, data: { confirm: 'Are you sure?' }, :class => 'btn btn-mini btn-danger' %>
+                <% end %>
               </td>
             </tr>
           <% end %>

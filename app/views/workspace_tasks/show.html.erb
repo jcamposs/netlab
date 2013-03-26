@@ -2,22 +2,22 @@
 
 <p>
   <b>Author:</b>
-  <%= @workspace_task.author_id %>
+  <%= @workspace_task.author.full_name %>
 </p>
 
 <p>
-  <b>Assigned:</b>
-  <%= @workspace_task.assigned_id %>
+  <b>Assigned to:</b>
+  <%= @workspace_task.assigned.full_name %>
 </p>
 
 <p>
-  <b>State:</b>
-  <%= @workspace_task.state %>
+  <b>Status:</b>
+  <%= @workspace_task.get_status %>
 </p>
 
 <p>
   <b>Priority:</b>
-  <%= @workspace_task.priority %>
+  <%= @workspace_task.get_priority %>
 </p>
 
 <p>
@@ -30,11 +30,7 @@
   <%= @workspace_task.description %>
 </p>
 
-<p>
-  <b>Auto task:</b>
-  <%= @workspace_task.auto_task %>
-</p>
-
-
-<%= link_to 'Edit', edit_workspace_task_path(@workspace_task) %> |
-<%= link_to 'Back', workspace_tasks_path %>
+<% if current_user == @workspace_task.author or current_user == @workspace_task.assigned %>
+  <%= link_to 'Edit', edit_workspace_task_path(@workspace_task) %> |
+<% end %>
+<%= link_to 'Back', manage_workspace_path(@workspace_task.workspace) %>
