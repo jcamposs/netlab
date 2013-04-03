@@ -9,7 +9,9 @@ class ApplicationController < ActionController::Base
   def check_notifications
     @user = current_user
     @workspace_invitations = @user.workspace_invitations
-    @num_notifications = @workspace_invitations.length
+    @num_invitations = @workspace_invitations.length
+    @workspace_tasks = @user.assigned_workspace_tasks
+    @num_tasks = @workspace_tasks.length
   end
 
 end

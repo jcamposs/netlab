@@ -26,8 +26,11 @@
               <li class="btn">
                 <%= link_to (root_path) do %>
                   <%= '<i class="icon-globe"></i> Notifications'.html_safe %>
-                  <% if @num_notifications != 0 %>
-                    <%= '<span class="badge badge-important">'.html_safe + "#{@num_notifications}" + '</span>'.html_safe %>
+                  <% if @num_invitations != 0 %>
+                    <%= '<span class="badge badge-important">'.html_safe + "#{@num_invitations}" + '</span>'.html_safe %>
+                  <% end %>
+                  <% if @num_tasks != 0 %>
+                    <%= '<span class="badge badge-warning">'.html_safe + "#{@num_tasks}" + '</span>'.html_safe %>
                   <% end %>
                 <% end %>
               </li>
