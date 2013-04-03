@@ -15,16 +15,19 @@
             <li class="active"><a href="#tab1" data-toggle="tab"><h4>Workspace management</h4></a></li>
             <li><a href="#tab2" data-toggle="tab"><h4>Tasks</h4></a></li>
           </ul>
-          <div class="tab-content">
+         <div id="tab-content" class="tab-content">
             <div class="tab-pane active" id="tab1">
-              <div>
-                <%= label_tag "Virtual machine:" %>
-                <div class="controls">
-		  <%= select_tag "virtual_machine", options_from_collection_for_select(VirtualMachine.find_all_by_workspace_id(@workspace.id), :name, :name) %>
-		  <%= button_to "Manage", configure_workspace_path(@workspace), :remote => true %>
-		  <%= button_to "Stop", halt_workspace_path(@workspace), :remote => true %>
+              <span id="scene_name" style="VISIBILITY:hidden"><%= @workspace.scene.name %></span>
+              <center>
+                <div class="control-group">
+                  <%= label_tag "Virtual machine:"%>
+                  <div class="controls">
+                    <%= select_tag "virtual_machine", options_from_collection_for_select(VirtualMachine.find_all_by_workspace_id(@workspace.id), :name, :name) %>
+                    <%= button_to "Manage", configure_workspace_path(@workspace), :remote => true, :class => 'btn btn-warning' %>
+                    <%= button_to "Stop", halt_workspace_path(@workspace), :remote => true, :class => 'btn btn-danger' %>
+                  </div>
                 </div>
-              </div>
+              </center>
             </div>
 
             <div class="tab-pane" id="tab2">
@@ -56,7 +59,6 @@
 
   </div>
 
-
 <div>
   <% VirtualMachine.find_all_by_workspace_id(@workspace.id).each do |vm| %>
     <div id="<%= vm.name %>" class="ui-widget-content ui-corner-all" style="display: none">
@@ -65,5 +67,3 @@
     </div>
   <% end %>
 </div>
-
-<%= link_to 'Back', workspaces_path %>
