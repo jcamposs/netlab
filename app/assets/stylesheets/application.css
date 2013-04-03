@@ -144,6 +144,20 @@ span.icon {
   line-height: 1.2;
 }
 
+.table th {
+  border-bottom: 0 none;
+  color: #666666;
+  font-size: 10px;
+  height: auto;
+  padding: 5px 10px 2px;
+  text-align: center;
+  background-color: #EFEFEF;
+  background-image: -webkit-gradient(linear, 0 0%, 0 100%, from(#fdfdfd), to(#eaeaea));
+  background-image: -webkit-linear-gradient(top, #fdfdfd 0%, #eaeaea 100%);
+  background-image: -moz-linear-gradient(top, #fdfdfd 0%, #eaeaea 100%);
+  background-image: -linear-gradient(top, #fdfdfd 0%, #eaeaea 100%);
+}
+
 .info {
   margin-top: -5px;
 }
