@@ -12,9 +12,11 @@
       <div class="navbar">
         <div class="navbar-inner">
           <a href="#" class="brand">User Profile</a>
-          <span class="icon pull-right">
-            <%= link_to '<i class="icon-edit"></i>'.html_safe, edit_profile_path(@user) %>
-          </span>
+          <% if current_user == @user %>
+            <span class="icon pull-right">
+              <%= link_to '<i class="icon-edit"></i>'.html_safe, edit_profile_path(@user) %>
+            </span>
+          <% end %>
         </div>
       </div>
 
