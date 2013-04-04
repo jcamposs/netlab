@@ -25,6 +25,8 @@ class ScenesController < ApplicationController
     #end
     @scenes = @user.scenes
     @scene = @scenes[0] # Default scene
+    @mode = "view"
+
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @scenes }
