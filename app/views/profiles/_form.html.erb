@@ -13,6 +13,13 @@
 
   <div class="container-fluid">
 
+    <ul id="breadcrumb" class="breadcrumb wizard">
+      <li><a href="/"><i class="icon-home"></i></a></li>
+      <li><%= link_to 'Profile', profile_path(@user) %></li>
+      <li class="active">Editing Profile</li>
+    </ul>
+
+
     <div class="row-fluid container-widget">
 
       <div class="span5">

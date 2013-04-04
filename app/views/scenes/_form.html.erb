@@ -13,6 +13,16 @@
 
   <div class="container-fluid">
 
+    <ul id="breadcrumb" class="breadcrumb wizard">
+      <li><a href="/"><i class="icon-home"></i></a></li>
+      <li><a href="/scenes">Scenes</a></li>
+      <% if @scene.user %>
+        <li class="active">Editing <%= @scene.name %></li>
+      <% else %>
+        <li class="active">New</li>
+      <% end %>
+    </ul>
+
     <div class="row-fluid container-widget">
 
       <div id="scene_view" class="span4 offset3">

@@ -1,5 +1,11 @@
 <div class="container-fluid">
 
+  <ul id="breadcrumb" class="breadcrumb wizard">
+    <li><a href="/"><i class="icon-home"></i></a></li>
+    <li><a href="/scenes">Scenes</a></li>
+    <li class="active"><%= @scene.name %></li>
+  </ul>
+
   <div class="row-fluid container-widget">
 
     <div id="netlab_params" class="span5">

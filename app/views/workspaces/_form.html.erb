@@ -12,6 +12,16 @@
 
   <div class="container-fluid">
 
+    <ul id="breadcrumb" class="breadcrumb wizard">
+      <li><a href="/"><i class="icon-home"></i></a></li>
+      <li><a href="/workspaces">Workspaces</a></li>
+      <% if @workspace.user %>
+        <li class="active">Editing <%= @workspace.name %></li>
+      <% else %>
+        <li class="active">New</li>
+      <% end %>
+    </ul>
+
     <div class="row-fluid container-widget">
 
       <div id="netlab_params" class="span5">
