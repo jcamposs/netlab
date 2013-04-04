@@ -12,7 +12,7 @@
   <tbody>
     <% workspace.workspace_tasks.where("state < 4").each do |wtask| %>
       <tr>
-        <td class="list-image"><i class="icon-envelope"></i></td>
+        <td class="list-image"><i class="icon-tasks"></i></td>
         <td><%= "#{wtask.assigned.full_name}" %></td>
         <td><%= "#{wtask.priority}" %></td>
         <td><%= "#{wtask.subject}" %></td>
