@@ -5,7 +5,7 @@
     <li><a href="/workspaces">Workspaces</a></li>
     <li><%= link_to @workspace_task.workspace.name, workspace_path(@workspace_task.workspace) %></li>
     <li><%= link_to 'Manage', manage_workspace_path(@workspace_task.workspace) %></li>
-    <li class="active">Task Info</li>
+    <li class="active">Task <%= @workspace_task.id %></li>
   </ul>
 
   <div class="row-fluid container-widget">
@@ -13,8 +13,18 @@
     <div id="netlab_params" class="span5">
 
       <% if current_user == @workspace_task.author or current_user == @workspace_task.assigned %>
-        <%= link_to '<i class="icon-edit"></i> Edit'.html_safe, edit_workspace_task_path(@workspace_task), :class => 'btn pull-right' %>
+        <a href='#newTaskModal' class='btn pull-right' data-toggle="modal"><i class="icon-edit"></i> Edit</a>
       <% end %>
+
+      <div id="newTaskModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 id="newTaskModalHeader">Edit Task</h3>
+        </div>
+        <div class="modal-body">
+          <%= render partial: 'workspace_tasks/form', :locals => {:workspace_task => WorkspaceTask.new, :workspace => @workspace_task.workspace} %>
+        </div>
+      </div>
 
       <div class="tabbable tabbable-bordered">
         <ul class="nav nav-tabs">

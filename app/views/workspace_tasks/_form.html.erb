@@ -32,7 +32,7 @@
     <% end %>
   </div>
   <div class="field">
-    <%= f.label :state, "Status" %><br />
+    <%= f.label :state, "Status" %>
     <% if workspace_task.state.nil? %>
       <%= f.select :state, options_for_select(["Open", "Resolved", "Feedback", "Fixed", "Closed"].each_with_index.map { |v,i| [v, i] }) %>
     <% else %>
@@ -40,7 +40,7 @@
     <% end %>
   </div>
   <div class="field">
-    <%= f.label :priority %><br />
+    <%= f.label :priority %>
     <% if workspace_task.priority.nil? %>
       <%= f.select :priority, options_for_select(["Very low", "Low", "Medium", "High", "Very High"].each_with_index.map { |v,i| [v, i] }, 2) %>
     <% else %>
@@ -49,14 +49,14 @@
 
   </div>
   <div class="field">
-    <%= f.label :subject %><br />
+    <%= f.label :subject %>
     <%= f.text_field :subject %>
   </div>
   <div class="field">
-    <%= f.label :description %><br />
+    <%= f.label :description %>
     <%= f.text_area :description %>
   </div>
-  <div class="actions">
-    <%= f.submit %>
+  <div class="modal-footer">
+    <center><%= f.submit 'Save', :class => 'btn btn-primary' %></center>
   </div>
 <% end %>
