@@ -12,6 +12,10 @@
 
     <div id="netlab_params" class="span5">
 
+      <% if current_user == @workspace_task.author or current_user == @workspace_task.assigned %>
+        <%= link_to '<i class="icon-edit"></i> Edit'.html_safe, edit_workspace_task_path(@workspace_task), :class => 'btn pull-right' %>
+      <% end %>
+
       <div class="tabbable tabbable-bordered">
         <ul class="nav nav-tabs">
           <li class="active"><a href="#tab1" data-toggle="tab"><h4>Task Info</h4></a></li>
