@@ -1,36 +1,43 @@
-<p id="notice"><%= notice %></p>
+<div class="container-fluid">
 
-<p>
-  <b>Author:</b>
-  <%= @workspace_task.author.full_name %>
-</p>
+  <ul id="breadcrumb" class="breadcrumb wizard">
+    <li><a href="/"><i class="icon-home"></i></a></li>
+    <li><a href="/workspaces">Workspaces</a></li>
+    <li><%= link_to @workspace_task.workspace.name, workspace_path(@workspace_task.workspace) %></li>
+    <li><%= link_to 'Manage', manage_workspace_path(@workspace_task.workspace) %></li>
+    <li class="active">Task Info</li>
+  </ul>
 
-<p>
-  <b>Assigned to:</b>
-  <%= @workspace_task.assigned.full_name %>
-</p>
+  <div class="row-fluid container-widget">
 
-<p>
-  <b>Status:</b>
-  <%= @workspace_task.get_status %>
-</p>
+    <div id="netlab_params" class="span5">
 
-<p>
-  <b>Priority:</b>
-  <%= @workspace_task.get_priority %>
-</p>
+      <div class="tabbable tabbable-bordered">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#tab1" data-toggle="tab"><h4>Task Info</h4></a></li>
+        </ul>
+        <div id="tab-content" class="tab-content">
+          <div class="tab-pane active" id="tab1">
+            <table class="table table-list info">
+              <tbody>
+                <tr>
+                  <td>
+                    <p class="formSep"><small class="muted">Author: </small><%= link_to "#{@workspace_task.author.full_name}", profile_path(@workspace_task.author) %></p>
+                    <p class="formSep"><small class="muted">Assigned to: </small><%= link_to "#{@workspace_task.assigned.full_name}", profile_path(@workspace_task.assigned) %></p>
+                    <p class="formSep"><small class="muted">Status: </small><%= @workspace_task.get_status %></p>
+                    <p class="formSep"><small class="muted">Priority: </small><%= @workspace_task.get_priority %></p>
+                    <p class="formSep"><small class="muted">Subject: </small><%= @workspace_task.subject %></p>
+                    <p class="formSep"><small class="muted">Description: </small><%= @workspace_task.description %></p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
 
-<p>
-  <b>Subject:</b>
-  <%= @workspace_task.subject %>
-</p>
+    </div>
 
-<p>
-  <b>Description:</b>
-  <%= @workspace_task.description %>
-</p>
+  </div>
 
-<% if current_user == @workspace_task.author or current_user == @workspace_task.assigned %>
-  <%= link_to 'Edit', edit_workspace_task_path(@workspace_task) %> |
-<% end %>
-<%= link_to 'Back', manage_workspace_path(@workspace_task.workspace) %>
+</div>
