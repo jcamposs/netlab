@@ -22,7 +22,7 @@
           <h3 id="newTaskModalHeader">Edit Task</h3>
         </div>
         <div class="modal-body">
-          <%= render partial: 'workspace_tasks/form', :locals => {:workspace_task => WorkspaceTask.new, :workspace => @workspace_task.workspace} %>
+          <%= render partial: 'workspace_tasks/form', :locals => {:workspace_task => @workspace_task, :workspace => @workspace_task.workspace} %>
         </div>
       </div>
 
