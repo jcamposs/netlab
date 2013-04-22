@@ -56,3 +56,6 @@ gem 'gdrivestrg', '~> 0.0.13'
 
 # Simple form style
 gem 'simple_form'
+
+# Synchronous AMQP client
+gem "bunny", ">= 0.9.0.pre9"
