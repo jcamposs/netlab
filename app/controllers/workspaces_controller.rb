@@ -2,6 +2,7 @@ require 'net/http'
 require 'net/https'
 require 'sys/proctable'
 require 'cloudstrg/cloudstrg'
+require 'bunny'
 include Sys
 
 class WorkspacesController < ApplicationController
@@ -161,6 +162,7 @@ class WorkspacesController < ApplicationController
     respond_to do |format|
       begin
         gen_schema get_scene(@scene, @user)
+        amqp_create_msg
         format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
         format.json { render json: @workspace, status: :created, location: @workspace }
       rescue CloudStrg::ROValidationRequired => e
@@ -536,5 +538,35 @@ class WorkspacesController < ApplicationController
       _session, url = driver.config _params
       session.merge!(_session)
     end
+  end
+
+  def amqp_create_msg
+    # Start a communication session with RabbitMQ
+    conn = Bunny.new({:user=>"guest", :pass=>"guest", :host=>"localhost", :vhost=>"/", :heartbeat=>1})
+    conn.start
+
+    rkey = "workspace.development.create"
+#    msg = {
+#      "workspace" => @workspace.id,
+#      "driver" => "netkit",
+#      "user" => @user.first_name,
+#      "email" => @user.email,
+#      "web" => "http://netlab.libresoft.es",
+#      "description" => "Workspace #{@workspace.name} based on scene #{@scene.name}. Created on #{@workspace.created_at}"
+#    }
+
+    json = '{"workspace":1, "driver": "netkit", "user": "pepito", "email": "pepito@gmail.com", "web": "http://netlab.libresoft.es", "description": "Workspace: workspace1 based on scene Scene1. Created on: 12/12/2013"}'
+
+    # open a channel
+    ch = conn.create_channel
+
+    # declare default direct exchange which is bound to all queues
+    e  = ch.default_exchange
+
+    # publish a message to the exchange which then gets routed to the queue
+    e.publish(json, :routing_key => rkey, :content_type => "application/json")
+
+    # close the connection
+    conn.stop
   end
 end
