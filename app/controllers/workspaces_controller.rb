@@ -542,7 +542,7 @@ class WorkspacesController < ApplicationController
 
   def amqp_create_msg
     # Start a communication session with RabbitMQ
-    conn = Bunny.new({:user=>"guest", :pass=>"guest", :host=>"localhost", :vhost=>"/", :heartbeat=>1})
+    conn = Bunny.new(Rails.configuration.amqp_settings)
     conn.start
 
     rkey = "workspace.#{ENV["RAILS_ENV"]}.create"

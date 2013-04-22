@@ -44,4 +44,13 @@ Netlab::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
+
+  # AMQP configuration object
+  config.amqp_settings = {
+    :user => "guest",
+    :pass => "guest",
+    :host => "localhost",
+    :vhost => "/",
+    :heartbeat => 1
+  }
 end

@@ -34,4 +34,13 @@ Netlab::Application.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
+
+  # AMQP configuration object
+  config.amqp_settings = {
+    :user => "guest",
+    :pass => "guest",
+    :host => "localhost",
+    :vhost => "/",
+    :heartbeat => 1
+  }
 end
