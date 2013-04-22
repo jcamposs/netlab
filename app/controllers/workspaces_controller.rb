@@ -547,16 +547,14 @@ class WorkspacesController < ApplicationController
 
     rkey = "workspace.#{ENV["RAILS_ENV"]}.create"
 
-#    msg = {
-#      "workspace" => @workspace.id,
-#      "driver" => "netkit",
-#      "user" => @user.first_name,
-#      "email" => @user.email,
-#      "web" => "http://netlab.libresoft.es",
-#      "description" => "Workspace #{@workspace.name} based on scene #{@scene.name}. Created on #{@workspace.created_at}"
-#    }
-
-    json = '{"workspace":1, "driver": "netkit", "user": "pepito", "email": "pepito@gmail.com", "web": "http://netlab.libresoft.es", "description": "Workspace: workspace1 based on scene Scene1. Created on: 12/12/2013"}'
+    msg = {
+      "workspace" => @workspace.id,
+      "driver" => "netkit",
+      "user" => @user.first_name,
+      "email" => @user.email,
+      "web" => "http://netlab.libresoft.es",
+      "description" => "Workspace #{@workspace.name} based on scene #{@scene.name}. Created on #{@workspace.created_at}"
+    }
 
     # open a channel
     ch = conn.create_channel
@@ -565,7 +563,7 @@ class WorkspacesController < ApplicationController
     e  = ch.default_exchange
 
     # publish a message to the exchange which then gets routed to the queue
-    e.publish(json, :routing_key => rkey, :content_type => "application/json")
+    e.publish(msg.to_json, :routing_key => rkey, :content_type => "application/json")
 
     # close the connection
     conn.stop
