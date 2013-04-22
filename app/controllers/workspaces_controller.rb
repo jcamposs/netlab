@@ -545,7 +545,8 @@ class WorkspacesController < ApplicationController
     conn = Bunny.new({:user=>"guest", :pass=>"guest", :host=>"localhost", :vhost=>"/", :heartbeat=>1})
     conn.start
 
-    rkey = "workspace.development.create"
+    rkey = "workspace.#{ENV["RAILS_ENV"]}.create"
+
 #    msg = {
 #      "workspace" => @workspace.id,
 #      "driver" => "netkit",
