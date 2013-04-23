@@ -156,23 +156,29 @@ class WorkspacesController < ApplicationController
     @workspace = @scene.workspaces.build(params[:workspace])
     @workspace.user = @user
 
-    # TODO: Set proper proxy
-    @workspace.proxy = Socket.gethostname
-    
     respond_to do |format|
-      begin
-        gen_schema get_scene(@scene, @user)
-        amqp_create_msg
-        format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
-        format.json { render json: @workspace, status: :created, location: @workspace }
-      rescue CloudStrg::ROValidationRequired => e
-        #session[:stored_params] = params
-        format.html {redirect_to e.message}
-      rescue Exception => e
-        puts e.message
-        puts e.backtrace
-        format.html { render action: "new" }
-        format.json { render json: @workspace.errors, status: :unprocessable_entity }
+      amqp_create_msg do |err, host|
+        begin
+          if (err)
+            @workspace.errors.add(:base, "Can not initialize workspace")
+            raise
+          else
+            @workspace.proxy = host
+          end
+
+          gen_schema get_scene(@scene, @user)
+          format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
+          format.json { render json: @workspace, status: :created, location: @workspace }
+        rescue CloudStrg::ROValidationRequired => e
+          #session[:stored_params] = params
+          format.html {redirect_to e.message}
+        rescue Exception => e
+          # TODO: Send amqp destroy resquest
+          puts e.message
+          puts e.backtrace
+          format.html { render action: "new" }
+          format.json { render json: @workspace.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -559,13 +565,40 @@ class WorkspacesController < ApplicationController
     # open a channel
     ch = conn.create_channel
 
+    # Create a queue to get the machine host
+    q  = ch.queue("", :auto_delete => true)
+
     # declare default direct exchange which is bound to all queues
     e  = ch.default_exchange
 
     # publish a message to the exchange which then gets routed to the queue
-    e.publish(msg.to_json, :routing_key => rkey, :content_type => "application/json")
+    e.publish(msg.to_json, {
+      :routing_key => rkey,
+      :content_type => "application/json",
+      :reply_to => q.name
+    })
 
-    # close the connection
-    conn.stop
+    # fetch a message from the queue
+    q.subscribe(:ack => true, :timeout => 10,
+                    :message_max => 1) do |delivery_info, properties, payload|
+      begin
+        rsp = JSON.parse(payload)
+        if block_given?
+          if (rsp["status"] == "error")
+            yield(rsp["cause"], nil)
+          else
+            yield(nil, rsp["host"])
+          end
+        end
+      rescue Exception => e
+        puts e.message
+        puts e.backtrace
+        yield("Unexpected error", nil)
+      ensure
+        # close the connection
+        conn.stop
+      end
+    end
+
   end
 end
