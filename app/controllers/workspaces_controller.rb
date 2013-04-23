@@ -56,28 +56,6 @@ class WorkspacesController < ApplicationController
     end
   end
 
-  #PUT /workspaces/1/stop
-  def stop
-    respond_to do |format|
-      begin
-        res = {}
-        @workspace = Workspace.find(params[:id])
-        running, halted = filter_running_machines params[:virtual_machines]
-
-        if running.length > 0
-          cmd = generate_stop_cmd running
-          reply = send_cmd(cmd, "/virtual_machine/halt")
-          res = JSON.parse(reply)
-        end
-
-        halted.each { |name| res[name] = { "status" => "success" } }
-        format.json { render json: res.to_json }
-      rescue
-        format.json { render :nothing => true, status: :unprocessable_entity }
-      end
-    end
-  end
-
   #POST /workspaces/1/configure
   #AJAX to manipulate virtual machine stuff
   def configure
@@ -316,58 +294,6 @@ class WorkspacesController < ApplicationController
         end
       end
     end
-  end
-
-  def gen_cmd_header
-    cmd = {}
-    cmd[:workspace] = @workspace.id
-    cmd[:parameters] = []
-    cmd
-  end
-
-  def generate_stop_cmd virtual_machines
-    cmd = gen_cmd_header
-
-    virtual_machines.each do |name|
-      vm = VirtualMachine.find_by_name_and_workspace_id(name, @workspace.id)
-      cmd[:parameters].push({ :name => vm.name })
-    end
-
-    cmd.to_json
-  end
-
-  def filter_running_machines virtual_machines
-    running = []
-    halted = []
-
-    virtual_machines.each do |name|
-      vm = VirtualMachine.find_by_name_and_workspace_id(name, @workspace.id)
-      if vm.state != "halted"
-        running.push name
-      else
-        halted.push name
-      end
-    end
-
-    return [running, halted]
-  end
-
-  def send_cmd(cmd, path)
-    uri = URI.parse("https://localhost:4000#{path}.json")
-    https = Net::HTTP.new(uri.host,uri.port)
-    https.use_ssl = true
-    #TODO: Set a proper certification directory
-    https.ca_file = "/home/nugana/Projects/weblab/netproxy/keys/final.crt"
-    https.verify_mode = OpenSSL::SSL::VERIFY_PEER
-
-    req = Net::HTTP::Post.new(uri.path)
-    req.content_type = 'application/json'
-    req.body = cmd
-    res = https.request(req)
-
-    raise unless res.kind_of? Net::HTTPSuccess
-
-    res.body
   end
 
   def get_shellinabox_conf_obj vm
