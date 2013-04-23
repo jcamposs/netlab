@@ -159,14 +159,17 @@ class WorkspacesController < ApplicationController
     respond_to do |format|
       begin
         gen_schema get_scene(@scene, @user)
-        amqp_create_msg do |err, host|
-          if (not err)
-            @workspace.proxy = host
-            @workspace.save
-          end
+        err, host = amqp_create_msg
+        if (not err)
+          @workspace.proxy = host
+          @workspace.save
+          format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
+          format.json { render json: @workspace, status: :created, location: @workspace }
+        else
+          #TODO: Destroy workspace
+          format.html { render action: "new" }
+          format.json { render json: @workspace.errors, status: :unprocessable_entity }
         end
-        format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
-        format.json { render json: @workspace, status: :created, location: @workspace }
       rescue CloudStrg::ROValidationRequired => e
         #session[:stored_params] = params
         format.html {redirect_to e.message}
@@ -575,26 +578,29 @@ class WorkspacesController < ApplicationController
       :reply_to => q.name
     })
 
+    err = nil
+    host = nil
+
     # fetch a message from the queue
-    q.subscribe(:ack => true, :timeout => 10,
-                    :message_max => 1) do |delivery_info, properties, payload|
+    q.subscribe(:ack => true, :timeout => 10, :message_max => 1,
+                        :block => true) do |delivery_info, properties, payload|
       begin
         rsp = JSON.parse(payload)
-        if block_given?
-          if (rsp["status"] == "error")
-            yield(rsp["cause"], nil)
-          else
-            yield(nil, rsp["host"])
-          end
+        if (rsp["status"] == "error")
+          err = rsp["cause"]
+        else
+          host = rsp["host"]
         end
       rescue Exception => e
         puts e.message
         puts e.backtrace
-        yield("Unexpected error", nil)
+        err = "Unexpected error"
       ensure
         # close the connection
         conn.stop
       end
     end
+
+    return err, host
   end
 end
