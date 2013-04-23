@@ -13,7 +13,6 @@ Netlab::Application.routes.draw do
   resources :workspaces do
     member do
       get 'manage'
-      put 'start'
       put 'stop'
       # Next two routes are just for testing purpose
       post 'configure'

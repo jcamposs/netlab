@@ -56,28 +56,6 @@ class WorkspacesController < ApplicationController
     end
   end
 
-  #PUT /workspaces/1/start
-  def start
-    respond_to do |format|
-      begin
-        res = {}
-        @workspace = Workspace.find(params[:id])
-        running, halted = filter_running_machines params[:virtual_machines]
-
-        if halted.length > 0
-          cmd = generate_start_cmd halted
-          reply = send_cmd(cmd, "/virtual_machine/start")
-          res = process_start_reply reply
-        end
-
-        append_running_machines(running, res)
-        format.json { render json: res.to_json }
-      rescue
-        format.json { render :nothing => true, status: :unprocessable_entity }
-      end
-    end
-  end
-
   #PUT /workspaces/1/stop
   def stop
     respond_to do |format|
@@ -347,29 +325,6 @@ class WorkspacesController < ApplicationController
     cmd
   end
 
-  def generate_start_cmd virtual_machines
-    cmd = gen_cmd_header
-
-    virtual_machines.each do |name|
-      vm = VirtualMachine.find_by_name_and_workspace_id(name, @workspace.id)
-      node = {
-        :name => vm.name,
-        :type => vm.node_type,
-        :network => []
-      }
-
-      Interface.find_all_by_virtual_machine_id(vm.id).each do |iface|
-        node[:network].push({
-          :interface => iface.name,
-          :collision_domain => iface.collision_domain.name
-        })
-      end
-
-      cmd[:parameters].push(node)
-    end
-    cmd.to_json
-  end
-
   def generate_stop_cmd virtual_machines
     cmd = gen_cmd_header
 
@@ -415,14 +370,6 @@ class WorkspacesController < ApplicationController
     res.body
   end
 
-  def configure_virtual_machine(vm, port)
-    return false if not vm
-
-    vm.state = "starting"
-    vm.port_number = port
-    vm.save
-  end
-
   def get_shellinabox_conf_obj vm
     shell = Shellinabox.find_by_user_id_and_virtual_machine_id(current_user.id, vm.id)
     if shell
@@ -436,98 +383,6 @@ class WorkspacesController < ApplicationController
         "status" => "error",
         "cause" => "Can not connect remote console"
       }
-    end
-  end
-
-  def process_start_reply(reply)
-    obj = JSON.parse(reply)
-    res = {}
-    obj.keys.each do |name|
-      vm = VirtualMachine.find_by_name_and_workspace_id(name, @workspace.id)
-      result = obj[name]
-
-      if result["status"] == "success"
-        if configure_virtual_machine(vm, result["port"])
-          if ShellinaboxSystemTool.start(vm, current_user)
-            res[name] = get_shellinabox_conf_obj vm
-          else
-            res[name] = {
-              "status" => "error",
-              "cause" => "Can not execute remote console"
-            }
-          end
-        else
-          res[name] = {
-            "status" => "error",
-            "cause" => "Can not configure virtual machine"
-          }
-        end
-      else
-        res[name] = obj[name]
-      end
-    end
-
-    res
-  end
-
-  def is_synchronized(shell)
-    return false if not shell
-
-    proc = ProcTable.ps(shell.pid)
-    if not proc
-      # Not such process exists
-      shell.destroy
-      return false
-    end
-
-    # Check process owner
-    if Etc.getpwuid(proc.uid).name != NetlabConf.user
-      shell.destroy
-      return false
-    end
-
-    # Check process id is a shellinabox instance
-    if proc.comm != "shellinaboxd"
-      shell.destroy
-      return false
-    end
-
-    return true if proc.cmdline.include?(" --port=#{shell.port_number} ") or
-            proc.cmdline.include?(" -p #{shell.port_number} ")
-
-    shell.destroy
-    return false
-  end
-
-  def append_running_machines(running, res)
-    running.each do |name|
-      vm = VirtualMachine.find_by_name_and_workspace_id(name, @workspace.id)
-      if vm.state != "halted"
-        shell = Shellinabox.find_by_user_id_and_virtual_machine_id(current_user.id, vm.id)
-        if is_synchronized(shell)
-          res[name] = {
-            "status" => "success",
-            "host" => shell.host_name,
-            "port" => shell.port_number
-          }
-        else
-          if ShellinaboxSystemTool.start(vm, current_user)
-            res[name] = get_shellinabox_conf_obj vm
-          else
-            res[name] = {
-              "status" => "error",
-              "cause" => "Can not execute remote console"
-            }
-          end
-        end
-      else
-        # Virtual machine was halted in the time we received the request to boot
-        # it and proxy answered us.
-        res[name] = {
-          "status" => "error",
-          "cause" => "Virtual machine halted unexpectedly"
-        }
-      end
     end
   end
 
