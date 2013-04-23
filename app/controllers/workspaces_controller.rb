@@ -160,18 +160,13 @@ class WorkspacesController < ApplicationController
       begin
         gen_schema get_scene(@scene, @user)
         amqp_create_msg do |err, host|
-          if (err)
-            #TODO: Send destroy amqp request
-            #TODO: Destroy workspace schema
-            format.html { render action: "new" }
-            format.json { render json: @workspace.errors, status: :unprocessable_entity }
-          else
+          if (not err)
             @workspace.proxy = host
             @workspace.save
-            format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
-            format.json { render json: @workspace, status: :created, location: @workspace }
           end
         end
+        format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
+        format.json { render json: @workspace, status: :created, location: @workspace }
       rescue CloudStrg::ROValidationRequired => e
         #session[:stored_params] = params
         format.html {redirect_to e.message}
@@ -601,6 +596,5 @@ class WorkspacesController < ApplicationController
         conn.stop
       end
     end
-
   end
 end
