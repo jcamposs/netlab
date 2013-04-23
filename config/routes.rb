@@ -14,7 +14,6 @@ Netlab::Application.routes.draw do
     member do
       get 'manage'
       # Next two routes are just for testing purpose
-      post 'configure'
       post 'halt'
     end
   end
