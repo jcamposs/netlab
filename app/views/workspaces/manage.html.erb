@@ -30,7 +30,6 @@
                   <%= label_tag "Virtual machine:"%>
                   <div class="controls">
                     <%= select_tag "virtual_machine", options_from_collection_for_select(VirtualMachine.find_all_by_workspace_id(@workspace.id), :name, :name) %>
-                    <%= button_to "Stop", halt_workspace_path(@workspace), :remote => true, :class => 'btn btn-danger' %>
                   </div>
                 </div>
               </center>

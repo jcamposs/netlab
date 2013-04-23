@@ -52,16 +52,6 @@ class WorkspacesController < ApplicationController
     end
   end
 
-  #POST /workspaces/1/halt
-  #AJAX to manipulate virtual machine stuff
-  def halt
-    @workspace = Workspace.find(params[:id])
-
-    respond_to do |format|
-      format.js #halt.js.erb
-    end
-  end
-
   # GET /workspaces/1/manage
   def manage
     @workspace = Workspace.find(params[:id])

@@ -13,8 +13,6 @@ Netlab::Application.routes.draw do
   resources :workspaces do
     member do
       get 'manage'
-      # Next two routes are just for testing purpose
-      post 'halt'
     end
   end
 
