@@ -296,22 +296,6 @@ class WorkspacesController < ApplicationController
     end
   end
 
-  def get_shellinabox_conf_obj vm
-    shell = Shellinabox.find_by_user_id_and_virtual_machine_id(current_user.id, vm.id)
-    if shell
-      return {
-        "status" => "success",
-        "host" => shell.host_name,
-        "port" => shell.port_number
-      }
-    else
-      return {
-        "status" => "error",
-        "cause" => "Can not connect remote console"
-      }
-    end
-  end
-
   private
   def capture_cloudstrg_validation
     @user = current_user
