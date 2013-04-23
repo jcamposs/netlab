@@ -1,9 +1,5 @@
-require 'net/http'
-require 'net/https'
-require 'sys/proctable'
 require 'cloudstrg/cloudstrg'
 require 'bunny'
-include Sys
 
 class WorkspacesController < ApplicationController
   before_filter :authenticate_user!, :confWidget
