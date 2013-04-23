@@ -157,28 +157,30 @@ class WorkspacesController < ApplicationController
     @workspace.user = @user
 
     respond_to do |format|
-      amqp_create_msg do |err, host|
-        begin
+      begin
+        gen_schema get_scene(@scene, @user)
+        amqp_create_msg do |err, host|
           if (err)
-            @workspace.errors.add(:base, "Can not initialize workspace")
-            raise
+            #TODO: Send destroy amqp request
+            #TODO: Destroy workspace schema
+            format.html { render action: "new" }
+            format.json { render json: @workspace.errors, status: :unprocessable_entity }
           else
             @workspace.proxy = host
+            @workspace.save
+            format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
+            format.json { render json: @workspace, status: :created, location: @workspace }
           end
-
-          gen_schema get_scene(@scene, @user)
-          format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
-          format.json { render json: @workspace, status: :created, location: @workspace }
-        rescue CloudStrg::ROValidationRequired => e
-          #session[:stored_params] = params
-          format.html {redirect_to e.message}
-        rescue Exception => e
-          # TODO: Send amqp destroy resquest
-          puts e.message
-          puts e.backtrace
-          format.html { render action: "new" }
-          format.json { render json: @workspace.errors, status: :unprocessable_entity }
         end
+      rescue CloudStrg::ROValidationRequired => e
+        #session[:stored_params] = params
+        format.html {redirect_to e.message}
+      rescue Exception => e
+        # TODO: Send amqp destroy resquest
+        puts e.message
+        puts e.backtrace
+        format.html { render action: "new" }
+        format.json { render json: @workspace.errors, status: :unprocessable_entity }
       end
     end
   end
