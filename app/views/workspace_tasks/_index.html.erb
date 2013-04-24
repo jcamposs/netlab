@@ -22,8 +22,8 @@
       <tr>
         <td class="list-image"><i class="icon-tasks"></i></td>
         <td><span class="list-text"><%= "#{wtask.workspace.name}" %></span></td>
-        <td><%= "#{wtask.state}" %></td>
-        <td><%= "#{wtask.priority}" %></td>
+        <td><%= "#{wtask.get_status}" %></td>
+        <td><%= "#{wtask.get_priority}" %></td>
         <td><%= "#{wtask.subject}" %></td>
         <td><%= ("#{wtask.created_at}").to_time.strftime("%Y/%m/%d") %></td>
         <td>

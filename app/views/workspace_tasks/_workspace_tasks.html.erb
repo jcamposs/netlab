@@ -14,7 +14,7 @@
       <tr>
         <td class="list-image"><i class="icon-tasks"></i></td>
         <td><%= "#{wtask.assigned.full_name}" %></td>
-        <td><%= "#{wtask.priority}" %></td>
+        <td><%= "#{wtask.get_priority}" %></td>
         <td><%= "#{wtask.subject}" %></td>
         <td><%= '<span class="minor">'.html_safe + ' On ' + ("#{wtask.created_at}").to_time.strftime("%B %d %Y %X") + '</span>'.html_safe %></td>
         <td>
