@@ -273,7 +273,6 @@ class WorkspacesController < ApplicationController
     end
   end
 
-  private
   def capture_cloudstrg_validation
     @user = current_user
     if session.has_key? :plugin_name
