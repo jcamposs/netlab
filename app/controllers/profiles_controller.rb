@@ -7,9 +7,15 @@ class ProfilesController < ApplicationController
   def show 
     @user = User.find(params[:id])
     respond_to do |format|
-      format.html # show.html.erb
-      #format.js
-      format.json { render json: @user }
+      if current_user == @user
+        format.html # show.html.erb
+        #format.js
+        format.json { render json: @user }
+      else
+        format.html # show.html.erb
+        #format.js
+        format.json { render json: @user.to_json(:only => [:created_at, :id, :first_name, :last_name]) }
+      end
     end
   end
 
