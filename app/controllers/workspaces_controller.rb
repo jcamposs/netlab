@@ -146,6 +146,7 @@ class WorkspacesController < ApplicationController
     @user = current_user
     
     if @user == @workspace.user
+      amqp_destroy_workspace
       @workspace.destroy
     else
       @workspace.editors.delete(@user)
@@ -343,5 +344,29 @@ class WorkspacesController < ApplicationController
     end
 
     return err, host
+  end
+
+  def amqp_destroy_workspace
+    # Start a communication session with RabbitMQ
+    conn = Bunny.new(Rails.configuration.amqp_settings)
+    conn.start
+
+    rkey = "workspace.#{ENV["RAILS_ENV"]}.#{@workspace.id}.destroy"
+
+    msg = {
+      "workspace" => @workspace.id
+    }
+
+    # open a channel
+    ch = conn.create_channel
+
+    # declare default direct exchange which is bound to all queues
+    e  = ch.default_exchange
+
+    # publish a message to the exchange which then gets routed to the queue
+    e.publish(msg.to_json, {
+      :routing_key => rkey,
+      :content_type => "application/json"
+    })
   end
 end
