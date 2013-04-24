@@ -98,15 +98,15 @@ class WorkspacesController < ApplicationController
           format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
           format.json { render json: @workspace, status: :created, location: @workspace }
         else
-          #TODO: Destroy workspace
-          format.html { render action: "new" }
-          format.json { render json: @workspace.errors, status: :unprocessable_entity }
+          @workspace.destroy
+          flash[:notice] = "Workspace could not be created"
+          format.html { redirect_to workspaces_path }
+          format.json { render json: {:error => "Can not create workspace"}}
         end
       rescue CloudStrg::ROValidationRequired => e
         #session[:stored_params] = params
         format.html {redirect_to e.message}
       rescue Exception => e
-        # TODO: Send amqp destroy resquest
         puts e.message
         puts e.backtrace
         format.html { render action: "new" }
