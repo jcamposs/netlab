@@ -19,6 +19,13 @@ class ProfilesController < ApplicationController
     end
   end
 
+  # GET /profiles/info.json
+  def info 
+    respond_to do |format|
+      format.json { render json: current_user }
+    end
+  end
+
   # GET /profiles/1/edit
   def edit
     @user = User.find(params[:id])
