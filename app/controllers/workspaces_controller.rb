@@ -91,7 +91,7 @@ class WorkspacesController < ApplicationController
     respond_to do |format|
       begin
         gen_schema get_scene(@scene, @user)
-        err, host = amqp_create_msg
+        err, host = amqp_create_workspace
         if (not err)
           @workspace.proxy = host
           @workspace.save
@@ -287,7 +287,7 @@ class WorkspacesController < ApplicationController
     end
   end
 
-  def amqp_create_msg
+  def amqp_create_workspace
     # Start a communication session with RabbitMQ
     conn = Bunny.new(Rails.configuration.amqp_settings)
     conn.start
