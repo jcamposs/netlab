@@ -35,7 +35,7 @@ module Netlab
     # config.i18n.default_locale = :de
     
     # Enabling SSL connections
-    config.force_ssl = true
+    #config.force_ssl = true
 
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = "utf-8"
