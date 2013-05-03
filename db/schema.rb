@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130321113449) do
+ActiveRecord::Schema.define(:version => 20130503170428) do
 
   create_table "cloudstrg_cloudstrgplugins", :force => true do |t|
     t.string   "plugin_name"
@@ -85,6 +85,16 @@ ActiveRecord::Schema.define(:version => 20130321113449) do
     t.datetime "updated_at", :null => false
   end
 
+  create_table "scene_configs", :force => true do |t|
+    t.integer  "workspace_id"
+    t.integer  "remoteobject_id"
+    t.integer  "user_id"
+    t.string   "name"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+    t.string   "url"
+  end
+
   create_table "scenes", :force => true do |t|
     t.integer  "user_id"
     t.string   "name"
@@ -106,6 +116,7 @@ ActiveRecord::Schema.define(:version => 20130321113449) do
 
   create_table "users", :force => true do |t|
     t.string   "email",               :default => "", :null => false
+    t.string   "encrypted_password",  :default => "", :null => false
     t.datetime "remember_created_at"
     t.integer  "sign_in_count",       :default => 0
     t.datetime "current_sign_in_at"
@@ -116,7 +127,6 @@ ActiveRecord::Schema.define(:version => 20130321113449) do
     t.datetime "updated_at",                          :null => false
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "encrypted_password"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

@@ -11,6 +11,7 @@ Netlab::Application.routes.draw do
   resources :workspaces do
     member do
       get 'manage'
+      get 'conf'
     end
   end
 

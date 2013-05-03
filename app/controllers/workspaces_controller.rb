@@ -2,9 +2,10 @@ require 'cloudstrg/cloudstrg'
 require 'bunny'
 
 class WorkspacesController < ApplicationController
-  before_filter :authenticate_user!, :confWidget
+  before_filter :authenticate_user!, :except => [:conf]
+  before_filter :confWidget, :except => [:conf]
   before_filter :capture_cloudstrg_validation, :only => [:index]
-  before_filter :check_notifications
+  before_filter :check_notifications, :except => [:conf]
 
   def confWidget
     #TODO: Choose the widget that fits better in user's device screen
@@ -86,14 +87,15 @@ class WorkspacesController < ApplicationController
     @user = current_user
     @scene = Scene.find(params[:workspace][:scene_id])
     @workspace = @scene.workspaces.build(params[:workspace])
+    @workspace.session = session
     @workspace.user = @user
-
     respond_to do |format|
       begin
         gen_schema get_scene(@scene, @user)
         err, host = NetlabAMQP.create_workspace(@workspace, @scene, @user)
         if (not err)
           @workspace.proxy = host
+          @workspace.config_file = nil
           @workspace.save
           format.html { redirect_to @workspace, notice: 'Workspace was successfully created.' }
           format.json { render json: @workspace, status: :created, location: @workspace }
@@ -176,6 +178,24 @@ class WorkspacesController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+  # GET /workspaces/1/conf
+  # GET /workspaces/1/conf.json
+  def conf
+    workspace = Workspace.find(params[:id])
+
+    if workspace.scene_config
+      respond_to do |format|
+        format.json { render json: workspace.scene_config.to_json(:only => [:url]) }
+      end
+    else
+      respond_to do |format|
+        format.json { head :no_content }
+      end
+    end
+  end
+
+
 
   private
   def create_iface(node, collision_domain)

@@ -60,6 +60,18 @@
                   <% end %>
                 </div>
               </div>
+
+              <div class="control-group">
+                <%= f.label :config_file, :class => 'control-label' %>
+
+                <div class="controls">
+                  <% if not @workspace.scene_config %>
+                    <%= f.file_field :config_file %>
+                  <% else %>
+                    <%= f.file_field :config_file %>
+                  <% end %>
+                </div>
+              </div>
             </div>
             <div class="tab-pane" id="tab2">
               <div id="team-list">
