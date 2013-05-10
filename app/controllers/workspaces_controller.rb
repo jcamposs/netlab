@@ -1,4 +1,5 @@
 require 'cloudstrg/cloudstrg'
+require 'net/http'
 require 'bunny'
 
 class WorkspacesController < ApplicationController
@@ -183,13 +184,45 @@ class WorkspacesController < ApplicationController
   # GET /workspaces/1/conf.json
   def conf
     workspace = Workspace.find(params[:id])
-
     if workspace.scene_config
+      if request.format == "html"
+        # Generate filename
+        uri = URI(workspace.scene_config.url)
+        filename = workspace.scene_config.name
+        directory = Rails.root.join('public', 'uploads')
+        filepath = File.join(directory,"#{rand(1000000000)}")
+
+        # Download file
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+        req = Net::HTTP::Get.new(uri.request_uri)
+        resp = http.request(req)
+
+	if resp.code == "302"
+          uri = URI(resp["location"])
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = true
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+          req = Net::HTTP::Get.new(uri.request_uri)
+          resp = http.request(req)
+          
+        end
+
+        File.open(filepath, "wb") { |f| f.write(resp.body)}
+      end
       respond_to do |format|
+        format.html { send_file filepath, :filename => filename, :type => 'application/x-gzip' }
         format.json { render json: workspace.scene_config.to_json(:only => [:url]) }
+      end
+      if request.format == "html"
+        File.delete(filepath)
       end
     else
       respond_to do |format|
+        format.html { redirect_to workspace }
         format.json { head :no_content }
       end
     end
