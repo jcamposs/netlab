@@ -57,6 +57,7 @@ class WorkspacesController < ApplicationController
   # GET /workspaces/1/manage
   def manage
     @workspace = Workspace.find(params[:id])
+    @mode = "management"
 
     respond_to do |format|
       format.html # manage.html.erb
