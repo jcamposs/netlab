@@ -58,6 +58,7 @@ class WorkspacesController < ApplicationController
   def manage
     @workspace = Workspace.find(params[:id])
     @mode = "management"
+    @handler = "WStreaming"
 
     respond_to do |format|
       format.html # manage.html.erb

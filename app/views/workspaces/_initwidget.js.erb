@@ -14,6 +14,11 @@
 
     var widget = <%= @module %>.getWidget();
     Netlab.loadJSON(widget, json);
+    <% if @mode == 'management' %>
+      var workspace = $('.virtual_machines').attr('id');
+      <%= @handler %>.useWidget(widget);
+      <%= @handler %>.initManagementIface(workspace);
+    <% end %>
   };
 
   function loadJSON(sceneId, sceneValue)
@@ -121,6 +126,9 @@
       width: <%= @width %>,
       height: <%= @height %>,
       mode: "<%= @mode %>",
+      <% if @mode == 'management' %>
+        handler: <%= @handler %>.getHandler(),
+      <% end %>
       callback: initJSON
     });
   };

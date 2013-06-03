@@ -64,7 +64,7 @@
 
   </div>
 
-<div>
+<div id="<%= @workspace.id %>" class="virtual_machines">
   <% VirtualMachine.find_all_by_workspace_id(@workspace.id).each do |vm| %>
     <div id="<%= vm.name %>" class="ui-widget-content ui-corner-all" style="display: none">
       <h3 class="ui-widget-header ui-corner-all"><%= vm.name %></h3>
