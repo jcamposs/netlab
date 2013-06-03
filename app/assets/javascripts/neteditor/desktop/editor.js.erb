@@ -2138,6 +2138,48 @@ var Desktop = (function () {
       }
     };
 
+    that.setIP = function(name, iface, ip) {
+      var nodes = scene.getNodes();
+
+      for(var index = 0; index < nodes.length; index++) {
+        var node = nodes[index];
+
+        if (node.getName() == name){
+          var interface = node.attrs.labels[iface].iface;
+          var group =  interface.getNode();
+
+          if(group.children[2]){
+            removePreviousState(group.children[2]);
+          }
+
+          var ip = new Kinetic.Text({
+            x: -12,
+            y: 10,
+            text: ip,
+            fontSize: 10,
+            fontFamily: "Calibri",
+            align: "center",
+            verticalAlign: "middle",
+            fontStyle: "bold",
+            fill: "black",
+            padding: 8,
+            opacity: 0.6,
+          });
+
+          group.transitionTo({
+            scale: {
+              x: 1,
+              y: 1
+            },
+            duration: 0.5,
+            easing: "elastic-ease-out"
+          });
+
+          group.add(ip);
+        }
+      }
+    };
+
     return that;
   };
 

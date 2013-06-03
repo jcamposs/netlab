@@ -103,6 +103,14 @@ var WStreaming = (function () {
             editor.setState(machine, "halted");
           else
             editor.setState(machine, "started");
+
+          if(data.nodes[index].interfaces){
+            for(var id = 0; id < data.nodes[index].interfaces.length; id++) {
+              var iface = data.nodes[index].interfaces[id].interface;
+              var ip = data.nodes[index].interfaces[id].ip;
+              editor.setIP(machine, iface, ip);
+            }
+          }
         }
       });
 
