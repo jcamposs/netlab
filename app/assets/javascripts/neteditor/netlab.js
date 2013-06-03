@@ -98,6 +98,25 @@ var Netlab = (function () {
     getConnections: function() {}
   };
 
+  module.ManagementInterface = {
+    /**
+     * Set the state "state" to the node identifies by "name"
+     * state can be either: "started" or "halted".
+     */
+    setState: function(name, state) {},
+
+    /**
+     * Set the new ip address to the node identified by "name" on the interface "iface".
+     */
+    setIP: function(name, iface, ip) {},
+
+    /**
+     * Draws an smal shell icon on the node when a shell is connected to this node.
+     * Deletes the shell icon when the shell is disconnected.
+     */
+    setShellState: function(name, state) {}
+  };
+
   var supportedNodes = ["pc", "router", "switch", "hub"];
 
   /**
