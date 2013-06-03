@@ -54,6 +54,23 @@ var WStreaming = (function () {
   ManagementIface = function() {
     var that = {};
 
+    function addNewTab(name) {
+      $("div#shells ul").append("<li><a data-toggle='tab' href='#tabs-" + name + "'><h4>" + name + "</h4></a></li>");
+      $("div#shells div#tab-content").append("<div id='tabs-"+ name +"' class='tab-pane'></div>");
+    }
+
+    function addShellinaBox(name, port) {
+      $("<iframe id='iframe" + name + "' class='frame'>").appendTo("#tabs-" + name);
+      $("#iframe" + name).attr("src", "http://localhost:" + JSON.stringify(port));
+      $("div#shells a:last").tab("show");
+    }
+
+    function removeTab(name) {
+      $("div#shells a[href='#tabs-" + name + "']").remove();
+      $("div#shells div#tab-content div#tabs-" + name).remove();
+      $("div#shells a:last").tab("show");
+    }
+
     function addListeners() {
       /* Joined is emitted when we are registered for workspace events */
       connection.on("joined", function(err, data){
@@ -86,6 +103,21 @@ var WStreaming = (function () {
             editor.setState(machine, "halted");
           else
             editor.setState(machine, "started");
+        }
+      });
+
+      /* We want to get shellinabox notifications */
+      connection.on("shell", function(data){
+        console.log("Shell: " + JSON.stringify(data));
+        var name = data.node;
+        var state = data.state;
+        editor.setShellState(name, state);
+
+        if(data.state == "connected"){
+          addNewTab(name);
+          addShellinaBox(name, data.port);
+        } else if(data.state == "disconnected"){
+          removeTab(name);
         }
       });
     }
@@ -133,6 +165,20 @@ var WStreaming = (function () {
       else
         connection.stop([node]);
      };
+
+    that.connectShell = function(node) {
+      if (!connected)
+        alert("Server disconnected");
+      else
+        connection.connectShell([node]);
+    };
+
+    that.disconnectShell = function(node) {
+      if (!connected)
+        alert("Server disconnected");
+      else
+        connection.disconnectShell([node]);
+    };
 
     return that;
   };

@@ -198,6 +198,7 @@ span.icon {
   padding-right: 30px;
   position: relative;
 }
+
 .wizard li a:after, .wizard li a:before {
   border: medium solid transparent;
   content: " ";
@@ -207,6 +208,7 @@ span.icon {
   position: absolute;
   width: 0;
 }
+
 .wizard li a:after {
   border-color: rgba(245, 245, 245, 0) rgba(245, 245, 245, 0) rgba(245, 245, 245, 0) #F5F5F5;
   border-width: 20px;
@@ -214,6 +216,7 @@ span.icon {
   margin-top: -20px;
   top: 50%;
 }
+
 .wizard li a:before {
   border-color: rgba(255, 255, 255, 0) rgba(255, 255, 255, 0) rgba(255, 255, 255, 0) #FFFFFF;
   border-width: 30px;
@@ -226,4 +229,12 @@ span.icon {
   padding-top: 2px;
   vertical-align: text-bottom;
   margin-right: 10px;
+}
+
+.frame {
+  margin: 0;
+  padding: 7px 5px;
+  border: none;
+  height: 350px;
+  width: 99%;
 }
