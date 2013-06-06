@@ -101,7 +101,7 @@ var WStreaming = (function () {
           var state = data.nodes[index].state;
           if (state == "halted")
             editor.setState(machine, "halted");
-          else
+          else if(state == "started")
             editor.setState(machine, "started");
 
           if(data.nodes[index].interfaces){
