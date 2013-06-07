@@ -4,6 +4,7 @@ require 'bunny'
 
 class WorkspacesController < ApplicationController
   before_filter :authenticate_user!, :except => [:conf]
+  before_filter :authenticate_admin!, :only => [:conf]
   before_filter :confWidget, :except => [:conf]
   before_filter :capture_cloudstrg_validation, :only => [:index]
   before_filter :check_notifications, :except => [:conf]
