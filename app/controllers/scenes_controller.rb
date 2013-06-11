@@ -95,7 +95,7 @@ class ScenesController < ApplicationController
   def create
     @user = current_user
     @scene = @user.scenes.build(params[:scene])
-    @scene.redirection_url = "#{request.protocol}#{request.host_with_port}/scenes"
+    @scene.redirection_url = "#{request.protocol}#{Netlab::Application.config.app_host_and_port}/scenes"
     @scene.session = session
     @mode = "edit"
 
@@ -116,7 +116,7 @@ class ScenesController < ApplicationController
         end
         s.h_params = params
         s.save
-        format.html { redirect_to cloudstrg.configs_path(:redirection_url => "#{request.protocol}#{request.host_with_port}/scenes", :notice => 'Please, create a plugin configuration before continue.')  }
+        format.html { redirect_to cloudstrg.configs_path(:redirection_url => "#{request.protocol}#{Netlab::Application.config.app_host_and_port}/scenes", :notice => 'Please, create a plugin configuration before continue.')  }
         #format.json { redirect_to cloudstrg.configs_path }
         #format.js { redirect_to cloudstrg.configs_path }
       rescue CloudStrg::ROValidationRequired => e
@@ -227,7 +227,7 @@ class ScenesController < ApplicationController
     s = Netlabsession.find_by_user_id_and_session_id(@user, session[:session_id])
     puts "Refererrrr:   #{request.referer}"
     continue_stored = false
-    if request.referer == "#{request.protocol}#{request.host_with_port}/cloudstrg/configs"
+    if request.referer == "#{request.protocol}#{Netlab::Application.config.app_host_and_port}/cloudstrg/configs"
       continue_stored = true
     end
     if session.has_key? :plugin_name
@@ -235,7 +235,7 @@ class ScenesController < ApplicationController
       session.delete(:plugin_name)
 
       _params = params
-      _params.merge!({:plugin_id => plugin, :user => @user, :redirect => "#{request.protocol}#{request.host_with_port}/scenes", :session => session})
+      _params.merge!({:plugin_id => plugin, :user => @user, :redirect => "#{request.protocol}#{Netlab::Application.config.app_host_and_port}/scenes", :session => session})
       driver = CloudStrg.new_driver _params
       if driver.check_referer request.referer
         continue_stored = true
@@ -292,7 +292,7 @@ class ScenesController < ApplicationController
     if params[:redirect_url]
       _params = {:user => @user, :plugin_id => plugin, :redirect => params[:redirect_url], :session => session}
     else
-      _params = {:user => @user, :plugin_id => plugin, :redirect => "#{request.protocol}#{request.host_with_port}/scenes", :session => session}
+      _params = {:user => @user, :plugin_id => plugin, :redirect => "#{request.protocol}#{Netlab::Application.config.app_host_and_port}/scenes", :session => session}
     end
 
     if not @driver
@@ -300,7 +300,7 @@ class ScenesController < ApplicationController
       _session, url = @driver.config _params
       session.merge!(_session)
 
-      @scene.redirection_url = "#{request.protocol}#{request.host_with_port}/scenes"
+      @scene.redirection_url = "#{request.protocol}#{Netlab::Application.config.app_host_and_port}/scenes"
       @scene.session = session
       if url
         s = Netlabsession.find_by_user_id_and_session_id(@user, session[:session_id])

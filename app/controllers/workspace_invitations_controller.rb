@@ -28,7 +28,7 @@ class WorkspaceInvitationsController < ApplicationController
     _session = {}
     _params = {:user => user,
                :plugin_id => plugin,
-               :redirect => "#{request.protocol}#{request.host_with_port}/scenes",
+               :redirect => "#{request.protocol}#{Netlab::Application.config.app_host_and_port}/scenes",
                :file_id => scene.remote.file_remote_id,
                :share_email => current_user.email,
                :local_file_id => scene.remote.id,

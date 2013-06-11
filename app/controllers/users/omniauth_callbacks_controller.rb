@@ -9,7 +9,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     
       _params = {:user => @user, 
              :plugin_id => Cloudstrg::Cloudstrgplugin.find_by_plugin_name("gdrive"), 
-             :redirect => "#{request.protocol}#{request.host_with_port}/users/auth/google_oauth2/callback", 
+             :redirect => "#{request.protocol}#{Netlab::Application.config.app_host_and_port}/users/auth/google_oauth2/callback", 
              :refresh_token => request.env["omniauth.auth"].credentials["refresh_token"], 
              :access_token => request.env["omniauth.auth"].credentials["token"], 
              :expires_in => request.env["omniauth.auth"].credentials["expires_at"], 

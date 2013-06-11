@@ -6,6 +6,10 @@ class ApplicationController < ActionController::Base
     new_user_session_path
   end
 
+  def after_sign_in_path_for(resource)
+    stored_location_for(resource) || "#{Netlab::Application.config.app_protocol}://#{Netlab::Application.config.app_host_and_port}/"
+  end
+
   def check_notifications
     @user = current_user
     @workspace_invitations = @user.workspace_invitations

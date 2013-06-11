@@ -164,7 +164,7 @@ class WorkspacesController < ApplicationController
       _session = {}
       _params = {:user => user,
                :plugin_id => plugin,
-               :redirect => "#{request.protocol}#{request.host_with_port}/workspaces",
+               :redirect => "#{request.protocol}#{Netlab::Application.config.app_host_and_port}/workspaces",
                :file_id => scene.remote.file_remote_id,
                :local_file_id => scene.remote.id,
                :user_id => @user.id,
@@ -271,7 +271,7 @@ class WorkspacesController < ApplicationController
   
   def get_scene(user, scene)
     _plugin = @scene.remote.cloudstrgplugin
-    _params = {:user => @user, :plugin_id => _plugin, :redirect => "#{request.protocol}#{request.host_with_port}/workspaces", :session => session}
+    _params = {:user => @user, :plugin_id => _plugin, :redirect => "#{request.protocol}#{Netlab::Application.config.app_host_and_port}/workspaces", :session => session}
     driver = CloudStrg.new_driver _params
     _session, url = driver.config _params
     session.merge!(_session)
@@ -336,7 +336,7 @@ class WorkspacesController < ApplicationController
       session.delete(:plugin_name)
 
       _params = params
-      _params.merge!({:plugin_id => plugin, :user => @user, :redirect => "#{request.protocol}#{request.host_with_port}/workspaces", :session => session})
+      _params.merge!({:plugin_id => plugin, :user => @user, :redirect => "#{request.protocol}#{Netlab::Application.config.app_host_and_port}/workspaces", :session => session})
       driver = CloudStrg.new_driver _params
       _session, url = driver.config _params
       session.merge!(_session)

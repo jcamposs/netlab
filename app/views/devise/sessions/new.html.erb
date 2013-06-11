@@ -10,12 +10,6 @@
     </div>
 
     <div id="login" class="span5">
-      <!-- <%- if devise_mapping.omniauthable? %>
-        <%- resource_class.omniauth_providers.each do |provider| %>
-          <a href='#' onclick="js:login('<%= omniauth_authorize_path(resource_name, provider) %>', '<%= "#{request.protocol}#{request.host_with_port}" %>', '<%= "#{request.protocol}#{request.host_with_port}" %>');" class="btn-large btn-info" id="btn-sign_in"><%= "Sign in with #{provider.to_s.titleize}" %></a>
-        <% end -%>
-      <% end -%>
-      -->
       <%= render "gdrivestrg/login" %>
     </div>
 
