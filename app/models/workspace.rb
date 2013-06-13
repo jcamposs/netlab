@@ -39,7 +39,7 @@ class Workspace < ActiveRecord::Base
               session = {} if not session
               _params = {:user => self.user,
                        :plugin_id => plugin,
-                       :redirect => "https://netlab.libresoft.es/workspaces",
+                       :redirect => "#{Netlab::Application.config.app_protocol}://#{Netlab::Application.config.app_host_and_port}/workspaces",
                        :file_id => self.scene.remote.file_remote_id,
                        :local_file_id => self.scene.remote.id,
                        :user_id => user.id,
@@ -83,7 +83,7 @@ class Workspace < ActiveRecord::Base
         session = {} if not session
         _params = {:user => self.user,
                    :plugin_id => plugin,
-                   :redirect => "https://netlab.libresoft.es/workspaces",
+                   :redirect => "#{Netlab::Application.config.app_protocol}://#{Netlab::Application.config.app_host_and_port}/workspaces",
                    :file => File.open(path, "rb"),
                    :filename => name,
                    :mimetype => 'application/x-gzip',
@@ -107,7 +107,7 @@ class Workspace < ActiveRecord::Base
           _params = {:file_id => sc.remote.file_remote_id,
                      :local_file_id => ro.id,
                      :user_id => self.user.id}
-          p _params
+          
           m_url = driver.share_public_file _params
           if m_url
             sc.url = m_url 
@@ -133,7 +133,7 @@ class Workspace < ActiveRecord::Base
         session = {} if not session
         _params = {:user => self.user,
                :plugin_id => plugin,
-               :redirect => "https://netlab.libresoft.es/workspaces",
+               :redirect => "#{Netlab::Application.config.app_protocol}://#{Netlab::Application.config.app_host_and_port}/workspaces",
                :file_id => self.scene.remote.file_remote_id,
                :local_file_id => self.scene.remote.id,
                :user_id => editor.id,
