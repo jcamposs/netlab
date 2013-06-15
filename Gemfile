@@ -50,7 +50,7 @@ gem 'omniauth-google-oauth2'
 gem 'sys-proctable'
 
 # Cloud storage drivers
-gem 'gdrivestrg', '~> 0.0.16'
+gem 'gdrivestrg', '~> 0.0.17'
 #gem 'cloudstrg', :path => '../rails_plugin/cloudstrg'
 #gem 'gdrivestrg', :path => '../rails_plugin/gdrivestrg'
 
