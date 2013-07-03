@@ -59,9 +59,9 @@ var WStreaming = (function () {
       $("div#shells div#tab-content").append("<div id='tabs-"+ name +"' class='tab-pane'></div>");
     }
 
-    function addShellinaBox(name, port) {
+    function addShellinaBox(name, host, port) {
       $("<iframe id='iframe" + name + "' class='frame'>").appendTo("#tabs-" + name);
-      $("#iframe" + name).attr("src", "http://localhost:" + JSON.stringify(port));
+      $("#iframe" + name).attr("src", "http://" + host + ":" + JSON.stringify(port));
       $("div#shells a:last").tab("show");
     }
 
@@ -123,7 +123,7 @@ var WStreaming = (function () {
 
         if(data.state == "connected"){
           addNewTab(name);
-          addShellinaBox(name, data.port);
+          addShellinaBox(name, data.host, data.port);
         } else if(data.state == "disconnected"){
           removeTab(name);
         }
