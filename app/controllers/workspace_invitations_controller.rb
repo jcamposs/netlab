@@ -45,7 +45,7 @@ class WorkspaceInvitationsController < ApplicationController
       @workspace_invitation.destroy
       begin
         driver.share_file _params
-      catch Exception, e
+      rescue Exception => e
         user.assigned_workspace_tasks.build({ :author_id => current_user.id, 
                                               :workspace_id => ws.id,
                                               :auto_task => "SHARE SCENE",
