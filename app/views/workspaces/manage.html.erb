@@ -31,6 +31,7 @@
                   <div class="controls">
                     <%= select_tag "virtual_machine", options_from_collection_for_select(VirtualMachine.find_all_by_workspace_id(@workspace.id), :name, :name) %>
                   </div>
+                  <hr><%= link_to '<i class="icon-download icon-white"></i> Download captures'.html_safe, download_captures_workspace_path(@workspace.id), :class => 'btn btn-success' %>
                 </div>
               </center>
             </div>

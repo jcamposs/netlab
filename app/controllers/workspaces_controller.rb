@@ -231,7 +231,35 @@ class WorkspacesController < ApplicationController
     end
   end
 
+  def compress_file(path)
+    require 'zip/zip'
+    require 'zip/zipfilesystem'
 
+    path.sub!(%r[/$],'')
+    archive = File.join(path,File.basename(path))+'.zip'
+    FileUtils.rm archive, :force=>true
+
+    Zip::ZipFile.open(archive, 'w') do |zipfile|
+      Dir["#{path}/**/**"].reject{|f|f==archive}.each do |file|
+        zipfile.add(file.sub(path+'/',''),file)
+      end
+    end
+  end
+
+  def download_captures
+    @workspace = Workspace.find(params[:id])
+    filepath = Netlab::Application.config.captures_path + "workspace#{@workspace.id}/netkit/captures/"
+    filename = '/captures.zip'
+    compress_file(filepath)
+    begin
+      send_file filepath + filename, :type => 'application/zip'
+      File.delete(filepath + filename)
+    rescue Exception => e
+      respond_to do |format|
+        format.html { redirect_to manage_workspace_path(@workspace), alert: 'Workspace has not captures.' }
+      end
+    end
+  end
 
   private
   def create_iface(node, collision_domain)

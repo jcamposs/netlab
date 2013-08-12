@@ -12,6 +12,7 @@ Netlab::Application.routes.draw do
     member do
       get 'manage'
       get 'conf'
+      get 'download_captures'
     end
   end
 
