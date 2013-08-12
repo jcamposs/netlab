@@ -59,3 +59,6 @@ gem 'simple_form'
 
 # Synchronous AMQP client
 gem "bunny", ">= 0.9.0.pre9"
+
+# A Ruby module for reading and writing zip files
+gem 'rubyzip'
