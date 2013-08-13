@@ -113,6 +113,11 @@ span.icon {
   padding: 10px 0 10px 18px;
 }
 
+.pull-right {
+  margin-left: 18px;
+  margin-right: -2px;
+}
+
 .control-group {
   margin-left: -60px;
 }

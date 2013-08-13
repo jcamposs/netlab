@@ -101,6 +101,9 @@
                 <span class="icon pull-right">
                   <%= link_to '<i class="icon-eye-open"></i>'.html_safe, @workspace %>
                 </span>
+                <span class="icon pull-right">
+                  <%= link_to '<i class="icon-wrench"></i>'.html_safe, manage_workspace_path(@workspace) %>
+                </span>
               <% end %>
             </div>
           </div>
