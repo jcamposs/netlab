@@ -9,7 +9,7 @@
 
     <div id="netlab_params" class="span5">
 
-      <%= link_to '<i class="icon-plus icon-white"></i> New Scene'.html_safe, new_scene_path, :class => 'btn btn-primary pull-right' %>
+      <%= link_to '<i class="icon-plus icon-white"></i> New Scene'.html_safe, new_scene_path, :class => 'btn btn-primary pull-right new' %>
 
       <div class="tabbable tabbable-bordered">
         <ul class="nav nav-tabs">
@@ -44,11 +44,11 @@
                   <td><%= scene.name %></td>
                   <td>
                     <% if scene.workspaces.empty? %>
-                      <%= link_to '<i class="icon-edit"></i> Edit'.html_safe, edit_scene_path(scene), :class => 'btn btn-mini' %>
-                      <%= link_to '<i class="icon-trash icon-white"></i> Delete'.html_safe, delete_scene_path(scene), :class => 'btn btn-mini btn-danger', :remote => true %>
+                      <%= link_to '<i class="icon-edit icon-white"></i>'.html_safe, edit_scene_path(scene), :class => 'btn btn-mini btn-info' %>
+                      <%= link_to '<i class="icon-trash icon-white"></i>'.html_safe, delete_scene_path(scene), :class => 'btn btn-mini btn-danger', :remote => true %>
                     <% else %>
                       <div class="btn-group">
-                        <a class="btn dropdown-toggle btn-mini btn-info" data-toggle="dropdown" href="#">
+                        <a class="btn dropdown-toggle btn-mini btn-success" data-toggle="dropdown" href="#">
                         <i class="icon-eye-open icon-white"></i>
                         Workspaces
                         <span class="caret"></span>
