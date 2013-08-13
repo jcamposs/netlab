@@ -9,7 +9,7 @@
 
     <div id="netlab_params" class="span5">
 
-      <%= link_to '<i class="icon-plus icon-white"></i> New Workspace'.html_safe, new_workspace_path, :class => 'btn btn-primary pull-right' %>
+      <%= link_to '<i class="icon-plus icon-white"></i> New Workspace'.html_safe, new_workspace_path, :class => 'btn btn-primary pull-right new' %>
 
       <div class="tabbable tabbable-bordered">
         <ul class="nav nav-tabs">
@@ -45,12 +45,13 @@
                   <td><%= workspace.user.first_name %></td>
                   <td><%= workspace.scene.name %></td>
                   <td>
-                    <%= link_to '<i class="icon-wrench icon-white"></i> Manage'.html_safe, manage_workspace_path(workspace), :class => 'btn btn-warning btn-mini' %>
+                    <%= link_to '<i class="icon-eye-open icon-white"></i>'.html_safe, workspace_path(workspace), :class => 'btn btn-success btn-mini' %>
+                    <%= link_to '<i class="icon-wrench icon-white"></i>'.html_safe, manage_workspace_path(workspace), :class => 'btn btn-warning btn-mini' %>
                     <% if @user.id == workspace.user.id %>
-                      <%= link_to '<i class="icon-edit"></i> Edit'.html_safe, edit_workspace_path(workspace), :class => 'btn btn-mini' %>
-                      <%= link_to '<i class="icon-trash icon-white"></i> Delete'.html_safe, workspace, confirm: 'Are you sure?', method: :delete, :class => 'btn btn-mini btn-danger'%>
+                      <%= link_to '<i class="icon-edit icon-white"></i>'.html_safe, edit_workspace_path(workspace), :class => 'btn btn-info btn-mini' %>
+                      <%= link_to '<i class="icon-trash icon-white"></i>'.html_safe, workspace, confirm: 'Are you sure?', method: :delete, :class => 'btn btn-danger btn-mini'%>
                     <% else %>
-                      <%= link_to '<i class="icon-remove icon-white"></i> Leave'.html_safe, workspace, confirm: 'Are you sure?', method: :delete, :class => 'btn btn-mini btn-danger' %>
+                      <%= link_to '<i class="icon-remove icon-white"></i>'.html_safe, workspace, confirm: 'Are you sure?', method: :delete, :class => 'btn btn-mini btn-danger' %>
                     <% end %>
                   </td>
                 </tr>
