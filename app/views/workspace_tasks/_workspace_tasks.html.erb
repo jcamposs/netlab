@@ -21,9 +21,9 @@
           <% if not wtask.auto_task.nil? and current_user == wtask.assigned %>
             <%= link_to '<i class="icon-ok icon-white"></i> Ok'.html_safe, do_auto_task_workspace_task_path(wtask), method: :put, :class => 'btn btn-mini btn-success' %>
           <% else %>
-            <%= link_to '<i class="icon-ok icon-white"></i> Show'.html_safe, wtask, :class => 'btn btn-mini btn-success' %>
+            <%= link_to '<i class="icon-eye-open icon-white"></i>'.html_safe, wtask, :class => 'btn btn-mini btn-success' %>
           <% end %>
-          <%= link_to '<i class="icon-remove icon-white"></i> Reject'.html_safe, wtask, method: :delete, data: { confirm: 'Are you sure?' }, :class => 'btn btn-mini btn-danger' %>
+          <%= link_to '<i class="icon-remove icon-white"></i>'.html_safe, wtask, method: :delete, data: { confirm: 'Are you sure?' }, :class => 'btn btn-mini btn-danger' %>
         </td>
       </tr>
     <% end %>
