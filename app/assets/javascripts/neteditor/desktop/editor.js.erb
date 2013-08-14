@@ -65,19 +65,6 @@ var Desktop = (function () {
     document.body.style.cursor = cursors.pop();
   }
 
-  function removePreviousState(node) {
-    node.transitionTo({
-      scale: {
-        x: 1,
-        y: 1
-      },
-      duration: 0.5,
-      easing: "elastic-ease-out"
-    });
-
-    node.remove();
-  };
-
   function merge(conf1, conf2) {
     var attrs = conf1 || {};
 
@@ -95,6 +82,50 @@ var Desktop = (function () {
 
       obj[prop] = iface[prop];
     };
+  };
+                           
+  function loading(node, offsetx, offsety) {
+    var img = new Kinetic.Image({
+      image: images.load,
+      width: MAX_ICON_SIZE,
+      height: MAX_ICON_SIZE,
+      scale: {
+        x: 0.4,
+        y: 0.4
+      },
+      offset: {
+        x: MAX_ICON_SIZE / offsetx,
+        y: MAX_ICON_SIZE / offsety
+      },
+      shadowColor: 'grey',
+      shadowBlur: 6,
+      shadowOffset: 2,
+      shadowOpacity: 0.6
+    });
+
+    node.transitionTo({
+      scale: {
+        x: 1,
+        y: 1
+      },
+      duration: 0.5,
+      easing: "elastic-ease-out"
+     });
+
+    node.add(img);
+  };
+
+  function removePreviousState(node) {
+    node.transitionTo({
+      scale: {
+        x: 1,
+        y: 1
+      },
+      duration: 0.5,
+      easing: "elastic-ease-out"
+    });
+
+    node.remove();
   };
 
   //////////////////////////////////////////////////////////////////////////////
@@ -340,77 +371,6 @@ var Desktop = (function () {
       return "eth" + id;
     };
 
-    function loadingState(node) {
-      var img = new Kinetic.Image({
-        image: images.load,
-        width: MAX_ICON_SIZE,
-        height: MAX_ICON_SIZE,
-        scale: {
-          x: 0.4,
-          y: 0.4
-        },
-        offset: {
-          x: MAX_ICON_SIZE / 24,
-          y: MAX_ICON_SIZE / 4
-        },
-        shadowColor: 'grey',
-        shadowBlur: 6,
-        shadowOffset: 2,
-        shadowOpacity: 0.6
-      });
-
-      node.add(img);
-    };
-
-    function loadingShellState(node) {
-      var img = new Kinetic.Image({
-        image: images.load,
-        width: MAX_ICON_SIZE,
-        height: MAX_ICON_SIZE,
-        scale: {
-          x: 0.4,
-          y: 0.4
-        },
-        offset: {
-          x: MAX_ICON_SIZE / 0.8,
-          y: MAX_ICON_SIZE / 4
-        },
-        shadowColor: 'grey',
-        shadowBlur: 6,
-        shadowOffset: 2,
-        shadowOpacity: 0.6
-      });
-
-      node.add(img);
-    };
-
-    function connectionHandler(node, group) {
-      var name = node.getName();
-
-      if(node.attrs.state == "halted"){
-        if(group.children[3]){
-          removePreviousState(group.children[3]);
-        }
-        loadingState(group);
-
-        handler.start(name);
-        node.attrs.shellState = "disconnected";
-      }else  if(node.attrs.state == "started"){
-        if(group.children[4]){
-          removePreviousState(group.children[4]);
-        }
-        loadingShellState(group);
-
-        if(node.attrs.shellState == "connected"){
-          handler.disconnectShell(name);
-          loadingState(group);
-          handler.stop(name);
-        }else if(node.attrs.shellState == "disconnected"){
-          handler.connectShell(name);
-        }
-      }
-    };
-
     group.on("mouseover", function(evt) {
       if (!evtProcessable("mouseover"))
         return;
@@ -451,29 +411,12 @@ var Desktop = (function () {
         return;
 
       if (scene.getState() == "management"){
-        this.setScale({x: 1.8, y: 1.8});
-        this.transitionTo({
-          scale: {
-            x: 1,
-            y: 1
-          },
-          duration: 0.5,
-          easing: "elastic-ease-out"
-        });
-
-        connectionHandler(that, this);
-      }
-      else {
-        this.setScale({x: 1.8, y: 1.8});
-        this.transitionTo({
-          scale: {
-            x: 1.3,
-            y: 1.3
-          },
-          duration: 0.5,
-          easing: "elastic-ease-out"
-        });
-      }
+        if(this.children[3].attrs.name == 'started' && this.children.length == 4){
+          var node = that.getName();
+          loading(this, 0.8, 4);
+          handler.connectShell(node);
+        } 
+      } 
 
       processEvt("click");
     });
@@ -795,9 +738,7 @@ var Desktop = (function () {
   //////////////////////////////////////////////////////////////////////////////
   PC = function(config) {
     var that = Interfaceable(merge(config, {
-      image: images.pc,
-      state: "undefined",
-      shellState: "undefined"
+      image: images.pc
     }));
 
     function numberOfInterfaces() {
@@ -869,14 +810,6 @@ var Desktop = (function () {
       return "pc";
     };
 
-    that.getState = function() {
-      return that.state;
-    };
-
-    that.getShellState = function() {
-      return that.shellState;
-    };
-
     return that;
   };
 
@@ -885,9 +818,7 @@ var Desktop = (function () {
   //////////////////////////////////////////////////////////////////////////////
   Router = function(config) {
     var that = Interfaceable(merge(config, {
-      image: images.router,
-      state: "undefined",
-      shellState: "undefined"
+      image: images.router
     }));
 
     function isConnectable() {
@@ -947,14 +878,6 @@ var Desktop = (function () {
       return "router";
     };
 
-    that.getState = function() {
-      return that.state;
-    };
-
-    that.getShellState = function() {
-      return that.shellState;
-    };
-
     return that;
   };
 
@@ -963,9 +886,7 @@ var Desktop = (function () {
   //////////////////////////////////////////////////////////////////////////////
   Switch = function(config) {
     var that = Interfaceable(merge(config, {
-      image: images.switch,
-      state: "undefined",
-      shellState: "undefined"
+      image: images.switch
     }));
 
     function isConnectable() {
@@ -1023,14 +944,6 @@ var Desktop = (function () {
 
     that.getType = function() {
       return "switch";
-    };
-
-    that.getState = function() {
-      return that.state;
-    };
-
-    that.getShellState = function() {
-      return that.shellState;
     };
 
     return that;
@@ -1926,6 +1839,13 @@ var Desktop = (function () {
 
     implements(that, Netlab.EditorInterface);
     implements(that, Netlab.ManagementInterface);
+                            
+    function updateVMachineState(node, state) {
+      if(state == 'halted')
+        handler.start(node);
+      else
+        handler.stop(node);
+    };
 
     that.addNode = function(type, name, position) {
       var node = scene.getNodeByName(name);
@@ -2042,20 +1962,17 @@ var Desktop = (function () {
         if (node.getName() == name){
           var group =  node.getNode();
 
-          if(group.children[3]){
+          if(group.children[3])
             removePreviousState(group.children[3]);
-          }
-          node.attrs.state = state;
 
-          if(state == 'halted'){
+          if(state == "halted")
             var imgState = images.stop;
-          }
-          else{
+          else
             var imgState = images.run;
-          }
 
           var img = new Kinetic.Image({
             image: imgState,
+            name: state,
             width: MAX_ICON_SIZE,
             height: MAX_ICON_SIZE,
             scale: {
@@ -2072,6 +1989,21 @@ var Desktop = (function () {
             shadowOpacity: 0.6
           });
 
+          img.on('click', function() {
+            var node = scene.getNodeByName(name);
+            var group = node.getNode();
+
+            if(group.children[4]){
+              removePreviousState(group.children[4]);
+              loading(group, 0.8, 4);
+            } 
+
+            removePreviousState(group.children[3]);
+            loading(group, 24, 4);
+
+            updateVMachineState(name, this.attrs.name);
+          });
+
           group.transitionTo({
             scale: {
               x: 1,
@@ -2082,10 +2014,6 @@ var Desktop = (function () {
           });
 
           group.add(img);
-
-          if(group.children[4]){
-            removePreviousState(group.children[3]);
-          }
         }
       }
     };
@@ -2099,14 +2027,13 @@ var Desktop = (function () {
         if (node.getName() == name){
           var group =  node.getNode();
 
-          if(group.children[4]){
+          if(group.children[4])
             removePreviousState(group.children[4]);
-          }
-          node.attrs.shellState = state;
-
+          
           if(state == "connected"){
             var img = new Kinetic.Image({
               image: images.shell,
+              name: state,
               width: MAX_ICON_SIZE,
               height: MAX_ICON_SIZE,
               scale: {
@@ -2122,18 +2049,28 @@ var Desktop = (function () {
               shadowOffset: 2,
               shadowOpacity: 0.6
             });
+            
+           img.on('click', function() {
+             var node = scene.getNodeByName(name);
+             var group = node.getNode();
 
-            group.transitionTo({
-              scale: {
-                x: 1,
-                y: 1
-              },
-              duration: 0.5,
-              easing: "elastic-ease-out"
-            });
+             removePreviousState(group.children[4]);
+             loading(group, 0.8, 4);
 
-            group.add(img);
-          }
+             handler.disconnectShell(name);
+           });
+
+           group.transitionTo({
+             scale: {
+               x: 1,
+               y: 1
+             },
+             duration: 0.5,
+             easing: "elastic-ease-out"
+           });
+
+           group.add(img);
+          }        
         }
       }
     };
@@ -2148,9 +2085,9 @@ var Desktop = (function () {
           var interface = node.attrs.labels[iface].iface;
           var group =  interface.getNode();
 
-          if(group.children[2]){
+          if(group.children[2])
             removePreviousState(group.children[2]);
-          }
+          
 
           var ip = new Kinetic.Text({
             x: -12,
