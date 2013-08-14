@@ -13,7 +13,7 @@
     <div id="netlab_params" class="span5">
 
       <% if current_user == @workspace_task.author or current_user == @workspace_task.assigned %>
-        <a href='#newTaskModal' class='btn pull-right' data-toggle="modal"><i class="icon-edit"></i> Edit</a>
+        <a href='#newTaskModal' class='btn btn-info pull-right new' data-toggle="modal"><i class="icon-edit icon-white"></i></a>
       <% end %>
 
       <div id="newTaskModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
