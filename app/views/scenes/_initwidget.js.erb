@@ -78,14 +78,16 @@
         }
       },
       error: function (xhr, ajaxOptions, thrownError) {
-        $('#error_msg').show();
-        $('#spinner').hide();
-        $('#error_msg').css('width', <%= @width %>);
-        $('#error_msg').css('height', <%= @height %>);
-        $('#error_msg').css('border', '1px solid #D4D4D4');
-        $('#spinner').hide();
-        $('#error_msg').html('<div class="alert alert-danger alert-block">'+'<h4 class="alert-heading">'+xhr.status+' '+thrownError+'</h4>'+'</div>');
-        $('#scene_title').html('Server Error');
+        if(xhr.status != 0){
+          $('#error_msg').show();
+          $('#spinner').hide();
+          $('#error_msg').css('width', <%= @width %>);
+          $('#error_msg').css('height', <%= @height %>);
+          $('#error_msg').css('border', '1px solid #D4D4D4');
+          $('#spinner').hide();
+          $('#error_msg').html('<div class="alert alert-danger alert-block">'+'<h4 class="alert-heading">'+xhr.status+' '+thrownError+'</h4>'+'</div>');
+          $('#scene_title').html('Server Error');
+        }
       }
     })
   };
