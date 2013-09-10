@@ -38,7 +38,7 @@
         <div id="container_title" class="navbar-inner">
           <a id="scene_title" href="#" class="brand">Loading...</a>
           <span class="icon pull-right">
-            <%= link_to '<i class="icon-edit"></i>'.html_safe, edit_scene_path(@scene) %>
+            <%= link_to '<i class="icon-edit"></i>'.html_safe, edit_scene_path(@scene), :title => 'Edit', :rel => 'tooltip' %>
           </span>
         </div>
       </div>

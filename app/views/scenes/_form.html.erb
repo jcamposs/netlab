@@ -31,7 +31,7 @@
             <a id="scene_title" href="#" class="brand">Loading...</a>
             <% if @scene.id %>
               <span class="icon pull-right">
-                <%= link_to '<i class="icon-eye-open"></i>'.html_safe, @scene %>
+                <%= link_to '<i class="icon-eye-open"></i>'.html_safe, @scene, :title => 'Show', :rel => 'tooltip' %>
               </span>
             <% end %>
           </div>

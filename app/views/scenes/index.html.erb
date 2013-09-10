@@ -44,8 +44,10 @@
                   <td><%= scene.name %></td>
                   <td>
                     <% if scene.workspaces.empty? %>
-                      <%= link_to '<i class="icon-edit icon-white"></i>'.html_safe, edit_scene_path(scene), :class => 'btn btn-mini btn-info' %>
-                      <%= link_to '<i class="icon-trash icon-white"></i>'.html_safe, delete_scene_path(scene), :class => 'btn btn-mini btn-danger', :remote => true %>
+                      <%= link_to '<i class="icon-edit icon-white"></i>'.html_safe, edit_scene_path(scene), :class => 'btn btn-mini btn-info',
+			  :title => 'Edit', :rel => 'tooltip' %>
+                      <%= link_to '<i class="icon-trash icon-white"></i>'.html_safe, delete_scene_path(scene), :class => 'btn btn-mini btn-danger',
+			  :title => 'Remove', :rel => 'tooltip', :remote => true %>
                     <% else %>
                       <div class="btn-group">
                         <a class="btn dropdown-toggle btn-mini btn-success" data-toggle="dropdown" href="#">

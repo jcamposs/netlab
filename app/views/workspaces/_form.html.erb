@@ -99,10 +99,10 @@
               <a id="workspace_title" href="#" class="brand">Loading...</a>
               <% if @workspace.id %>
                 <span class="icon pull-right">
-                  <%= link_to '<i class="icon-eye-open"></i>'.html_safe, @workspace %>
+                  <%= link_to '<i class="icon-eye-open"></i>'.html_safe, @workspace, :title => 'Show', :rel => 'tooltip' %>
                 </span>
                 <span class="icon pull-right">
-                  <%= link_to '<i class="icon-wrench"></i>'.html_safe, manage_workspace_path(@workspace) %>
+                  <%= link_to '<i class="icon-wrench"></i>'.html_safe, manage_workspace_path(@workspace), :title => 'Manage', :rel => 'tooltip' %>
                 </span>
               <% end %>
             </div>

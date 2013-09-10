@@ -45,13 +45,18 @@
                   <td><%= workspace.user.first_name %></td>
                   <td><%= workspace.scene.name %></td>
                   <td>
-                    <%= link_to '<i class="icon-eye-open icon-white"></i>'.html_safe, workspace_path(workspace), :class => 'btn btn-success btn-mini' %>
-                    <%= link_to '<i class="icon-wrench icon-white"></i>'.html_safe, manage_workspace_path(workspace), :class => 'btn btn-warning btn-mini' %>
+                    <%= link_to '<i class="icon-eye-open icon-white"></i>'.html_safe, workspace_path(workspace), :class => 'btn btn-success btn-mini',
+			:title => 'Show', :rel => 'tooltip' %>
+                    <%= link_to '<i class="icon-wrench icon-white"></i>'.html_safe, manage_workspace_path(workspace), :class => 'btn btn-warning btn-mini',
+			:title => 'Manage', :rel => 'tooltip' %>
                     <% if @user.id == workspace.user.id %>
-                      <%= link_to '<i class="icon-edit icon-white"></i>'.html_safe, edit_workspace_path(workspace), :class => 'btn btn-info btn-mini' %>
-                      <%= link_to '<i class="icon-trash icon-white"></i>'.html_safe, workspace, confirm: 'Are you sure?', method: :delete, :class => 'btn btn-danger btn-mini'%>
+                      <%= link_to '<i class="icon-edit icon-white"></i>'.html_safe, edit_workspace_path(workspace), :class => 'btn btn-info btn-mini',
+			  :title => 'Edit', :rel => 'tooltip' %>
+                      <%= link_to '<i class="icon-trash icon-white"></i>'.html_safe, workspace, confirm: 'Are you sure?', method: :delete,
+			  :class => 'btn btn-danger btn-mini', :title => 'Remove' %>
                     <% else %>
-                      <%= link_to '<i class="icon-remove icon-white"></i>'.html_safe, workspace, confirm: 'Are you sure?', method: :delete, :class => 'btn btn-mini btn-danger' %>
+                      <%= link_to '<i class="icon-remove icon-white"></i>'.html_safe, workspace, confirm: 'Are you sure?', method: :delete,
+			  :class => 'btn btn-mini btn-danger', :title => 'Leave'%>
                     <% end %>
                   </td>
                 </tr>

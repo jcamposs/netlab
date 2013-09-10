@@ -49,10 +49,10 @@
         <div id="container_title" class="navbar-inner">
           <a id="workspace_title" href="#" class="brand">Loading...</a>
           <span class="icon pull-right">
-            <%= link_to '<i class="icon-wrench"></i>'.html_safe, manage_workspace_path(@workspace) %>
+            <%= link_to '<i class="icon-wrench"></i>'.html_safe, manage_workspace_path(@workspace), :title => 'Manage', :rel => 'tooltip' %>
           </span>
           <span class="icon pull-right">
-            <%= link_to '<i class="icon-edit"></i>'.html_safe, edit_workspace_path(@workspace) %>
+            <%= link_to '<i class="icon-edit"></i>'.html_safe, edit_workspace_path(@workspace), :title => 'Edit', :rel => 'tooltip' %>
           </span>
         </div>
       </div>

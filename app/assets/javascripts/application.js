@@ -23,4 +23,8 @@
 $(document).ready(function (){
   // Remove flash messages
   setTimeout("$('.alert').remove()", 5000);
+  
+  // Initialization tooltips
+  $("a[rel=tooltip]").tooltip();
+  $("a[rel=nofollow]").tooltip();
 });
