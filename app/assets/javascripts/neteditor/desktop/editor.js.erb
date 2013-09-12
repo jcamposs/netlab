@@ -33,8 +33,8 @@ var Desktop = (function () {
     hub: "<%= asset_path('editor/hub.png') %>",
     connect: "<%= asset_path('editor/connect.png') %>",
     scissor: "<%= asset_path('editor/scissors.png') %>",
-    run: "<%= asset_path('editor/run.png') %>",
-    stop: "<%= asset_path('editor/stop.png') %>",
+    on: "<%= asset_path('editor/on.png') %>",
+    off: "<%= asset_path('editor/off.png') %>",
     load: "<%= asset_path('editor/load.png') %>",
     shell: "<%= asset_path('editor/shell.png') %>"
   };
@@ -84,18 +84,18 @@ var Desktop = (function () {
     };
   };
                            
-  function loading(node, offsetx, offsety) {
+  function loading(node) {
     var img = new Kinetic.Image({
       image: images.load,
       width: MAX_ICON_SIZE,
       height: MAX_ICON_SIZE,
       scale: {
-        x: 0.4,
-        y: 0.4
+        x: 0.5,
+        y: 0.5
       },
       offset: {
-        x: MAX_ICON_SIZE / offsetx,
-        y: MAX_ICON_SIZE / offsety
+        x: MAX_ICON_SIZE / 1.68,
+        y: MAX_ICON_SIZE / 1.4
       },
       shadowColor: 'grey',
       shadowBlur: 6,
@@ -413,7 +413,7 @@ var Desktop = (function () {
       if (scene.getState() == "management"){
         if(this.children[3].attrs.name == 'started' && this.children.length == 4){
           var node = that.getName();
-          loading(this, 0.8, 4);
+          loading(this);
           handler.connectShell(node);
         } 
       } 
@@ -1961,27 +1961,29 @@ var Desktop = (function () {
 
         if (node.getName() == name){
           var group =  node.getNode();
-
-          if(group.children[3])
+          
+          if(group.children[4]){
+            removePreviousState(group.children[4]);
             removePreviousState(group.children[3]);
+          }
 
           if(state == "halted")
-            var imgState = images.stop;
+            var imgState = images.off;
           else
-            var imgState = images.run;
+            var imgState = images.on;
 
           var img = new Kinetic.Image({
             image: imgState,
             name: state,
-            width: MAX_ICON_SIZE,
+            width: MAX_ICON_SIZE * 2,
             height: MAX_ICON_SIZE,
             scale: {
               x: 0.4,
-              y: 0.4
+              y: 0.3
             },
             offset: {
-              x: MAX_ICON_SIZE / 16,
-              y: MAX_ICON_SIZE / 4
+              x: MAX_ICON_SIZE / 0.95,
+              y: MAX_ICON_SIZE / 0.47
             },
             shadowColor: 'grey',
             shadowBlur: 6,
@@ -1995,11 +1997,8 @@ var Desktop = (function () {
 
             if(group.children[4]){
               removePreviousState(group.children[4]);
-              loading(group, 0.8, 4);
-            } 
-
-            removePreviousState(group.children[3]);
-            loading(group, 24, 4);
+            }
+            loading(group);
 
             updateVMachineState(name, this.attrs.name);
           });
@@ -2054,8 +2053,10 @@ var Desktop = (function () {
              var node = scene.getNodeByName(name);
              var group = node.getNode();
 
-             removePreviousState(group.children[4]);
-             loading(group, 0.8, 4);
+             if(group.children[4]){
+               removePreviousState(group.children[4]);
+             }
+             loading(group);
 
              handler.disconnectShell(name);
            });
