@@ -66,9 +66,9 @@
 
                 <div class="controls">
                   <% if not @workspace.scene_config %>
-                    <%= f.file_field :config_file %>
+                    <%= f.file_field :config_file, :title => "Select file" %>
                   <% else %>
-                    <%= f.file_field :config_file %>
+                    <%= f.file_field :config_file, :title => "Select file" %>
                   <% end %>
                 </div>
               </div>

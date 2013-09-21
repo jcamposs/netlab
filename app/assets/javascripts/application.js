@@ -27,4 +27,8 @@ $(document).ready(function (){
   // Initialization tooltips
   $("a[rel=tooltip]").tooltip();
   $("a[rel=nofollow]").tooltip();
+  
+  // Initialization file inputs
+  $('input[type=file]').bootstrapFileInput();
+  $('.file-inputs').bootstrapFileInput();
 });
