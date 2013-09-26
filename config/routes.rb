@@ -36,6 +36,8 @@ Netlab::Application.routes.draw do
       get 'info'
     end
   end
+  
+  get '/help', to: 'help#index', as: 'help'
 
   mount Cloudstrg::Engine, :at => 'cloudstrg'
   mount Gdrivestrg::Engine, :at => 'gdrive'

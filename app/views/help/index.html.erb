@@ -1,0 +1,204 @@
+<div class="container-fluid">
+
+  <ul id="breadcrumb" class="breadcrumb wizard">
+    <li><a href="/"><i class="icon-home"></i></a></li>
+    <li class="active">Man</li>
+  </ul>
+
+  <div id="man" class="row-fluid container-widget">
+    <div class="span3 bs-docs-sidebar">
+      <ul class="nav bs-docs-sidenav affix">
+        <li><a href="#"><i class="icon-chevron-right"></i> What is NetLAB?</a></li>
+        <li><a href="#scenes"><i class="icon-chevron-right"></i> Scenes</a></li>
+        <li><a href="#workspaces"><i class="icon-chevron-right"></i> Workspaces</a></li>
+        <li><a href="#requirements"><i class="icon-chevron-right"></i> Requirements</a></li>
+        <li><a href="#browser-support"><i class="icon-chevron-right"></i> Browser Support</a></li>
+      </ul>
+    </div>
+      
+    <div class="span9" data-spy="scroll" data-offset-top="0">
+    
+      <!-- What is NetLAB?
+      ================================================== -->
+      <section id="scenes">
+        <div class="page-header">
+          <h1>What is NetLAB?</h1>
+        </div>
+        
+        NetLab is a graphical interface for the system Netkit. NetLab allows edit network diagrams, start the nodes
+        (computers, routers and switches) and stop them, besides being able to work together on the design of a network.
+        
+        <br><br> In NetLAB a <a href="#scenes">scene</a> is related to the design of diagrams network.
+        A <a href="#workspaces">workspace</a> allows manage a scene and work on it in groups.
+      </section>
+  
+      <!-- Scenes
+      ================================================== -->
+      <section id="scenes">
+        <div class="page-header">
+          <h1>Scenes</h1>
+        </div>
+          
+        <h3>How to create a scene</h3>
+        <ul>
+          <li>First you have to go to page <%= link_to 'scenes', scenes_path %>.</li>
+          <li>Click on <%= link_to '<i class="icon-plus icon-white"></i> New Scene'.html_safe, new_scene_path, 
+            :class => 'btn btn-primary' %>
+          <li>To add a node, simply click on it and drag it to the design area. You cand add:</li>
+            <p class="bs-docs-example"><img src="<%= asset_path('editor/image.png') %>" class="img-rounded" width="48" height="48">
+            <img src="<%= asset_path('editor/router.png') %>" class="img-rounded" width="48" height="48">
+            <img src="<%= asset_path('editor/switch.png') %>" class="img-rounded" width="48" height="48">
+            <img src="<%= asset_path('editor/hub.png') %>" class="img-rounded" width="48" height="48"></p>
+          <li>To join two nodes, click on <img src="<%= asset_path('editor/connect.png') %>" class="img-rounded" width="48" height="48">
+          and then click on each node you want to join.</li>
+          <li>To delete a link, click on <img src="<%= asset_path('editor/scissors.png') %>" class="img-rounded" width="48" height="48">
+          and then click on the link you want to delete.</li>
+          <li>Click on <button class="btn btn-primary" type="button">Save</button> to save the network design, 
+          and write the name of the scene in pop up.</li>
+          <li>If you want reset the network, click on <button class="btn" type="button">Clear</button></li>
+        </ul>
+
+        <h3>How to edit a scene</h3>
+        <p class="prettyprint-info">
+          <strong>Info: </strong>You can only edit a scene if this is not associated with a workspace.
+        </p>
+        <li>
+          To edit a scene, you can click on the button
+          <button class="btn btn-mini btn-info" type="button"><i class="icon-edit icon-white"></i></button>
+          that appears on the right side of each scene in your list, or click on the same button that appears on the top right
+          of each widget if you're watching a scene information.
+        </li>
+        <li>Modifies the scene and click on <button class="btn btn-primary" type="button">Save</button> to save changes.</li>
+
+        <h3>How to remove a scene</h3>
+        <p class="prettyprint-danger">
+          <strong>Info: </strong>You can only remove a scene if this is not associated with a workspace.
+        </p>
+        <li>
+          To remove a scene, click on the button
+          <button class="btn btn-mini btn-danger" type="button"><i class="icon-trash icon-white"></i></button>
+          that appears on the right side of each scene in your list.
+        </li>
+      </section>
+  
+      <!-- Workspaces
+      ================================================== -->
+      <section id="workspaces">
+        <div class="page-header">
+          <h1>Workspaces</h1>
+        </div>
+
+        <h3>How to create a workspace</h3>
+        <ul>
+          <li>First you have to go to page <%= link_to 'workspaces', workspaces_path %>.</li>
+          <li>Click on <%= link_to '<i class="icon-plus icon-white"></i> New Workspace'.html_safe, new_workspace_path, 
+            :class => 'btn btn-primary' %>
+          <li><code>New workspace</code> tab you must complete the field name, select the scene you want to be part of the workspace
+          and load the configuration file. <code>Team</code> tab, you can select which users will be able to work on this workspace.</li>
+          <li>Click on <button class="btn btn-primary" type="button">Create Workspace</button> to save the workspace.
+        </ul>
+          
+        <h3>How to edit a workspace</h3>
+        <li>
+          To edit a workspace, you can click on the button
+          <button class="btn btn-mini btn-info" type="button"><i class="icon-edit icon-white"></i></button>
+          that appears on the right side of each workspace in your list, or click on the same button that appears on the top right
+          of each widget if you're watching a information or in mode manage of a workspace.
+         </li>
+         <li>Modifies the information you want and click on <button class="btn btn-primary" type="button">Update Workspace</button>
+         to save changes.</li>
+           
+        <h3>How to remove a workspace</h3>
+        <p class="prettyprint-danger">
+           <strong>Info: </strong>You can only remove a workspace if you are the owner.
+        </p>
+        <li>
+          To remove a workspace, click on the button
+          <button class="btn btn-mini btn-danger" type="button"><i class="icon-trash icon-white"></i></button>
+          that appears on the right side of each workspace in your list.
+        </li>
+           
+        <h3>How to manage a workspace</h3>
+        <li>
+          Enter in mode <code>manage</code> of a workspace, click on the button
+          <button class="btn btn-mini btn-warning" type="button"><i class="icon-wrench icon-white"></i></button>
+          that appears on the right side of each workspace in your list, or click on the same button that appears on the top right
+          of each widget if you're watching a information or editing a workspace.
+        </li>
+        <li>
+          To boot a virtual machine, click on
+          <img src="<%= asset_path('editor/off.png') %>" class="img-rounded" width="60" height="60">. 
+          When the virtual machine is powered on, you will see the icon
+          <img src="<%= asset_path('editor/on.png') %>" class="img-rounded" width="60" height="60">
+        </li>           
+        <li>To start a terminal for that node, you have to click on that node.
+        <li>If you just want to close the terminal session, click on <img src="<%= asset_path('editor/shell.png') %>" 
+          class="img-rounded" width="32" height="32">
+        <li>If you want to turn off the virtual machine, click on <img src="<%= asset_path('editor/on.png') %>" 
+          class="img-rounded" width="60" height="60">
+          
+        <h3>How to download captures of a workspace</h3>
+        <p class="prettyprint-info">
+          <strong>Info: </strong>To download captures of a workspace, you have to copy them to the directory 
+          <em class="text-warning">/hostlab/captures</em>
+        </p>
+        <li>
+          You can download network captures made ​​on a workspace, if you are in mode <code>manage</code> and click on
+          <button class="btn btn-success" type="button"><i class="icon-download icon-white"></i>Download captures</button>
+        </li>
+          
+        <h3>How to work in groups in a workspace</h3>
+        <li>First you will have to create a workspace and invite the users you want by selecting them in the team tab.
+        When invited to a workspace by another user, you will receive notice of the invitation in the navigation bar.</li>
+          <div class="bs-docs-example">
+            <div class="btn">
+              <%= '<i class="icon-bell"></i> Notifications'.html_safe %>
+              <%= '<span class="badge badge-important">'.html_safe + "2" + '</span>'.html_safe %>
+            </div>
+          </div>
+        <li>
+          Click on the button and you will see a panel on the left side with the list of pending notifications.
+          If you want to join the workspace click on
+          <button class="btn btn-mini btn-success" type="button"><i class="icon-ok icon-white"></i></button>
+          If you reject the invitation, click on
+         <button class="btn btn-mini btn-danger" type="button"><i class="icon-remove icon-white"></i></button>
+        </li>
+        <li>
+          To leave a workspace, click on the button
+          <button class="btn btn-mini btn-danger" type="button"><i class="icon-remove icon-white"></i></button>
+          that appears on the right side of each workspace in your list.
+        </li>
+      </section>
+      
+      <!-- Requirements
+      ================================================== -->
+      <section id="requirements">
+        <div class="page-header">
+          <h1>Requirements</h1>
+        </div>
+        
+        You must have a Google account to access in NetLAB. You can create one <a href="https://accounts.google.com/signup?hl=en" 
+        target="Google account">here</a>.
+      </section>
+      
+      <!-- Browser Support
+      ================================================== -->
+      <section id="browser-support">
+        <div class="page-header">
+          <h1>Browser Support</h1>
+        </div>
+        
+        NetLAB is intended for relatively newer browsers. Especially as we experiment with what we're doing, supporting older 
+        browsers causes far more challenge than it is an advantage.
+        
+        <h3>Supported Browsers</h3>
+        We recommend the most recent release of <a href="https://www.google.com/intl/en/chrome/browser/">Chrome</a>.
+        <br>If you want use <a href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a> is possible that some characters
+        like "-", "_" don't work on consoles of virtual machines.
+        <br>It is possible to support Internet Explorer. However we do not test at all regularly on Internet Explorer.
+      </section>
+    
+    </div>
+  </div>
+
+</div>

@@ -247,3 +247,102 @@ span.icon {
   height: 350px;
   width: 99%;
 }
+
+#man {
+  margin: 20px 0 50px 0;
+}
+
+.bs-docs-sidenav {
+  background-color: #FFFFFF;
+  border-radius: 6px 6px 6px 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.067);
+  margin: 30px 0 0;
+  padding: 0;
+  width: 228px;
+}
+
+.bs-docs-sidenav > li > a {
+  border: 1px solid #E5E5E5;
+  display: block;
+  margin: 0 0 -1px;
+  padding: 10px 14px;
+}
+
+.bs-docs-sidenav > li:first-child > a {
+  border-radius: 6px 6px 0 0;
+}
+
+.bs-docs-sidenav > li:last-child > a {
+  border-radius: 0 0 6px 6px;
+}
+
+.bs-docs-sidenav > .active > a {
+  border: 0 none;
+  box-shadow: 1px 0 0 rgba(0, 0, 0, 0.1) inset, -1px 0 0 rgba(0, 0, 0, 0.1) inset;
+  padding: 9px 15px;
+  position: relative;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+  z-index: 2;
+}
+
+.bs-docs-sidenav .icon-chevron-right {
+  float: right;
+  margin-right: -6px;
+  margin-top: 2px;
+  opacity: 0.25;
+}
+
+.bs-docs-sidenav > li > a:hover {
+  background-color: #F5F5F5;
+}
+
+.bs-docs-sidenav a:hover .icon-chevron-right {
+  opacity: 0.5;
+}
+
+.bs-docs-sidenav.affix {
+  top: 140px;
+}
+
+.bs-docs-example:after {
+  background-color: #F5F5F5;
+  border: 1px solid #DDDDDD;
+  border-radius: 4px 0 4px 0;
+  color: #9DA0A4;
+  content: "Example";
+  font-size: 12px;
+  font-weight: bold;
+  left: -1px;
+  padding: 3px 7px;
+  position: absolute;
+  top: -1px;
+}
+
+.bs-docs-example {
+    background-color: #FFFFFF;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px 4px 4px 4px;
+    margin: 15px 0;
+    padding: 39px 19px 14px;
+    position: relative;
+}
+
+.prettyprint-info {
+  background-color: #D9EDF7;
+  border-color: #BCE8F1;
+  color: #3A87AD;
+  border-radius: 4px 4px 4px 4px;
+  margin-bottom: 20px;
+  padding: 8px 35px 8px 14px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.prettyprint-danger {
+  background-color: #F2DEDE;
+  border-color: #EED3D7;
+  color: #B94A48;
+  border-radius: 4px 4px 4px 4px;
+  margin-bottom: 20px;
+  padding: 8px 35px 8px 14px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
