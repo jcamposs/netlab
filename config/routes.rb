@@ -7,6 +7,8 @@ Netlab::Application.routes.draw do
   end
 
   resources :workspace_invitations
+  
+  resources :chat_invitations
 
   resources :workspaces do
     member do

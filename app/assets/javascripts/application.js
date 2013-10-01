@@ -31,4 +31,28 @@ $(document).ready(function (){
   // Initialization file inputs
   $('input[type=file]').bootstrapFileInput();
   $('.file-inputs').bootstrapFileInput();
+  
+  //Check if togetherjs is initiated
+  setTimeout('check_chat_started()', 3000);
 });
+
+function check_chat_started() {
+  if ($("#togetherjs-container").length){
+    $('#btn-chat').val("1");
+    $('#btn-text-chat').addClass("label label-success");
+    $('#btn-text-chat').html("Online");
+  }  
+}
+
+function switchChat(){
+  if ($("#togetherjs-container").length){
+    $('#btn-chat').val("0");
+    $('#btn-text-chat').removeClass();
+    $('#btn-text-chat').addClass("label");
+    $('#btn-text-chat').html("Ofline");
+  } else {
+    $('#btn-chat').val("1");
+    $('#btn-text-chat').addClass("label label-success");
+    $('#btn-text-chat').html("Online");
+  }
+}

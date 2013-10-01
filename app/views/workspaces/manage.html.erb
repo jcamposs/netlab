@@ -21,6 +21,7 @@
           <ul class="nav nav-tabs">
             <li class="active"><a href="#tab1" data-toggle="tab"><h4>Workspace management</h4></a></li>
             <li><a href="#tab2" data-toggle="tab"><h4>Tasks</h4></a></li>
+             <li><a href="#tab3" data-toggle="tab"><h4>Chat</h4></a></li>
           </ul>
          <div id="tab-content" class="tab-content">
             <div class="tab-pane active" id="tab1">
@@ -39,6 +40,12 @@
             <div class="tab-pane" id="tab2">
               <div><br/>
                 <%= render partial: 'workspace_tasks/workspace_tasks', :locals => {:workspace => @workspace} %>
+              </div>
+            </div>
+            
+            <div class="tab-pane" id="tab3">
+              <div><br/>
+                <%= render partial: 'chat_invitations/form', :locals => {:chat_invitation => ChatInvitation.new, :workspace => @workspace} %>
               </div>
             </div>
           </div>

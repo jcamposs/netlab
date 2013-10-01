@@ -63,7 +63,7 @@
 }
 
 #alert {
-  margin: -70px 0 0 350px;
+  margin: -69px 0 0 290px;
   float:left;
 }
 
@@ -130,6 +130,10 @@ span.icon {
   margin-left: 60px;
 }
 
+#chat-list {
+  margin-left: 120px;
+}
+
 .container-widget {
   margin: 20px 0 0 0;
 }
@@ -144,6 +148,8 @@ span.icon {
 .table-list .list-image {
   vertical-align: middle;
   border-right: 2px solid #DDDDDD;
+  width: 15px;
+  height: 39px;
 }
 
 .table-list span.minor {
@@ -195,6 +201,10 @@ span.icon {
   margin: 0;
   clear: both;
   padding: 10px 20px;
+}
+
+#virtual_machines.controls {
+  margin-left: 5px; 
 }
 
 #breadcrumb {

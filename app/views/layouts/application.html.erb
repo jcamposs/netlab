@@ -34,9 +34,11 @@
                   <% if @num_tasks != 0 %>
                     <%= '<span class="badge badge-warning">'.html_safe + "#{@num_tasks}" + '</span>'.html_safe %>
                   <% end %>
+                  <% if @num_chat_invitations != 0 %>
+                    <%= '<span class="badge badge-info">'.html_safe + "#{@num_chat_invitations}" + '</span>'.html_safe %>
+                  <% end %>
                 <% end %>
               </li>
-              <li class="btn"><a onclick="TogetherJS(this); return false;"><i class="icon-comment"></i> Chat</a></li>
               <li class="btn"><%= link_to '<i class="icon-book"></i> Help'.html_safe, help_path %></li>
               <li class="btn"><%= link_to '<i class="icon-off"></i> Logout'.html_safe, destroy_user_session_path, method: :delete %></li>
             </ul>

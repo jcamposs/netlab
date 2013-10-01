@@ -1,0 +1,50 @@
+<%= form_for(chat_invitation) do |f| %>
+  <% if chat_invitation.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(chat_invitation.errors.count, "error") %> prohibited this chat_invitation from being saved:</h2>
+
+      <ul>
+        <% chat_invitation.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <center>
+    <button id="btn-chat" class="btn" onclick="switchChat(); TogetherJS(this); return false;">
+      <i class="icon-comment"></i> <span id="btn-text-chat" class="label" value="0">Ofline</span></button>
+  </center>
+  
+  <hr>
+  
+  <div id="chat-list">
+    <%= f.hidden_field :sender_id, :value => "#{current_user.id}" %>
+    <%= f.hidden_field :workspace_id, :value => "#{workspace.id}" %>
+      <div class="control-group">
+        <h5> Chat with... </h5>
+        <% User.find(:all, :conditions => ["id != ?", @user.id]).each do |user| -%>
+          <% if workspace.editors.include?(user) || (workspace.user == user) %>
+            <label class="checkbox">
+              <%= check_box_tag "receivers_ids[]", user.id %> <%= "#{user.first_name} #{user.last_name}" %>
+            </label>
+          <% end -%>
+        <% end -%>
+      </div>
+      <br>
+  </div>
+  
+  <center>
+    <div class="field">
+      <%= f.text_field :url, :placeholder => "Copy your link here ..." %>
+    </div>
+  </center>
+  
+  <div class="form-actions">
+    <center>
+      <%= button_tag(type: "submit", class: "btn btn-primary", name: "commit") do %>
+        <i class="icon-share-alt icon-white"></i> Send Invitation
+      <% end %>
+    </center>
+  </div>
+<% end %>

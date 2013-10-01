@@ -1,0 +1,18 @@
+<table class="table table-hover table-list">
+  <% @user.receiver_chat_invitations.each do |chat_invitation| %>
+    <tbody>
+      <tr>
+        <td class="list-image"><i class="icon-comment"></i></td>
+        <td>
+          <span class="list-text"><%= "#{User.find_by_id(chat_invitation.sender_id).first_name} #{User.find_by_id(chat_invitation.sender_id).last_name} 
+            wants to start a chat session with you" %></span>
+          <%= '<span class="minor">'.html_safe + ' On ' + ("#{chat_invitation.created_at}").to_time.strftime("%B %d %Y %X") + '</span>'.html_safe %>
+        </td>
+         <td>
+          <%= link_to '<i class="icon-ok icon-white"></i>'.html_safe, chat_invitation, :class => 'btn btn-mini btn-success' %>
+          <%= link_to '<i class="icon-remove icon-white"></i>'.html_safe, chat_invitation, method: :delete, data: { confirm: 'Are you sure?' }, :class => 'btn btn-mini btn-danger' %>
+        </td>
+      </tr>
+    </tbody>
+  <% end %>
+</table>

@@ -8,6 +8,8 @@ class User < ActiveRecord::Base
 
   has_many :author_workspace_tasks, class_name: WorkspaceTask, foreign_key: :author_id, dependent: :destroy
   has_many :assigned_workspace_tasks, class_name: WorkspaceTask, foreign_key: :assigned_id, dependent: :destroy
+  
+  has_many :receiver_chat_invitations, class_name: ChatInvitation, foreign_key: :receiver_id, dependent: :destroy
 
   # Cloud storage params
   has_one :cloudstrgconfig, :class_name => Cloudstrg::Config, :dependent => :destroy

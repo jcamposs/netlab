@@ -16,6 +16,8 @@ class ApplicationController < ActionController::Base
     @num_invitations = @workspace_invitations.length
     @workspace_tasks = @user.assigned_workspace_tasks
     @num_tasks = @workspace_tasks.length
+    @chat_invitations = @user.receiver_chat_invitations
+    @num_chat_invitations = @chat_invitations.length
   end
 
 end
