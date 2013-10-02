@@ -34,6 +34,11 @@ $(document).ready(function (){
   
   //Check if togetherjs is initiated
   setTimeout('check_chat_started()', 3000);
+  
+  $('#alert-notifications').toggleClass('in');
+  
+  // Remove alert notifications
+  setTimeout("$('#alert-notifications').remove()", 5000);
 });
 
 function check_chat_started() {

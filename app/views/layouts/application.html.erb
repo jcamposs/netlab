@@ -39,6 +39,12 @@
                   <% end %>
                 <% end %>
               </li>
+              <% if @num_invitations != 0 || @num_tasks != 0 || @num_chat_invitations != 0 %>
+                <div id="alert-notifications" class="jumbotron flyover flyover-bottom">
+                  <h3>Hey <%="#{@user.first_name}" %>!</h3>
+                  <p> You have pending notifications.</p>
+                </div>
+              <% end %>
               <li class="btn"><%= link_to '<i class="icon-book"></i> Help'.html_safe, help_path %></li>
               <li class="btn"><%= link_to '<i class="icon-off"></i> Logout'.html_safe, destroy_user_session_path, method: :delete %></li>
             </ul>
