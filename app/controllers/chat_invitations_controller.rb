@@ -34,7 +34,7 @@ class ChatInvitationsController < ApplicationController
       end
     rescue
       respond_to do |format|
-        format.html { render action: "new" }
+        format.html { redirect_to manage_workspace_path(@workspace), alert: 'Error sending a chat invitation.' }
         format.json { render json: manage_workspace_path(@workspace).errors, status: :unprocessable_entity }
       end
     end

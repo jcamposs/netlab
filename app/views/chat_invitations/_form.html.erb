@@ -36,7 +36,8 @@
   
   <center>
     <div class="field">
-      <%= f.text_field :url, :placeholder => "Copy your link here ..." %>
+      <%= f.text_field :url ,:placeholder => "Copy your link here ...", :type => "url" , :required => true,
+        :oninvalid => "setCustomValidity('This field is required.')", :onchange => "try{setCustomValidity('')}catch(e){}" %>
     </div>
   </center>
   
