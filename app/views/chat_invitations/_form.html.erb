@@ -10,14 +10,7 @@
       </ul>
     </div>
   <% end %>
-  
-  <center>
-    <button id="btn-chat" class="btn" onclick="switchChat(); TogetherJS(this); return false;">
-      <i class="icon-comment"></i> <span id="btn-text-chat" class="label" value="0">Ofline</span></button>
-  </center>
-  
-  <hr>
-  
+ 
   <div id="chat-list">
     <%= f.hidden_field :sender_id, :value => "#{current_user.id}" %>
     <%= f.hidden_field :workspace_id, :value => "#{workspace.id}" %>

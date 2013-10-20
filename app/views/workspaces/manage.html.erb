@@ -16,38 +16,71 @@
     <div class="row-fluid container-widget">
 
       <div id="netlab_params" class="span5">
+        <span id="scene_name" style="VISIBILITY:hidden"><%= @workspace.scene.name %></span>
+      
+        <center>
+          <div class="control-btn">
+            <%= link_to '<i class="icon-download icon-white"></i> Download captures'.html_safe, 
+              download_captures_workspace_path(@workspace.id), :class => 'btn btn-success' %>
+            
+            <div class="btn-group">
+              <button id="btn-chat" class="btn" onclick="switchChat(); TogetherJS(this); return false;">
+                <i class="icon-comment"></i> <span id="btn-text-chat" class="label" value="0">Offline</span></button>
+              <button class="btn dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a href='#newInvitationModal' data-toggle="modal"><i class="icon-plus"></i> New invitation</a></li>
+              </ul>
+            </div>
+            <a></a>
+            <div class="btn-group">
+              <button class="btn btn-info"><i class="icon-tasks icon-white"></i> Tasks</button>
+              <button class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a href='#newTaskModal' data-toggle="modal"><i class="icon-plus"></i> New task</a></li>
+                <li><a href='#viewTaskModal' data-toggle="modal"><i class="icon-eye-open"></i> View all tasks</a></li>
+              </ul>
+            </div>
+          </div>
+        </center>
+
+        <div id="newInvitationModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="newInvitationModalHeader">New chat invitation</h3>
+          </div>
+          <div class="modal-body">
+            <%= render partial: 'chat_invitations/form', :locals => {:chat_invitation => ChatInvitation.new, :workspace => @workspace} %>
+          </div>
+        </div>
+
+        <div id="newTaskModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="newInvitationModalHeader">New task</h3>
+          </div>
+          <div class="modal-body">
+            <%= render partial: 'workspace_tasks/form', :locals => {:workspace_task => WorkspaceTask.new, :workspace => @workspace} %>
+          </div>
+        </div>
+
+        <div id="viewTaskModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="viewTaskModalHeader">Tasks</h3>
+          </div>
+          <div class="modal-body">
+             <%= render partial: 'workspace_tasks/workspace_tasks', :locals => {:workspace => @workspace} %>
+          </div>
+        </div>
 
         <div class="tabbable tabbable-bordered">
-          <ul class="nav nav-tabs">
-            <li class="active"><a href="#tab1" data-toggle="tab"><h4>Workspace management</h4></a></li>
-            <li><a href="#tab2" data-toggle="tab"><h4>Tasks</h4></a></li>
-             <li><a href="#tab3" data-toggle="tab"><h4>Chat</h4></a></li>
-          </ul>
-         <div id="tab-content" class="tab-content">
-            <div class="tab-pane active" id="tab1">
-              <span id="scene_name" style="VISIBILITY:hidden"><%= @workspace.scene.name %></span>
-              <center>
-                <div class="control-group">
-                  <%= label_tag "Virtual machine:"%>
-                  <div class="controls">
-                    <%= select_tag "virtual_machine", options_from_collection_for_select(VirtualMachine.find_all_by_workspace_id(@workspace.id), :name, :name) %>
-                  </div>
-                  <hr><%= link_to '<i class="icon-download icon-white"></i> Download captures'.html_safe, download_captures_workspace_path(@workspace.id), :class => 'btn btn-success' %>
-                </div>
-              </center>
-            </div>
-
-            <div class="tab-pane" id="tab2">
-              <div><br/>
-                <%= render partial: 'workspace_tasks/workspace_tasks', :locals => {:workspace => @workspace} %>
-              </div>
-            </div>
-            
-            <div class="tab-pane" id="tab3">
-              <div><br/>
-                <%= render partial: 'chat_invitations/form', :locals => {:chat_invitation => ChatInvitation.new, :workspace => @workspace} %>
-              </div>
-            </div>
+          <div id="shells" class="tabbable tabbable-bordered">
+            <ul class="nav nav-tabs"></ul>
+            <div id="tab-content" class="tab-content"></div>
           </div>
         </div>
       </div>
@@ -70,11 +103,6 @@
           <%= render 'scenes/netwidget' %>
         </div>
       <% end %>
-
-      <div id="shells" class="tabbable tabbable-bordered">
-        <ul class="nav nav-tabs"></ul>
-        <div id="tab-content" class="tab-content"></div>
-      </div>
 
     </div>
 

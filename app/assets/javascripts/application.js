@@ -54,7 +54,7 @@ function switchChat(){
     $('#btn-chat').val("0");
     $('#btn-text-chat').removeClass();
     $('#btn-text-chat').addClass("label");
-    $('#btn-text-chat').html("Ofline");
+    $('#btn-text-chat').html("Offline");
   } else {
     $('#btn-chat').val("1");
     $('#btn-text-chat').addClass("label label-success");

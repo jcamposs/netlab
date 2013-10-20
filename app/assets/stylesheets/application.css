@@ -404,3 +404,29 @@ span.icon {
   margin-top: -5%;
   font-size: 18px;
 }
+
+.tabbable {
+  margin-top: 20px;
+}
+
+#shells {
+  width: 121.2%;
+  height: 429px;
+  margin-top: 20px;
+}
+
+#shells > #tab-content.tab-content {
+  overflow: hidden;
+}
+
+#shells > #tab-content > div {
+  border-top: 1px solid #DDDDDD;
+}
+
+#shells > ul {
+  border-bottom: 0px;
+}
+
+.control-btn {
+  margin-left: 95px; 
+}
