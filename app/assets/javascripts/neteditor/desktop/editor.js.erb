@@ -1608,6 +1608,7 @@ var Desktop = (function () {
       });
 
       pcItem.on("dragend", function(pos) {
+        changeState("edit");
         var node = PC({
           name: generateRootName("pc")
         });
@@ -1615,6 +1616,7 @@ var Desktop = (function () {
       });
 
       routerItem.on("dragend", function(pos) {
+        changeState("edit");
         var node = Router({
           name: generateRootName("r")
         });
@@ -1622,6 +1624,7 @@ var Desktop = (function () {
       });
 
       switchItem.on("dragend", function(pos) {
+        changeState("edit");
         var node = Switch({
           name: generateRootName("s")
         });
@@ -1629,6 +1632,7 @@ var Desktop = (function () {
       });
 
       hubItem.on("dragend", function(pos) {
+        changeState("edit");
         var node = Hub({
           name: generateRootName("h")
         });
