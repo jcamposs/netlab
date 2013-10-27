@@ -89,6 +89,11 @@
   text-decoration: none;
 }
 
+#scene_manage {
+  margin-left: 26%;
+  margin-bottom: 2%;
+}
+
 #container_title {
   width: 560px;
 }
@@ -405,14 +410,9 @@ span.icon {
   font-size: 18px;
 }
 
-.tabbable {
-  margin-top: 20px;
-}
-
 #shells {
-  width: 121.2%;
+  width: 100%;
   height: 429px;
-  margin-top: 20px;
 }
 
 #shells > #tab-content.tab-content {
@@ -427,6 +427,48 @@ span.icon {
   border-bottom: 0px;
 }
 
+#shellsModal {
+  width: 82%;
+  left: 31%;
+  height: 70%;
+  top: 15%;
+}
+
+#shellsModal > .modal-header {
+  cursor: move;
+}
+
+#shellsModal > .modal-body {
+  overflow: hidden;
+}
+
+#shellsModal.modal.fade {
+  transition: opacity 0.1s linear 0s, top 0.1s ease-out 0s;
+}
+
+#shellsModal.modal-backdrop.fade.in {
+  opacity: 0.3;
+}
+
 .control-btn {
-  margin-left: 95px; 
+  margin-bottom: 20px;
+  margin-left: 8px;
+  margin-top: -20px;
+}
+
+#loadingShellModal {
+  width: 82%;
+  left: 31%;
+  height: 70%;
+  top: 15%;
+}
+
+#loading-shell {
+  margin-left: 25%;
+  margin-top: 22%;
+  width: 50%;
+}
+
+#loadingShellModal.modal.fade {
+  transition: opacity 0.1s linear 0s, top 0.1s ease-out 0s;
 }

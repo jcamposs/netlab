@@ -421,6 +421,17 @@ var Desktop = (function () {
       processEvt("click");
     });
 
+    group.on("dblclick", function(evt) {
+      if (scene.getState() == "management"){
+        if(this.children[4]) {
+          if(this.children[4].attrs.name == 'connected' && this.children.length == 5){
+            var node = that.getName();
+            handler.foregroundShell(node);
+          } 
+        }
+      } 
+    });
+
     group.on("dragstart", function() {
       scene.dragNodeStart(that);
     });

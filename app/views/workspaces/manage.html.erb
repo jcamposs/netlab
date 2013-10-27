@@ -15,7 +15,7 @@
 
     <div class="row-fluid container-widget">
 
-      <div id="netlab_params" class="span5">
+      <div id="netlab_params">
         <span id="scene_name" style="VISIBILITY:hidden"><%= @workspace.scene.name %></span>
       
         <center>
@@ -77,16 +77,30 @@
           </div>
         </div>
 
-        <div class="tabbable tabbable-bordered">
-          <div id="shells" class="tabbable tabbable-bordered">
-            <ul class="nav nav-tabs"></ul>
-            <div id="tab-content" class="tab-content"></div>
+        <div id="shellsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="shellsModalHeader">Admin Panel</h3>
+          </div>
+          <div class="modal-body">
+            <div id="shells" class="tabbable tabbable-bordered">
+              <ul class="nav nav-tabs"></ul>
+              <div id="tab-content" class="tab-content"></div>
+            </div>
+          </div>
+        </div>
+ 
+        <div id="loadingShellModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-body">
+            <div id="loading-shell" class="progress progress-striped active">
+              <div class="bar" style="width: 100%;"></div>
+            </div>
           </div>
         </div>
       </div>
 
       <% if not @workspace.scene.nil? %>
-        <div id="scene_view" class="span6 offset1">
+        <div id="scene_manage">
           <div class="navbar">
             <div id="container_title" class="navbar-inner">
               <a id="workspace_title" href="#" class="brand">Loading...</a>

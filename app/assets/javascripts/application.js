@@ -39,6 +39,18 @@ $(document).ready(function (){
   
   // Remove alert notifications
   setTimeout("$('#alert-notifications').remove()", 5000);
+  
+  $("#shellsModal").draggable({
+    handle: ".modal-header"
+  });
+  
+  $("#shellsModal").on('show', function () {
+    $(".modal-backdrop").css('opacity', '0.06');
+  });
+  
+  $("#shellsModal").on('hide', function () {
+    $(".modal-backdrop").css('opacity', '0');
+  });
 });
 
 function check_chat_started() {

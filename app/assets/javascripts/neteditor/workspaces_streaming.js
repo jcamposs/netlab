@@ -53,6 +53,11 @@ var WStreaming = (function () {
   //////////////////////////////////////////////////////////////////////////////
   ManagementIface = function() {
     var that = {};
+    
+    function loadingShell(name) {
+      $("#loadingShellModal").css({'top': $('#shellsModal').css('top'), 'left': $('#shellsModal').css('left')});
+      $("#loadingShellModal").modal("show");
+    }
 
     function addNewTab(name) {
       $("div#shells ul").append("<li><a data-toggle='tab' href='#tabs-" + name + "'><h4>" + name + "</h4></a></li>");
@@ -62,13 +67,19 @@ var WStreaming = (function () {
     function addShellinaBox(name, host, port) {
       $("<iframe id='iframe" + name + "' class='frame'>").appendTo("#tabs-" + name);
       $("#iframe" + name).attr("src", "http://" + host + ":" + JSON.stringify(port));
+      $("#shellsModal").modal("show");
       $("div#shells a:last").tab("show");
+      setTimeout(function() {$("#loadingShellModal").modal("hide");},2000);
     }
 
     function removeTab(name) {
       $("div#shells a[href='#tabs-" + name + "']").remove();
       $("div#shells div#tab-content div#tabs-" + name).remove();
-      $("div#shells a:last").tab("show");
+      if ($("div#shells div#tab-content").html()) {
+        $("div#shells a:last").tab("show");
+      } else {
+        $("#shellsModal").modal("hide");
+      }
     }
 
     function addListeners() {
@@ -122,6 +133,7 @@ var WStreaming = (function () {
         editor.setShellState(name, state);
 
         if(data.state == "connected"){
+          loadingShell();
           addNewTab(name);
           addShellinaBox(name, data.host, data.port);
         } else if(data.state == "disconnected"){
@@ -159,6 +171,25 @@ var WStreaming = (function () {
   //////////////////////////////////////////////////////////////////////////////
   ConnectionHandler = function() {
     var that = {};
+    
+    function hideAllTabs() {
+      $("#shells > ul > li").each(function (index) {
+        $(this).removeClass();
+      });
+      $("#shells > .tab-content > div").each(function (index) {
+        $(this).removeClass('active');
+      });
+    };
+  
+    function showTab(node) {
+      var tab_header = $("a[href*='" + node + "']").parent();
+      var tab_content = $("div[id*='" + node + "']");
+ 
+      tab_header.addClass("active");
+      tab_content.addClass("active");
+      $("#shellsModal").modal("show");
+      $(".modal-backdrop").css('opacity', '0.06');
+    };
 
     that.start = function(node) {
       if (!connected)
@@ -186,6 +217,11 @@ var WStreaming = (function () {
         alert("Server disconnected");
       else
         connection.disconnectShell([node]);
+    };
+    
+    that.foregroundShell = function(node) {
+      hideAllTabs();
+      showTab(node);
     };
 
     return that;
