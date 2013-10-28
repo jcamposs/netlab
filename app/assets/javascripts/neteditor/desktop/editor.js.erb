@@ -1785,7 +1785,7 @@ var Desktop = (function () {
     that.addNode = function(node, pos, absolute) {
       var knode = node.getNode();
 
-      if ((state != "view") && (state != "management"))
+      if (state != "view")
         knode.setDraggable(true);
 
       layers.nodes.add(knode);
