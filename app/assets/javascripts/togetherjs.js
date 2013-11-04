@@ -159,8 +159,8 @@
         attrName = attr.substr(("TowTruckConfig_on_").length);
         console.warn("TowTruckConfig_* is deprecated, please rename", attr, "to TogetherJSConfig_on_" + attrName);
         globalOns[attrName] = window[attr];
-      } else if (attr.indexOf("TogetherJSConfig_") === 0) {
-        attrName = attr.substr(("TogetherJSConfig_").length);
+      } else if (attr.indexOf("TowTruckConfig_") === 0) {
+        attrName = attr.substr(("TowTruckConfig_").length);
         console.warn("TowTruckConfig_* is deprecated, please rename", attr, "to TogetherJSConfig_" + attrName);
         TogetherJS.config(attrName, window[attr]);
       }
@@ -416,6 +416,10 @@
 
   TogetherJS._configuration = {};
   TogetherJS._defaultConfiguration = {
+    // Disables clicks for a certain element.
+    // (e.g., 'canvas' would not show clicks on canvas elements.)
+    // Setting this to true will disable clicks globally.
+    dontShowClicks: false,
     // Experimental feature to echo clicks to certain elements across clients:
     cloneClicks: false,
     // Enable Mozilla or Google analytics on the page when TogetherJS is activated:
@@ -448,10 +452,10 @@
     // "MySite's Collaboration Tool"
     toolName: null,
     // Used to auto-start TogetherJS with a {prefix: pageName, max: participants}
-    // Implies auto-start
-    // Also with findRoom: "roomName" it will start TogetherJS automatically in the
-    // given room.
+    // Also with findRoom: "roomName" it will connect to the given room name
     findRoom: null,
+    // If true, starts TogetherJS automatically (of course!)
+    autoStart: false,
     // If true, then the "Join TogetherJS Session?" confirmation dialog
     // won't come up
     suppressJoinConfirmation: false,
@@ -462,7 +466,14 @@
     // This is used to keep sessions from crossing over on the same
     // domain, if for some reason you want sessions that are limited
     // to only a portion of the domain:
-    storagePrefix: "togetherjs"
+    storagePrefix: "togetherjs",
+    // When true, we treat the entire URL, including the hash, as the identifier
+    // of the page; i.e., if you one person is on `http://example.com/#view1`
+    // and another person is at `http://example.com/#view2` then these two people
+    // are considered to be at completely different URLs
+    includeHashInUrl: false,
+    // When true, the WebRTC-based mic/chat will be disabled
+    disableWebRTC: false
   };
   // FIXME: there's a point at which configuration can't be updated
   // (e.g., hubBase after the TogetherJS has loaded).  We should keep
@@ -521,7 +532,6 @@
       // updated, especially when TogetherJS is running
     }
   };
-
   TogetherJS.reinitialize = function () {
     if (TogetherJS.running && typeof TogetherJS.require == "function") {
       TogetherJS.require(["session"], function (session) {
@@ -683,6 +693,7 @@
       delete window._TogetherJSBookmarklet;
       TogetherJS();
     } else {
+      // FIXME: this doesn't respect storagePrefix:
       var key = "togetherjs-session.status";
       var value = sessionStorage.getItem(key);
       if (value) {
@@ -692,7 +703,8 @@
           TogetherJS.startup.reason = value.startupReason;
           TogetherJS();
         }
-      } else if (window.TogetherJSConfig_findRoom) {
+      } else if (window.TogetherJSConfig_autoStart ||
+                 (window.TogetherJSConfig && window.TogetherJSConfig.autoStart)) {
         TogetherJS.startup.reason = "joined";
         TogetherJS();
       }
