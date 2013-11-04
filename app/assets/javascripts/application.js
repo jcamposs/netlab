@@ -51,6 +51,10 @@ $(document).ready(function (){
   $("#shellsModal").on('hide', function () {
     $(".modal-backdrop").css('opacity', '0');
   });
+  
+  // Change color btn sign_in
+  $("#btn-sign_in > center > div.btn").removeClass("btn-info");
+  $("#btn-sign_in > center > div.btn").addClass("btn-warning");
 });
 
 function check_chat_started() {

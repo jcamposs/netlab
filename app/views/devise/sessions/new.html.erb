@@ -1,16 +1,66 @@
-<div class="container-fluid">
+<header class="header" id="header">
 
-  <div class="row-fluid">
+  <div class="container">
 
-    <div id="logo" class="span7">
-      <center>
-        <h2>Free Network Simulator Machines</h2><br />
-        <%= image_tag("logo.png") %>
-      </center>
+    <div id="cover" class="row-fluid">
+
+      <div class="span6">
+        <div class="header-description">
+          <h1>NetLAB allows you to manage from your Web browser emulated TCP/IP networks running on the cloud</h1>
+        </div>
+        <div class="app-login-button-wrapper">
+          <%= render "gdrivestrg/login" %>
+        </div>         
+      </div>
+
+      <div class="span4">
+        <div id="coverCarousel" class="carousel slide">
+          <ol class="carousel-indicators">
+            <li data-target="#coverCarousel" data-slide-to="0" class="active"></li>
+            <li data-target="#coverCarousel" data-slide-to="1"></li>
+            <li data-target="#coverCarousel" data-slide-to="2"></li>
+          </ol>
+          <div class="carousel-inner">
+            <div class="active item"><img alt="" src="/assets/cover/slide-1.png"></div>
+            <div class="item"><img alt="" src="/assets/cover/slide-2.png"></div>
+            <div class="item"><img alt="" src="/assets/cover/slide-3.png"></div>
+            <div class="item"><img alt="" src="/assets/cover/slide-4.png"></div>
+          </div>
+          <a class="carousel-control left" href="#coverCarousel" data-slide="prev">&lsaquo;</a>
+          <a class="carousel-control right" href="#coverCarousel" data-slide="next">&rsaquo;</a>
+        </div>
+      </div>
+
     </div>
 
-    <div id="login" class="span5">
-      <%= render "gdrivestrg/login" %>
+  </div>
+
+</header>
+
+<div id="content-cover">
+
+  <div class="container">
+
+    <h3 id="content-h3">With NetLAB you can remotely collaborate in real-time with other users</h3>
+
+    <div class="row">
+
+      <div class="span4 feature">
+        <h3>Audio and Text Chat</h3>
+        <img alt="Placeholder" class="thumb" src="/assets/cover/audio-text-chat.png">
+        <p>Chat with them while you are collaborating to solve a problem in an emulated network.</p>
+      </div>
+      <div class="span4 feature">
+        <h3>Remoting Console</h3>
+        <img alt="Placeholder" class="thumb" src="/assets/cover/share-console.png">
+        <p>Share with them the console of an emulated host/router/switch.</p>
+      </div>
+      <div class="span4 feature">
+        <h3>Packet Capture</h3>
+        <img alt="Placeholder" class="thumb" src="/assets/cover/download-captures.png">
+        <p>Capture the traffic they are generating on the net and download it to be analyzed by wireshark.</p>
+      </div>
+ 
     </div>
 
   </div>

@@ -58,10 +58,6 @@
   vertical-align: text-bottom;
 }
 
-#logo {
-  margin: 170px 0 0 0;
-}
-
 #alert {
   margin: -69px 0 0 290px;
   float:left;
@@ -78,15 +74,6 @@
   -webkit-border-radius: 4px;
      -moz-border-radius: 4px;
           border-radius: 4px;
-}
-
-#login {
-  margin: 350px 0 0 0;
-}
-
-#btn-sign_in {
-  margin: 0 0 0 120px;
-  text-decoration: none;
 }
 
 #scene_manage {
@@ -471,4 +458,81 @@ span.icon {
 
 #loadingShellModal.modal.fade {
   transition: opacity 0.1s linear 0s, top 0.1s ease-out 0s;
+}
+
+.header {
+  background: url("/assets/cover/background.jpg") repeat-x scroll center 0 #3E495D;
+  width: 100%;
+  margin-top: 7.2%;
+}
+
+#coverCarousel {
+  margin: 59% -30% 70px;
+  position: relative;
+  width: 140%;
+}
+
+#coverCarousel > a.carousel-control {
+  margin-top: 5px;
+}
+
+#coverCarousel  > div.carousel-inner > .item {
+  height: 260px;
+}
+
+.header-description h1 {
+  color: #FFFFFF;
+  font-size: 220%;
+  font-weight: 700;
+  line-height: 44px;
+  margin: 0px 100px 100px 0;
+  text-shadow: 0 1px 0 #414C60;
+  width: 85%;
+}
+
+.header .span6 {
+  padding-top: 100px;
+}
+
+.app-login-button-wrapper {
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+  box-shadow: 0 1px rgba(255, 255, 255, 0.34), 0 2px 15px 1px rgba(0, 0, 0, 0.2) inset;
+  display: inline-block;
+  margin: 0 0 0;
+  padding: 12px;
+}
+
+#btn-sign_in > center > div.btn {
+  width: 200px;
+}
+
+#cover.row-fluid .span6 {
+  width: 62.9362%;
+}
+
+#content-cover {
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #CCCCCC;
+  border-top: 4px solid #E3E3E3;
+  padding: 20px 0 20px 20px;
+}
+
+#content-cover .feature {
+  margin-bottom: 10px;
+  margin-left: 20px;
+}
+
+#content-cover .feature .thumb {
+  float: right;
+  margin: 0 15px 15px;
+}
+
+#content-cover .feature p {
+  color: #262626;
+  font-size: 16px;
+}
+
+#content-h3 {
+  margin: 40px 40px 20px;
 }
