@@ -102,6 +102,9 @@ $.fn.bootstrapFileInput = function() {
         // fileName = $(this).val().replace('C:\\fakepath\\','');
         fileName = fileName.substring(fileName.lastIndexOf('\\')+1,fileName.length);
       }
+      
+      // Remove previous file
+      $('.wk-config-file').remove();
 
       $(this).parent().after('<span class="file-input-name">'+fileName+'</span>');
     });

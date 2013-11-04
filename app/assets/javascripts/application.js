@@ -32,9 +32,6 @@ $(document).ready(function (){
   $('input[type=file]').bootstrapFileInput();
   $('.file-inputs').bootstrapFileInput();
   
-  // Remove text when change file inputs
-  $('.wk-config-file').remove();
-  
   //Check if togetherjs is initiated
   setTimeout('check_chat_started()', 3000);
   
