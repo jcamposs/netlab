@@ -21,8 +21,14 @@
                 <tr>
                   <td>
                     <p class="formSep"><small class="muted">Name: </small><%= @workspace.name %></p>
-                    <p class="formSep"><small class="muted">Owner: </small><%= link_to "#{@workspace.user.first_name} #{@workspace.user.last_name}", profile_path(@workspace.user) %></p>
+                    <p class="formSep"><small class="muted">Owner: </small>
+                      <%= link_to "#{@workspace.user.first_name} #{@workspace.user.last_name}", profile_path(@workspace.user) %></p>
                     <p class="formSep"><small class="muted">Scene: </small><span id="scene_name"><%= @workspace.scene.name %></span></p>
+                    <p class="formSep"><small class="muted">Config file: </small>
+                      <% if @workspace.scene_config %>
+                        <%= link_to "#{@workspace.scene_config.name}", 
+                          "#{Netlab::Application.config.app_protocol}://#{Netlab::Application.config.app_host_and_port}//workspaces/#{@workspace.id}/conf"%></p>
+                      <% end %>
                     <p class="formSep"><small class="muted">Collaborators: </small>
                     <% User.find(:all, :conditions => ["id != ?", @user.id]).each_with_index do |user, i| -%>
                       <% if @workspace.editors.include?(user) %>

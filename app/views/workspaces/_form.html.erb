@@ -69,6 +69,8 @@
                     <%= f.file_field :config_file, :title => "Select file" %>
                   <% else %>
                     <%= f.file_field :config_file, :title => "Select file" %>
+                    <%= link_to "#{@workspace.scene_config.name}", 
+                        "#{Netlab::Application.config.app_protocol}://#{Netlab::Application.config.app_host_and_port}//workspaces/#{@workspace.id}/conf", :class => 'wk-config-file'%></p>
                   <% end %>
                 </div>
               </div>
