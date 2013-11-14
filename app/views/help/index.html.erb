@@ -25,11 +25,25 @@
           <h1>What is NetLAB?</h1>
         </div>
         
-        NetLab is a graphical interface for the system Netkit. NetLab allows edit network diagrams, start the nodes
-        (computers, routers and switches) and stop them, besides being able to work together on the design of a network.
+        NetLAB is an HTML5 Web application that allows several users
+        to remotely operate a shared emulation of a TCP/IP
+        network. NetLAB uses Netkit processes running on servers to
+        emulate switches, routers, hosts and Ethernet.
         
-        <br><br> In NetLAB a <a href="#scenes">scene</a> is related to the design of diagrams network.
-        A <a href="#workspaces">workspace</a> allows manage a scene and work on it in groups.
+        From the Web browser, NetLAB users can edit network diagrams,
+        start/stop the nodes (hosts, routers and switches). All users
+        working on the same emulated network share the console of each
+        emulated node of the network. This way a user can see what
+        another one is typing, what is useful for the purpose of
+        learning. Users can also chat in realtime or talk among them
+        using the collaboration tools offered by NetLAB.
+
+	
+        <br><br> A <a href="#scenes">scene</a> in NetLAB is used to
+        edit a new network diagram. A user then can create
+        a <a href="#workspaces">workspace</a> for launching and
+        operating the emulated nodes described in the scene, being
+        able to invite other users to share the emulated network.
       </section>
   
       <!-- Scenes
@@ -41,10 +55,10 @@
           
         <h3>How to create a scene</h3>
         <ul>
-          <li>First you have to go to page <%= link_to 'scenes', scenes_path %>.</li>
+          <li>First, you have to go to page <%= link_to 'scenes', scenes_path %>.</li>
           <li>Click on <%= link_to '<i class="icon-plus icon-white"></i> New Scene'.html_safe, new_scene_path, 
             :class => 'btn btn-primary' %>
-          <li>To add a node, simply click on it and drag it to the design area. You cand add:</li>
+          <li>To add a node, simply click on it and drag it to the design area. You can add:</li>
             <p class="bs-docs-example"><img src="<%= asset_path('editor/image.png') %>" class="img-rounded" width="48" height="48">
             <img src="<%= asset_path('editor/router.png') %>" class="img-rounded" width="48" height="48">
             <img src="<%= asset_path('editor/switch.png') %>" class="img-rounded" width="48" height="48">
@@ -54,13 +68,13 @@
           <li>To delete a link, click on <img src="<%= asset_path('editor/scissors.png') %>" class="img-rounded" width="48" height="48">
           and then click on the link you want to delete.</li>
           <li>Click on <button class="btn btn-primary" type="button">Save</button> to save the network design, 
-          and write the name of the scene in pop up.</li>
-          <li>If you want reset the network, click on <button class="btn" type="button">Clear</button></li>
+          and write the name of the scene in a pop up window.</li>
+          <li>If you want to reset the network, click on <button class="btn" type="button">Clear</button></li>
         </ul>
 
         <h3>How to edit a scene</h3>
         <p class="prettyprint-info">
-          <strong>Info: </strong>You can only edit a scene if this is not associated with a workspace.
+          <strong>Info: </strong>One a scene has been associated with a Workspace you can no edit it.
         </p>
         <li>
           To edit a scene, you can click on the button
@@ -68,11 +82,12 @@
           that appears on the right side of each scene in your list, or click on the same button that appears on the top right
           of each widget if you're watching a scene information.
         </li>
-        <li>Modifies the scene and click on <button class="btn btn-primary" type="button">Save</button> to save changes.</li>
+        <li>After modifying a scene, click on <button class="btn
+        btn-primary" type="button">Save</button> to save changes.</li>
 
         <h3>How to remove a scene</h3>
         <p class="prettyprint-danger">
-          <strong>Info: </strong>You can only remove a scene if this is not associated with a workspace.
+          <strong>Info: </strong>You can only remove a scene if this is not yet associated with a workspace.
         </p>
         <li>
           To remove a scene, click on the button
@@ -93,8 +108,8 @@
           <li>First you have to go to page <%= link_to 'workspaces', workspaces_path %>.</li>
           <li>Click on <%= link_to '<i class="icon-plus icon-white"></i> New Workspace'.html_safe, new_workspace_path, 
             :class => 'btn btn-primary' %>
-          <li><code>New workspace</code> tab you must complete the field name, select the scene you want to be part of the workspace
-          and load the configuration file. <code>Team</code> tab, you can select which users will be able to work on this workspace.</li>
+          <li>In the <code>New workspace</code> tab you must fill the field name, select the scene you want to use in  the workspace being created, 
+          and load the configuration file. In the <code>Team</code> tab you can select which users will be able to work on this workspace.</li>
           <li>Click on <button class="btn btn-primary" type="button">Create Workspace</button> to save the workspace.
         </ul>
           
@@ -102,10 +117,10 @@
         <li>
           To edit a workspace, you can click on the button
           <button class="btn btn-mini btn-info" type="button"><i class="icon-edit icon-white"></i></button>
-          that appears on the right side of each workspace in your list, or click on the same button that appears on the top right
-          of each widget if you're watching a information or in mode manage of a workspace.
+          that appears on the right side of each workspace in your list. Alternatively, you can  click on the same button that appears on the top right
+          of each widget when you're watching information of a workspace, or operating it.
          </li>
-         <li>Modifies the information you want and click on <button class="btn btn-primary" type="button">Update Workspace</button>
+         <li>After modifying the information of a Workspace click   <button class="btn btn-primary" type="button">Update Workspace</button>
          to save changes.</li>
            
         <h3>How to remove a workspace</h3>
@@ -120,22 +135,29 @@
            
         <h3>How to manage a workspace</h3>
         <li>
-          Enter in mode <code>manage</code> of a workspace, click on the button
-          <button class="btn btn-mini btn-warning" type="button"><i class="icon-wrench icon-white"></i></button>
-          that appears on the right side of each workspace in your list, or click on the same button that appears on the top right
-          of each widget if you're watching a information or editing a workspace.
+          By clicking on the button
+          <button class="btn btn-mini btn-warning"
+          type="button"><i class="icon-wrench
+          icon-white"></i></button> that appears on the right side of
+          each workspace in your list you enter
+          the <code>manage</code> mode of a workspace. In the manage
+          mode users can run the emulated network. Alternatively, you
+          can click on the same button that appears on the top right
+          of each widget when you're watching information related to a
+          workspace, or editing it.
         </li>
-        <li>
+man        <li>
           To boot a virtual machine, click on
           <img src="<%= asset_path('editor/off.png') %>" class="img-rounded" width="60" height="60">. 
           When the virtual machine is powered on, you will see the icon
           <img src="<%= asset_path('editor/on.png') %>" class="img-rounded" width="60" height="60">
         </li>           
-        <li>To start a terminal for that node, you have to click on that node.
+        <li>To start a terminal for that node, you have to click on that node.</li>
+        <li>If you double-click on a machine that has started a terminal, the terminal is shown in the foreground.</li>
         <li>If you just want to close the terminal session, click on <img src="<%= asset_path('editor/shell.png') %>" 
-          class="img-rounded" width="32" height="32">
+          class="img-rounded" width="32" height="32"></li>
         <li>If you want to turn off the virtual machine, click on <img src="<%= asset_path('editor/on.png') %>" 
-          class="img-rounded" width="60" height="60">
+          class="img-rounded" width="60" height="60"></li>
           
         <h3>How to download captures of a workspace</h3>
         <p class="prettyprint-info">
@@ -143,7 +165,8 @@
           <em class="text-warning">/hostlab/captures</em>
         </p>
         <li>
-          You can download network captures made ​​on a workspace, if you are in mode <code>manage</code> and click on
+          You can download network captures made on a workspace while
+          you are <code>manage</code> mode by clicking on
           <button class="btn btn-success" type="button"><i class="icon-download icon-white"></i>Download captures</button>
         </li>
           
@@ -173,11 +196,11 @@
         <li>
           First, click on the button 
           <button class="btn"><i class="icon-comment"></i><span class="label">Ofline</span></button>
-          to init a session. When the chat session this started, you will see
+          to init a chat session. When the chat session is started the button toggles showing this icon: 
           <button class="btn"><i class="icon-comment"></i><span class="label label-success">Online</span></button>
         </li>
         <li>
-          Copy the link of the session in the text field of the third tab on the left panel and choose who you want to chat.
+          Click on the button right above and select "New invitation". Copy the link of the session in the text field and choose who you want to chat.
         </li>
         <li>
           Click on <button class="btn btn-primary"><i class="icon-share-alt icon-white"></i> Send Invitation</button> to send the invitation.
@@ -202,13 +225,15 @@
           <h1>Browser Support</h1>
         </div>
         
-        NetLAB is intended for relatively newer browsers. Especially as we experiment with what we're doing, supporting older 
-        browsers causes far more challenge than it is an advantage.
+        NetLAB works best on modern browsers and some features only
+        work on the most recent versions of some of these browsers.
         
         <h3>Supported Browsers</h3>
         We recommend the most recent release of <a href="https://www.google.com/intl/en/chrome/browser/">Chrome</a>.
-        <br>If you want use <a href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a> is possible that some characters
-        like "-", "_" don't work on consoles of virtual machines.
+        <br>If you want to
+        use <a href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a>
+        it is possible that some characters like "-", "_" don't work
+        on consoles of virtual machines.
         <br>It is possible to support Internet Explorer. However we do not test at all regularly on Internet Explorer.
       </section>
     
