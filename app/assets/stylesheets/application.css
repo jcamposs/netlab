@@ -536,3 +536,30 @@ span.icon {
 #content-h3 {
   margin: 40px 40px 20px;
 }
+
+#marketing-video {
+  background: none repeat scroll 0 0 rgba(0, 0, 0, 0.8);
+  display: none;
+  height: 600px;
+  left: 0;
+  margin-bottom: 200px;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 99;
+}
+
+#marketing-video #frame-video {
+  padding-top: 120px;
+  width: 80%;
+}
+
+.video-closebtn {
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  float: right;
+}
+
+#slide-1 {
+  cursor: pointer;
+}

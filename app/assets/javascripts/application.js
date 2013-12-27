@@ -55,6 +55,25 @@ $(document).ready(function (){
   // Change color btn sign_in
   $("#btn-sign_in > center > div.btn").removeClass("btn-info");
   $("#btn-sign_in > center > div.btn").addClass("btn-warning");
+  
+  //Video player
+  $("#slide-1").click(function() {
+    $("#marketing-video").fadeIn();
+  }); 
+  
+  $("#marketing-video").click(function() {
+    $("#marketing-video").fadeOut();
+  }); 
+  
+  $(".video-closebtn" ).click(function() {
+    $("#marketing-video").fadeOut();
+  }); 
+  
+  // stop youtube from playing on btn close
+  $('.video-closebtn').click(function(){
+    var myPlayer = document.getElementById('youtubevid');
+    myPlayer.stopVideo();
+  }); 
 });
 
 function check_chat_started() {
